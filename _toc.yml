@@ -1,0 +1,7 @@
+
+format: jb-book
+root: intro
+chapters:
+- file: one.ipynb
+- file: four.ipynb
+- file: markdown-notebooks

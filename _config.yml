@@ -1,0 +1,32 @@
+
+
+title: Stock and Watson Introduction to  Econometrics Python Solutions
+author: Ahmed H. Darwish
+logo: logo.png
+
+
+execute:
+  execute_notebooks: "off"
+
+
+latex:
+  latex_documents:
+    targetname: book.tex
+
+bibtex_bibfiles:
+  - references.bib
+
+
+repository:
+  url: https://github.com/42Ahmed/stockpy  
+  path_to_book: docs  
+  branch: master  
+
+html:
+  use_issues_button: true
+  use_repository_button: true
+
+include_toc: true
+
+launch_buttons:
+  colab_url:
