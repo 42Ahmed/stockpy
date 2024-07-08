@@ -1,0 +1,112 @@
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  /Users/mwatson/Dropbox/TB/4E/ReplicationMaterials/Ch4/FinalFiles/SW_4E_ch4.log
+  log type:  text
+ opened on:  22 Oct 2017, 13:45:16
+
+. ***********************************;
+. * Read In Data;
+.  * (Note: Change path name so that it is appropriate for your computer);
+. use /Users/mwatson/Dropbox/TB/4E/ReplicationMaterials/FinalData/caschool.dta;
+
+. *;
+. *;
+. * Decription of Data;
+. * dist_code -- district Code;
+. * Read_scr  -- avg Reading Score;
+. * Math_scr  -- avg Math Score;
+. * County   --  county;
+. * District -- District;
+. * gr_span -- grade span of district;
+. * enrl_tot -- total enrollment;
+. * teachers -- number of teachers;
+. * computer -- number of computers;
+. * testscr -- avg test score (= (read_scr+math_scr)/2 );
+. * comp_stu -- computers per student ( = computer/enrl_tot);
+. * expn_stu -- expentitures per student;
+. * str -- student teacher ration (teachers/enrl_tot);
+. * el_pct -- percent of English Learners;
+. * Meal_pct -- Percent qualifying for reduced-price lunch;
+. * clw_pct -- Percent qualifying for CalWorks;
+. * aving -- district average income (in $1000's);
+. **************************************************************;
+. ***** Table 4.1 ******
+> **************************************************************;
+. summarize str str;
+
+    Variable |       Obs        Mean    Std. Dev.       Min        Max
+-------------+--------------------------------------------------------
+         str |       420    19.64043    1.891812         14       25.8
+         str |       420    19.64043    1.891812         14       25.8
+
+. pctile pct_tsc = testscr, nq(20) genp(pctx);
+
+. pctile pct_str = str, nq(20);
+
+. list pctx pct_str pct_tsc in 1/20;
+
+     +---------------------------+
+     | pctx    pct_str   pct_tsc |
+     |---------------------------|
+  1. |    5   16.41658    623.15 |
+  2. |   10   17.34573   630.375 |
+  3. |   15   17.74146     634.1 |
+  4. |   20    18.1497   636.975 |
+  5. |   25   18.58179       640 |
+     |---------------------------|
+  6. |   30   18.80982     643.5 |
+  7. |   35   19.05785   645.875 |
+  8. |   40   19.26605    649.05 |
+  9. |   45    19.3945     652.1 |
+ 10. |   50   19.72321    654.45 |
+     |---------------------------|
+ 11. |   55   19.93005   656.675 |
+ 12. |   60   20.07934     659.4 |
+ 13. |   65   20.28437     662.4 |
+ 14. |   70   20.59594   664.425 |
+ 15. |   75   20.87183   666.675 |
+     |---------------------------|
+ 16. |   80   21.08237   669.575 |
+ 17. |   85    21.4304     672.5 |
+ 18. |   90   21.87561     679.1 |
+ 19. |   95   22.64514     685.5 |
+ 20. |    .          .         . |
+     +---------------------------+
+
+. **************************************************************;
+. ***** Correlation ******
+> **************************************************************;
+. cor str testscr;
+(obs=420)
+
+             |      str  testscr
+-------------+------------------
+         str |   1.0000
+     testscr |  -0.2264   1.0000
+
+
+. **************************************************************;
+. ***** Equation 4.11 ******
+> **************************************************************;
+. reg testscr str, r;
+
+Linear regression                                      Number of obs =     420
+                                                       F(  1,   418) =   19.26
+                                                       Prob > F      =  0.0000
+                                                       R-squared     =  0.0512
+                                                       Root MSE      =  18.581
+
+------------------------------------------------------------------------------
+             |               Robust
+     testscr |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+         str |  -2.279808   .5194892    -4.39   0.000    -3.300945   -1.258671
+       _cons |    698.933   10.36436    67.44   0.000     678.5602    719.3057
+------------------------------------------------------------------------------
+
+. log close;
+      name:  <unnamed>
+       log:  /Users/mwatson/Dropbox/TB/4E/ReplicationMaterials/Ch4/FinalFiles/SW_4E_ch4.log
+  log type:  text
+ closed on:  22 Oct 2017, 13:45:16
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

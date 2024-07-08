@@ -1,0 +1,17 @@
+all 7055
+open data wilshire_returns.asc
+data(for=free,org=obs) / ret
+graph(header='Figure 17.3 Daily Percentage Changes in the Wilshire 5000 Index, 1990-2013', vlabel = 'Percent')
+# ret 1 7055
+
+garch(reg,p=1,q=1,hseries=h,resids=u) / ret
+# constant
+set upper = sqrt(h)
+set lower = -sqrt(h)
+graph(header='Figure 16.4 Daily Percentage Changes in the Wilshire 5000 Index and GARCH(1,1) Bands') 3
+# u
+# upper / 2
+# lower / 2
+open copy ch16_arch_output.xls
+copy(format=xls,org=obs) / ret u lower upper
+close copy

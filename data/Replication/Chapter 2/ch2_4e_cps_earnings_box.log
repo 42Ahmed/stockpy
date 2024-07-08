@@ -1,0 +1,146 @@
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  /Users/mwatson/Dropbox/TB/4E/WebSupplements/ForStudents/SW_4E_ReplicationFiles/Chapter_2/ch2_4e_cps_earnings_box.log
+  log type:  text
+ opened on:  24 Sep 2018, 14:19:05
+
+. ***********************************;
+. ********************* Description of Variables *************;
+. **** a_age = age;
+. **** a_hga = education level ;
+. *     0  "Children";
+. *     31  "Less Than 1st Grade";
+. *     32  "1st,2nd,3rd,or 4th grade";
+. *     33  "5th Or 6th Grade";
+. *     34  "7th and 8th grade";
+. *     35  "9th Grade";
+. *     36  "10th Grade";
+. *     37  "11th Grade";
+. *     38  "12th Grade No Diploma";
+. *     39  "High school graduate-high school diploma";
+. *     40  "Some College But No Degree";
+. *     41  "Assc degree-occupation/vocation";
+. *     42  "Assc degree-academic program";
+. *     43  "Bachelor''s degree (BA,AB,BS)";
+. *     44  "Master''s degree (MA,MS,MENG,MED,MSW,MBA)";
+. *     45  "Professional school degree (MD,DDS,DVM,L";
+. *     46  "Doctorate degree (PHD,EDD)"  ;
+. *'     
+> **** a_sex = 1 male;
+.  *            2 female;
+.  ******************* 2015 Data (from March 2016 CPS) **************** ;
+. * Change this to match file configuration on your computer;
+.  use "/Users/mwatson/Dropbox/TB/4E/WebSupplements/ForStudents/SW_4E_ReplicationFiles/Replication_Data/cps_ch2";
+
+. desc;
+
+Contains data from /Users/mwatson/Dropbox/TB/4E/WebSupplements/ForStudents/SW_4E_ReplicationFiles/Replication_Data/cps_ch2.dta
+  obs:        54,365                          
+ vars:             6                          6 Oct 2017 17:54
+ size:       543,650                          (_dta has notes)
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+              storage   display    value
+variable name   type    format     label      variable label
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+gereg           byte    %9.0g      gereg    * Region
+a_age           byte    %18.0g     a_age    * Item 18d - Age
+a_sex           byte    %8.0g      a_sex    * Item 18g - Sex
+a_hga           byte    %59.0g     a_hga    * Item 18h - Educational attainment
+occup           int     %111.0g    occup    * Occupation of longest job
+ahe             float   %9.0g                 
+                                            * indicated variables have notes
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Sorted by: 
+
+. ******************************************************************** ;
+. summarize ahe, detail;
+
+                             ahe
+-------------------------------------------------------------
+      Percentiles      Smallest
+ 1%     4.807693       2.019231
+ 5%     8.076923       2.019231
+10%     9.882479       2.040816       Obs              54,365
+25%     14.42308       2.053846       Sum of Wgt.      54,365
+
+50%     21.15385                      Mean           25.88473
+                        Largest       Std. Dev.      17.71086
+75%     32.21154       320.1923
+90%     48.07692       403.8458       Variance       313.6744
+95%       59.925        467.147       Skewness       3.024288
+99%     90.38461       591.3457       Kurtosis       40.05219
+
+. summarize ahe if (a_sex==2)&(a_hga==39), detail;
+
+                             ahe
+-------------------------------------------------------------
+      Percentiles      Smallest
+ 1%      4.43787       2.019231
+ 5%     6.579959       2.019231
+10%     7.912088       2.163461       Obs               5,321
+25%     10.98901       2.197802       Sum of Wgt.       5,321
+
+50%     14.42308                      Mean           16.28005
+                        Largest       Std. Dev.      8.910237
+75%     19.23077       96.15385
+90%     25.64103       96.15385       Variance       79.39233
+95%     31.62393       96.15385       Skewness       2.969052
+99%     48.55769       147.8633       Kurtosis       23.18004
+
+. summarize ahe if (a_sex==2)&(a_hga==43), detail;
+
+                             ahe
+-------------------------------------------------------------
+      Percentiles      Smallest
+ 1%     6.165865       2.388462
+ 5%           10          2.825
+10%         12.5       2.884615       Obs               6,276
+25%     16.82692        3.21875       Sum of Wgt.       6,276
+
+50%     23.55769                      Mean           27.22945
+                        Largest       Std. Dev.      16.17734
+75%     33.65385       134.6154
+90%     47.59615       134.6154       Variance       261.7062
+95%     57.69231       138.4615       Skewness       4.638297
+99%           80        467.147       Kurtosis       93.32673
+
+. summarize ahe if (a_sex==1)&(a_hga==39), detail;
+
+                             ahe
+-------------------------------------------------------------
+      Percentiles      Smallest
+ 1%     4.807693       2.136752
+ 5%     7.692307       2.259615
+10%     9.615385       2.399039       Obs               8,497
+25%     13.22115       2.564103       Sum of Wgt.       8,497
+
+50%     19.11765                      Mean           21.21991
+                        Largest       Std. Dev.      11.96181
+75%      26.0989       110.9467
+90%     36.05769       120.1923       Variance       143.0848
+95%         43.5            125       Skewness       1.950368
+99%     64.10256       135.4167       Kurtosis       10.12249
+
+. summarize ahe if (a_sex==1)&(a_hga==43), detail;
+
+                             ahe
+-------------------------------------------------------------
+      Percentiles      Smallest
+ 1%     5.769231       2.040816
+ 5%     11.53846       2.307692
+10%     14.42308       2.307692       Obs               7,190
+25%     20.67308       2.307692       Sum of Wgt.       7,190
+
+50%     30.93773                      Mean           35.10273
+                        Largest       Std. Dev.      20.36002
+75%     44.71154       144.2308
+90%     60.89743       148.3517       Variance       414.5304
+95%     72.59615       159.3137       Skewness       2.067142
+99%          100       403.8458       Kurtosis       20.04389
+
+. log close;
+      name:  <unnamed>
+       log:  /Users/mwatson/Dropbox/TB/4E/WebSupplements/ForStudents/SW_4E_ReplicationFiles/Chapter_2/ch2_4e_cps_earnings_box.log
+  log type:  text
+ closed on:  24 Sep 2018, 14:19:05
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

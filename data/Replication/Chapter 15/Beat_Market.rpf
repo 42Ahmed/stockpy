@@ -1,0 +1,27 @@
+*
+* Replication file for SW_3e Chapter 14, Can You Beat the Market?
+*
+cal 1931 1 12
+all 2002:12
+
+open data \tb\3e\supplements\replicationfiles\data\stock_returns_1931_2002.asc
+data(for=free,org=obs) / year month exreturn ln_divyield
+close data
+set d_ln_divyield / = ln_divyield(t)-ln_divyield(t-1)
+* 
+* AR Models -- Part 1 Box
+*
+smpl 1960:1 2002:12
+linreg(robust) exreturn /
+# constant exreturn{1}
+exclude
+# exreturn{1}
+linreg(robust) exreturn /
+# constant exreturn{1 to 2}
+exclude
+# exreturn{1 to 2}
+linreg(robust) exreturn /
+# constant exreturn{1 to 4}
+exclude
+# exreturn{1 to 4}
+*

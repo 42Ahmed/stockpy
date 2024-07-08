@@ -1,0 +1,120 @@
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  /Users/mwatson/Dropbox/TB/4E/WebSupplements/ForStudents/SW_4E_ReplicationFiles/Chapter_5/ch5_4e_economic_value_box.log
+  log type:  text
+ opened on:  24 Sep 2018, 14:39:28
+
+. set more 1;
+
+. ***********************************;
+. * Read In Data;
+.  * (Note: Change path name so that it is appropriate for your computer);
+. use "/Users/mwatson/Dropbox/TB/4E/WebSupplements/ForStudents/SW_4E_ReplicationFiles/Replication_Data/ch5_cps_box";
+
+. *;
+. desc;
+
+Contains data from /Users/mwatson/Dropbox/TB/4E/WebSupplements/ForStudents/SW_4E_ReplicationFiles/Replication_Data/ch5_cps_box.dta
+  obs:         2,731                          
+ vars:             4                          22 Oct 2017 17:51
+ size:        27,310                          (_dta has notes)
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+              storage   display    value
+variable name   type    format     label      variable label
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+a_age           byte    %18.0g     a_age    * Item 18d - Age
+a_sex           byte    %8.0g      a_sex    * Item 18g - Sex
+ahe             float   %9.0g                 
+yrseduc         float   %9.0g                 
+                                            * indicated variables have notes
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Sorted by: 
+
+. summ ahe, detail;
+
+                             ahe
+-------------------------------------------------------------
+      Percentiles      Smallest
+ 1%     4.807693       2.747253
+ 5%      7.49674       2.884615
+10%     9.523809       2.884615       Obs               2,731
+25%     12.98077       2.884615       Sum of Wgt.       2,731
+
+50%           18                      Mean           21.13509
+                        Largest       Std. Dev.      12.44252
+75%     26.04167       96.15385
+90%     36.63004       96.15385       Variance       154.8164
+95%     45.67308            100       Skewness       1.891119
+99%     65.78947       110.5769       Kurtosis       8.725295
+
+. summ yrseduc, detail;
+
+                           yrseduc
+-------------------------------------------------------------
+      Percentiles      Smallest
+ 1%            9              8
+ 5%           12              8
+10%           12              8       Obs               2,731
+25%           12              8       Sum of Wgt.       2,731
+
+50%           13                      Mean           14.00622
+                        Largest       Std. Dev.      2.251487
+75%           16             18
+90%           18             18       Variance       5.069192
+95%           18             18       Skewness       .1492202
+99%           18             18       Kurtosis       2.343029
+
+. reg ahe yrseduc, robust;
+
+Linear regression                               Number of obs     =      2,731
+                                                F(1, 2729)        =     537.05
+                                                Prob > F          =     0.0000
+                                                R-squared         =     0.1845
+                                                Root MSE          =     11.238
+
+------------------------------------------------------------------------------
+             |               Robust
+         ahe |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+     yrseduc |   2.374044   .1024423    23.17   0.000     2.173172    2.574917
+       _cons |  -12.11631   1.355573    -8.94   0.000    -14.77436   -9.458258
+------------------------------------------------------------------------------
+
+. predict t5;
+(option xb assumed; fitted values)
+
+. predict u5, residual;
+
+. summ u5 if yrseduc==10;
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+          u5 |         30    2.556746    6.313466  -8.127628   19.86625
+
+. summ u5 if yrseduc==12;
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+          u5 |        782    .2473538    8.540832  -13.48761   68.24316
+
+. summ u5 if yrseduc==16;
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+          u5 |        738    .4296822    13.54997  -22.98378   84.70852
+
+. scatter ahe yrseduc || lfit ahe yrseduc, ytitle("Average Hourly Earnings") xtitle("Years of Education");
+
+. *************************************************************;
+. * Save these data for plotting, etc.;
+. keep yrseduc ahe t5 ;
+
+. export excel figure_5_3.xlsx, firstrow(var) replace;
+file figure_5_3.xlsx saved
+
+. log close;
+      name:  <unnamed>
+       log:  /Users/mwatson/Dropbox/TB/4E/WebSupplements/ForStudents/SW_4E_ReplicationFiles/Chapter_5/ch5_4e_economic_value_box.log
+  log type:  text
+ closed on:  24 Sep 2018, 14:39:30
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

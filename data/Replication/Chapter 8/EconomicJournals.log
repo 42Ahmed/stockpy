@@ -1,0 +1,168 @@
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  /Users/mwatson/Dropbox/TB/4E/WebSupplements/ForStudents/SW_4E_ReplicationFiles/Chapter_8/EconomicJournals.log
+  log type:  text
+ opened on:  24 Sep 2018, 15:01:51
+
+. ***********************************;
+. * Read In Data;
+.  * (Note: Change path name so that it is appropriate for your computer);
+. *;
+. use "/Users/mwatson/Dropbox/TB/4E/WebSupplements/ForStudents/SW_4E_ReplicationFiles/Replication_Data/Journals.dta";
+
+. desc;
+
+Contains data from /Users/mwatson/Dropbox/TB/4E/WebSupplements/ForStudents/SW_4E_ReplicationFiles/Replication_Data/Journals.dta
+  obs:           180                          
+ vars:            10                          29 Dec 2010 18:53
+ size:        21,600                          
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+              storage   display    value
+variable name   type    format     label      variable label
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+title           str56   %56s                  Title
+pub             str33   %33s                  Pub
+society         byte    %8.0g                 
+libprice        int     %8.0g                 
+pages           int     %8.0g                 
+charpp          int     %8.0g                 
+citestot        int     %8.0g                 
+date1           int     %8.0g                 
+oclc            int     %8.0g                 
+field           str18   %18s                  Field
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Sorted by: citestot
+
+. **************************;
+. gen q = oclc;
+
+. gen p = libprice;
+
+. gen logq = ln(oclc);
+
+. gen ppercite = libprice/citestot;
+
+. gen pc = libprice/citestot;
+
+. gen logpc = ln(pc);
+
+. gen logpc2 = logpc*logpc;
+
+. gen logpc3 = logpc2*logpc;
+
+. gen age = 2000-date1;
+
+. gen logage = ln(age);
+
+. gen lagexlpc = logage*logpc;
+
+. gen chars = charpp*page/1000000;
+
+. gen logchars = ln(chars);
+
+. **** Table 6.1 *****;
+. *****;
+. **** col(1);
+. reg logq logpc, r;
+
+Linear regression                               Number of obs     =        180
+                                                F(1, 178)         =     246.39
+                                                Prob > F          =     0.0000
+                                                R-squared         =     0.5573
+                                                Root MSE          =     .74974
+
+------------------------------------------------------------------------------
+             |               Robust
+        logq |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+       logpc |  -.5330535   .0339593   -15.70   0.000    -.6000681   -.4660388
+       _cons |   4.766212   .0552583    86.25   0.000     4.657167    4.875258
+------------------------------------------------------------------------------
+
+.  dis "Adjusted Rsquared = " _result(8);
+Adjusted Rsquared = .55476726
+
+. **** col(2);
+. reg logq logpc logage logchars, r;
+
+Linear regression                               Number of obs     =        180
+                                                F(3, 176)         =     101.18
+                                                Prob > F          =     0.0000
+                                                R-squared         =     0.6132
+                                                Root MSE          =     .70474
+
+------------------------------------------------------------------------------
+             |               Robust
+        logq |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+       logpc |  -.4077182   .0437175    -9.33   0.000    -.4939962   -.3214403
+      logage |   .4236486   .1190644     3.56   0.000     .1886709    .6586262
+    logchars |   .2056141   .0977507     2.10   0.037     .0126998    .3985284
+       _cons |   3.206648   .3797246     8.44   0.000     2.457248    3.956048
+------------------------------------------------------------------------------
+
+.  dis "Adjusted Rsquared = " _result(8);
+Adjusted Rsquared = .6066164
+
+. **** col(3);
+. reg logq logpc logpc2 logpc3 logage lagexlpc logchars, r;
+
+Linear regression                               Number of obs     =        180
+                                                F(6, 173)         =      84.30
+                                                Prob > F          =     0.0000
+                                                R-squared         =     0.6349
+                                                Root MSE          =     .69056
+
+------------------------------------------------------------------------------
+             |               Robust
+        logq |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+       logpc |  -.9609365   .1601349    -6.00   0.000    -1.277006   -.6448667
+      logpc2 |   .0165099   .0254886     0.65   0.518    -.0337988    .0668186
+      logpc3 |   .0036666   .0055146     0.66   0.507     -.007218    .0145513
+      logage |   .3730539   .1176966     3.17   0.002     .1407477    .6053602
+    lagexlpc |   .1557773   .0518947     3.00   0.003      .053349    .2582056
+    logchars |   .2346178   .0977318     2.40   0.017     .0417175     .427518
+       _cons |   3.407596   .3735992     9.12   0.000     2.670196    4.144995
+------------------------------------------------------------------------------
+
+.  dis "Adjusted Rsquared = " _result(8);
+Adjusted Rsquared = .62228014
+
+.  test logpc2 logpc3;
+
+ ( 1)  logpc2 = 0
+ ( 2)  logpc3 = 0
+
+       F(  2,   173) =    0.25
+            Prob > F =    0.7799
+
+.  **** col(4);
+. reg logq logpc  logage lagexlpc logchars, r;
+
+Linear regression                               Number of obs     =        180
+                                                F(4, 175)         =      99.87
+                                                Prob > F          =     0.0000
+                                                R-squared         =     0.6339
+                                                Root MSE          =     .68759
+
+------------------------------------------------------------------------------
+             |               Robust
+        logq |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+       logpc |  -.8989097   .1446483    -6.21   0.000    -1.184389   -.6134299
+      logage |   .3735148   .1175268     3.18   0.002     .1415624    .6054672
+    lagexlpc |   .1409591   .0401991     3.51   0.001     .0616215    .2202966
+    logchars |   .2294661   .0964932     2.38   0.018      .039026    .4199062
+       _cons |   3.433521   .3674714     9.34   0.000     2.708275    4.158767
+------------------------------------------------------------------------------
+
+.  dis "Adjusted Rsquared = " _result(8);
+Adjusted Rsquared = .62552019
+
+.    log close;
+      name:  <unnamed>
+       log:  /Users/mwatson/Dropbox/TB/4E/WebSupplements/ForStudents/SW_4E_ReplicationFiles/Chapter_8/EconomicJournals.log
+  log type:  text
+ closed on:  24 Sep 2018, 15:01:52
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

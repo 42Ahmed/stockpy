@@ -1,0 +1,183 @@
+*
+* Replication file for SW4E Chapter 16
+* Note: This file borrows heavily from ESTIMA's replication files for SW3E (www.estima.com)
+*
+cal 1947 1 12
+all 2001:12
+*
+* Change the path so that it matches your computer configuration
+*****open data /Users/mwatson/Dropbox/TB/4E/WebSupplements/ForStudents/SW_4E_ReplicationFiles/Replication_Data/oj.rat
+*
+*
+* Read in Price Data
+*
+data(for=rats) / ppioj pwfsa fdd
+*
+set poj   = ppioj/pwfsa
+set rpoj  = log(poj)
+set drpoj = rpoj-rpoj{1}
+set drpoj = 100*drpoj
+*
+* Figure 16.1
+*
+spgraph(vfields=2,hfields=2,header='Figure 13.1 Orange Juice Prices and Florida Weather')
+graph(min=0.0,hlabel='(a) Price Index for Frozen Concentrated Orange Juice')
+# poj
+graph(style=bargraph,hlabel='(b) Monthly Freezing Degree Days in Orlando, Florida')
+# fdd
+graph(hlabel='(c) Percent Change in the Price of Frozen Concentrated Orange Juice')
+# drpoj
+spgraph(done)
+*
+* Equation (16.1)
+* The HAC standard errors are done by adding the lags option in
+* addition to robust. lwindow=newey selects the Newey-West method
+* for using the extra lags.
+*
+linreg(robust,lags=7,lwindow=newey) drpoj 1950:1 2000:12
+# constant fdd
+*
+* Equation (16.2)
+*
+linreg(robust,lags=7,lwindow=newey) drpoj 1950:1 2000:12
+# constant fdd{0 to 6}
+*
+* Table 16.1
+*
+linreg(robust,lags=7,lwindow=newey) drpoj 1950:1 2000:12
+# constant fdd{0 to 18}
+*
+* Pull out the DL coefficients and standard errors for use in
+* figure 13.2 graph. The lag coefficients are in positions
+* 2 to 20 of the coefficient and standard error vectors. We copy
+* them over to entries 1 to 19 (corresponding to lags 0 to 18)
+* of the new series. We'll deal with the relabeling when they're
+* graphed.
+*
+set dynmult 1 19 = %beta(t+1)
+set dynse   1 19 = %stderrs(t+1)
+*
+set dfdd = fdd-fdd{1}
+linreg(robust,lags=7,lwindow=newey) drpoj 1950:1 2000:12
+# constant dfdd{0 to 17} fdd{18}
+*
+set cummult 1 19 = %beta(t+1)
+set cumse   1 19 = %stderrs(t+1)
+*
+linreg(robust,lags=14,lwindow=newey) drpoj 1950:1 2000:12
+# constant dfdd{0 to 17} fdd{18}
+*
+* Create Seasonal Dummies for column 4.
+*
+seasonal seasonals
+linreg(robust,lags=7,lwindow=newey) drpoj 1950:1 2000:12
+# constant dfdd{0 to 17} fdd{18}  seasonals{0 to 10}
+exclude
+# seasonals{0 to 10}
+*
+* Figure 16.2
+*
+set dynlower = dynmult-1.96*dynse
+set dynupper = dynmult+1.96*dynse
+set cumlower = cummult-1.96*cumse
+set cumupper = cummult+1.96*cumse
+spgraph(vfields=2,header='Figure 13.2 Dynamic Effect of an FDD on the Price of Orange Juice')
+graph(number=0,hlabel='(a) Estimated Dynamic Multipliers and 95% Confidence Interval') 3
+# dynmult
+# dynlower / 2
+# dynupper / 2
+graph(number=0,hlabel='(c) Estimated Cumulative Multipliers and 95% Confidence Interval') 3
+# cummult
+# cumlower / 2
+# cumupper / 2
+spgraph(done)
+*
+* QLR Results
+*
+compute [integer] n = (2000:12) - (1950:1)
+compute [integer] tskip = fix(0.15*n)
+compute t1 = (1950:1)+tskip+1
+compute t2 = (2000:12)-tskip-1
+
+do t3 = t1,t2
+   set dc  = t > t3
+   set d0  = dc*fdd
+   set d1  = dc*fdd{1}
+   set d2  = dc*fdd{2}
+   set d3  = dc*fdd{3}
+   set d4  = dc*fdd{4}
+   set d5  = dc*fdd{5}
+   set d6  = dc*fdd{6}
+   set d7  = dc*fdd{7}
+   set d8  = dc*fdd{8}
+   set d9  = dc*fdd{9}
+   set d10 = dc*fdd{10}
+   set d11 = dc*fdd{11}
+   set d12 = dc*fdd{12}
+   set d13 = dc*fdd{13}
+   set d14 = dc*fdd{14}
+   set d15 = dc*fdd{15}
+   set d16 = dc*fdd{16}
+   set d17 = dc*fdd{17}
+   set d18 = dc*fdd{18}
+   linreg(noprint,robusterrors,lags=7,lwindow=newey) drpoj 1950:1 2000:12
+   # constant fdd{0 to 18} dc d0 to d18
+   compute fac = float(%ndf)/float(%nobs)
+   exclude(noprint)
+   # dc d0 to d18
+   set fstat t3 t3 = %cdstat*fac/20.0
+end do
+*
+extremum(print) fstat
+compute qlr = %maximum
+disp qlr
+graph
+# fstat
+
+compute [integer] tskip = fix(0.15*n)
+compute t1 = (1950:1)+tskip+1
+compute t2 = (2000:12)-tskip-1
+
+do t3 = t1,t2
+   set dc = t > t3
+   set d0 = dc*fdd
+   set d1 = dc*fdd{1}
+   set d2 = dc*fdd{2}
+   set d3 = dc*fdd{3}
+   set d4 = dc*fdd{4}
+   set d5 = dc*fdd{5}
+   set d6 = dc*fdd{6}
+
+   linreg(noprint,robusterrors,lags=7,lwindow=newey) drpoj 1950:1 2000:12
+   # constant fdd{0 to 18} dc d0 d1 d2 d3 d4 d5 d6
+   compute fac = float(%ndf)/float(%nobs)
+   exclude(noprint)
+   # dc d0 d1 d2 d3 d4 d5 d6
+   set fstat t3 t3 = fac*%cdstat/8.0
+end do
+extremum(noprint) fstat
+compute qlr = %maximum
+disp qlr
+*
+* Instability Regressions
+*
+linreg(robust,lags=7,lwindow=newey) drpoj 1950:1 1966:12
+# constant dfdd{0 to 17} fdd{18}
+set cmult5066 1 19 = %beta(t+1)
+linreg(robust,lags=7,lwindow=newey) drpoj 1967:1 1983:12
+# constant dfdd{0 to 17} fdd{18}
+set cmult6783 1 19 = %beta(t+1)
+linreg(robust,lags=7,lwindow=newey) drpoj 1984:1 2000:12
+# constant dfdd{0 to 17} fdd{18}
+set cmult8400 1 19 = %beta(t+1)
+*
+* Figure 16.3
+*
+graph(header='Figure 13.3 Estimated Cumulative Dynamic Multipliers',key=attached,$
+ klabels=||'1950-1966','1967-1983','1984-2000'||) 3
+# cmult5066
+# cmult6783
+# cmult8400
+
+
+

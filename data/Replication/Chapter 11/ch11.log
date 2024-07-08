@@ -1,0 +1,909 @@
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  /Users/mwatson/Dropbox/TB/4E/WebSupplements/ForStudents/SW_4E_ReplicationFiles/Chapter_11/ch11.log
+  log type:  text
+ opened on:  24 Sep 2018, 15:28:52
+
+. ***********************************;
+. * Read In Data;
+.  * (Note: Change path name so that it is appropriate for your computer);
+. use "/Users/mwatson/Dropbox/TB/4E/WebSupplements/ForStudents/SW_4E_ReplicationFiles/Replication_Data/hmda_sw.dta";
+
+. ********************************************;
+. gen deny = (s7==3);
+
+.     * deny;
+. gen pi_rat = s46/100;
+
+.   * P/I ratio;
+. gen black = (s13==3);
+
+.   * black
+> 
+> ***********************************;
+. * Results on Page 1;
+. **********************************;
+. summarize deny if (black==1);
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+        deny |        339    .2831858    .4512119          0          1
+
+. summarize deny if (black==0);
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+        deny |      2,041    .0926017    .2899445          0          1
+
+. ************************************;
+. **** Equation 11.1;
+. ************************************;
+. regress deny pi_rat, r;
+
+Linear regression                               Number of obs     =      2,380
+                                                F(1, 2378)        =      37.56
+                                                Prob > F          =     0.0000
+                                                R-squared         =     0.0397
+                                                Root MSE          =     .31828
+
+------------------------------------------------------------------------------
+             |               Robust
+        deny |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+      pi_rat |   .6035349   .0984826     6.13   0.000     .4104144    .7966555
+       _cons |  -.0799096   .0319666    -2.50   0.012    -.1425949   -.0172243
+------------------------------------------------------------------------------
+
+. ************************************;
+. **** Equation 11.3;
+. ************************************;
+. regress deny pi_rat black, r;
+
+Linear regression                               Number of obs     =      2,380
+                                                F(2, 2377)        =      49.39
+                                                Prob > F          =     0.0000
+                                                R-squared         =     0.0760
+                                                Root MSE          =     .31228
+
+------------------------------------------------------------------------------
+             |               Robust
+        deny |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+      pi_rat |   .5591946   .0886663     6.31   0.000     .3853233    .7330658
+       black |   .1774282   .0249463     7.11   0.000     .1285096    .2263469
+       _cons |  -.0905136   .0285996    -3.16   0.002    -.1465963   -.0344309
+------------------------------------------------------------------------------
+
+. ************************************;
+. **** Equation 11.7;
+. ************************************;
+. probit deny pi_rat, r;
+
+Iteration 0:   log pseudolikelihood =  -872.0853  
+Iteration 1:   log pseudolikelihood = -832.02975  
+Iteration 2:   log pseudolikelihood =  -831.7924  
+Iteration 3:   log pseudolikelihood = -831.79234  
+
+Probit regression                               Number of obs     =      2,380
+                                                Wald chi2(1)      =      40.68
+                                                Prob > chi2       =     0.0000
+Log pseudolikelihood = -831.79234               Pseudo R2         =     0.0462
+
+------------------------------------------------------------------------------
+             |               Robust
+        deny |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+      pi_rat |   2.967907   .4653217     6.38   0.000     2.055893    3.879921
+       _cons |  -2.194159   .1649761   -13.30   0.000    -2.517506   -1.870812
+------------------------------------------------------------------------------
+Note: 0 failures and 1 success completely determined.
+
+. ************************************;
+. **** Equation 11.8;
+. ************************************;
+. probit deny pi_rat black, r;
+
+Iteration 0:   log pseudolikelihood =  -872.0853  
+Iteration 1:   log pseudolikelihood = -800.88504  
+Iteration 2:   log pseudolikelihood =  -797.1478  
+Iteration 3:   log pseudolikelihood = -797.13604  
+Iteration 4:   log pseudolikelihood = -797.13604  
+
+Probit regression                               Number of obs     =      2,380
+                                                Wald chi2(2)      =     118.18
+                                                Prob > chi2       =     0.0000
+Log pseudolikelihood = -797.13604               Pseudo R2         =     0.0859
+
+------------------------------------------------------------------------------
+             |               Robust
+        deny |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+      pi_rat |   2.741637   .4441747     6.17   0.000      1.87107    3.612203
+       black |   .7081579    .083188     8.51   0.000     .5451124    .8712035
+       _cons |  -2.258738   .1588211   -14.22   0.000    -2.570022   -1.947454
+------------------------------------------------------------------------------
+
+. ************************************;
+. **** Equation 11.10;
+. ************************************;
+. logit deny pi_rat black, r;
+
+Iteration 0:   log pseudolikelihood =  -872.0853  
+Iteration 1:   log pseudolikelihood =  -806.3571  
+Iteration 2:   log pseudolikelihood = -795.72934  
+Iteration 3:   log pseudolikelihood = -795.69521  
+Iteration 4:   log pseudolikelihood = -795.69521  
+
+Logistic regression                             Number of obs     =      2,380
+                                                Wald chi2(2)      =     117.75
+                                                Prob > chi2       =     0.0000
+Log pseudolikelihood = -795.69521               Pseudo R2         =     0.0876
+
+------------------------------------------------------------------------------
+             |               Robust
+        deny |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+      pi_rat |   5.370362   .9633435     5.57   0.000     3.482244    7.258481
+       black |   1.272782   .1460986     8.71   0.000     .9864339     1.55913
+       _cons |  -4.125558    .345825   -11.93   0.000    -4.803362   -3.447753
+------------------------------------------------------------------------------
+
+. *************************************
+> **** Table 11.1 ;
+. ************************************;
+. gen hse_inc = s45/100;
+
+.      * housing expense to income ratio;
+. gen loan_val = s6/s50;
+
+.      * loan to value ratio;
+. gen ccred = s43;
+
+.            * Consumer credit score;
+. gen mcred = s42;
+
+.            * mortgage credit score;
+. gen pubrec = (s44>0);
+
+.       * public bad credit record;
+. gen denpmi = (s53==1);
+
+.      * denied mortgage insurance;
+. gen selfemp = (s27a==1);
+
+.    * self-employed;
+. gen married = (s23a=="M");
+
+.  * maried;
+. gen single = (married==0);
+
+.  * single;
+. gen hischl = (school>=12);
+
+.  * high school diploma;
+. gen probunmp = uria;
+
+.        * unemployment rate;
+. gen condo = (s51 == 1);
+
+.     * condo;
+. sum pi_rat hse_inc loan_val ccred mcred pubrec denpmi selfemp
+>  single hischl probunmp condo black deny;
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+      pi_rat |      2,380    .3308136    .1072573          0          3
+     hse_inc |      2,380    .2553461    .0966556          0          3
+    loan_val |      2,380    .7377759     .178751        .02       1.95
+       ccred |      2,380    2.116387    1.666721          1          6
+       mcred |      2,380    1.721008    .5372816          1          4
+-------------+---------------------------------------------------------
+      pubrec |      2,380    .0735294    .2610584          0          1
+      denpmi |      2,380    .0201681    .1406045          0          1
+     selfemp |      2,380    .1163866    .3207553          0          1
+      single |      2,380    .3932773    .4885802          0          1
+      hischl |      2,380    .9836134    .1269835          0          1
+-------------+---------------------------------------------------------
+    probunmp |      2,380    3.774496    2.027062        1.8       10.6
+       condo |      2,380    .2882353    .4530364          0          1
+       black |      2,380     .142437    .3495712          0          1
+        deny |      2,380    .1197479    .3247347          0          1
+
+. *************************************
+> **** Table 11.2 ;
+. ************************************;
+. gen ltv_med = (loan_val>=0.80)*(loan_val<=.95);
+
+. gen ltv_high = (loan_val>0.95);
+
+.  gen blk_pi = black*pi_rat;
+
+. gen blk_hse = black*hse_inc;
+
+. gen ccred3 = (ccred==3);
+
+.  gen ccred4 = (ccred==4);
+
+. gen ccred5 = (ccred==5);
+
+. gen ccred6 = (ccred==6);
+
+. gen mcred3 = (mcred==3);
+
+. gen mcred4 = (mcred==4);
+
+. ** Preliminary Analysis ... compute means of all variables;
+. sum deny black pi_rat hse_inc ltv_med ltv_high ccred mcred pubrec denpmi
+>  selfemp single hischl probunmp mcred3 mcred4 ccred3 ccred4 ccred5 ccred6
+>  condo;
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+        deny |      2,380    .1197479    .3247347          0          1
+       black |      2,380     .142437    .3495712          0          1
+      pi_rat |      2,380    .3308136    .1072573          0          3
+     hse_inc |      2,380    .2553461    .0966556          0          3
+     ltv_med |      2,380    .3743697    .4840615          0          1
+-------------+---------------------------------------------------------
+    ltv_high |      2,380    .0323529    .1769728          0          1
+       ccred |      2,380    2.116387    1.666721          1          6
+       mcred |      2,380    1.721008    .5372816          1          4
+      pubrec |      2,380    .0735294    .2610584          0          1
+      denpmi |      2,380    .0201681    .1406045          0          1
+-------------+---------------------------------------------------------
+     selfemp |      2,380    .1163866    .3207553          0          1
+      single |      2,380    .3932773    .4885802          0          1
+      hischl |      2,380    .9836134    .1269835          0          1
+    probunmp |      2,380    3.774496    2.027062        1.8       10.6
+      mcred3 |      2,380    .0172269    .1301432          0          1
+-------------+---------------------------------------------------------
+      mcred4 |      2,380    .0088235     .093538          0          1
+      ccred3 |      2,380    .0529412    .2239631          0          1
+      ccred4 |      2,380    .0323529    .1769728          0          1
+      ccred5 |      2,380    .0764706    .2658054          0          1
+      ccred6 |      2,380    .0844538    .2781256          0          1
+-------------+---------------------------------------------------------
+       condo |      2,380    .2882353    .4530364          0          1
+
+.   ** col(1);
+. regress deny black pi_rat hse_inc ltv_med ltv_high ccred mcred pubrec denpmi
+>  selfemp, r;
+
+Linear regression                               Number of obs     =      2,380
+                                                F(10, 2369)       =      67.22
+                                                Prob > F          =     0.0000
+                                                R-squared         =     0.2663
+                                                Root MSE          =     .27875
+
+------------------------------------------------------------------------------
+             |               Robust
+        deny |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+       black |   .0836967   .0225623     3.71   0.000     .0394529    .1279406
+      pi_rat |   .4487963   .1135962     3.95   0.000     .2260381    .6715545
+     hse_inc |  -.0480226    .109559    -0.44   0.661     -.262864    .1668187
+     ltv_med |   .0314498   .0127391     2.47   0.014     .0064688    .0564308
+    ltv_high |   .1890511   .0501681     3.77   0.000     .0906732     .287429
+       ccred |   .0307716   .0045843     6.71   0.000     .0217819    .0397612
+       mcred |   .0209104   .0112898     1.85   0.064    -.0012284    .0430493
+      pubrec |   .1970876   .0348812     5.65   0.000     .1286867    .2654885
+      denpmi |   .7018841   .0451051    15.56   0.000     .6134345    .7903337
+     selfemp |   .0598438   .0205233     2.92   0.004     .0195983    .1000894
+       _cons |  -.1829933   .0276729    -6.61   0.000    -.2372589   -.1287277
+------------------------------------------------------------------------------
+
+.  ** col(2);
+.  logit deny black pi_rat hse_inc ltv_med ltv_high ccred mcred pubrec denpmi
+>  selfemp;
+
+Iteration 0:   log likelihood =  -872.0853  
+Iteration 1:   log likelihood = -672.05096  
+Iteration 2:   log likelihood = -656.94676  
+Iteration 3:   log likelihood = -636.05789  
+Iteration 4:   log likelihood = -635.63857  
+Iteration 5:   log likelihood = -635.63667  
+Iteration 6:   log likelihood = -635.63667  
+
+Logistic regression                             Number of obs     =      2,380
+                                                LR chi2(10)       =     472.90
+                                                Prob > chi2       =     0.0000
+Log likelihood = -635.63667                     Pseudo R2         =     0.2711
+
+------------------------------------------------------------------------------
+        deny |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+       black |   .6884231   .1773918     3.88   0.000     .3407416    1.036105
+      pi_rat |   4.764416   1.042587     4.57   0.000     2.720983     6.80785
+     hse_inc |  -.1088114   1.239403    -0.09   0.930    -2.537996    2.320374
+     ltv_med |    .463525    .159096     2.91   0.004     .1517025    .7753475
+    ltv_high |   1.494764   .3112213     4.80   0.000     .8847812    2.104746
+       ccred |   .2903017   .0398178     7.29   0.000     .2122603    .3683431
+       mcred |   .2790178   .1399192     1.99   0.046     .0047811    .5532544
+      pubrec |   1.225797   .2054334     5.97   0.000     .8231547    1.628439
+      denpmi |   4.548166   .5524863     8.23   0.000     3.465312    5.631019
+     selfemp |   .6661288   .2115319     3.15   0.002     .2515338    1.080724
+       _cons |  -5.707384   .4097911   -13.93   0.000    -6.510559   -4.904208
+------------------------------------------------------------------------------
+
+. logit deny black pi_rat hse_inc ltv_med ltv_high ccred mcred pubrec denpmi
+>  selfemp, r;
+
+Iteration 0:   log pseudolikelihood =  -872.0853  
+Iteration 1:   log pseudolikelihood = -672.05096  
+Iteration 2:   log pseudolikelihood = -656.94676  
+Iteration 3:   log pseudolikelihood = -636.05789  
+Iteration 4:   log pseudolikelihood = -635.63857  
+Iteration 5:   log pseudolikelihood = -635.63667  
+Iteration 6:   log pseudolikelihood = -635.63667  
+
+Logistic regression                             Number of obs     =      2,380
+                                                Wald chi2(10)     =     265.96
+                                                Prob > chi2       =     0.0000
+Log pseudolikelihood = -635.63667               Pseudo R2         =     0.2711
+
+------------------------------------------------------------------------------
+             |               Robust
+        deny |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+       black |   .6884231   .1821237     3.78   0.000     .3314673    1.045379
+      pi_rat |   4.764416   1.329396     3.58   0.000     2.158848    7.369985
+     hse_inc |  -.1088114   1.294986    -0.08   0.933    -2.646938    2.429315
+     ltv_med |    .463525   .1600764     2.90   0.004      .149781     .777269
+    ltv_high |   1.494764   .3242173     4.61   0.000     .8593095    2.130218
+       ccred |   .2903017   .0388286     7.48   0.000     .2141991    .3664043
+       mcred |   .2790178   .1376277     2.03   0.043     .0092724    .5487631
+      pubrec |   1.225797   .2030504     6.04   0.000     .8278253    1.623768
+      denpmi |   4.548166   .5744167     7.92   0.000      3.42233    5.674002
+     selfemp |   .6661288   .2133542     3.12   0.002     .2479623    1.084295
+       _cons |  -5.707384   .4834338   -11.81   0.000    -6.654896   -4.759871
+------------------------------------------------------------------------------
+
+.  scalar w0 =  _b[black]*0
+>               + _b[ pi_rat]*  .3308136 
+>               + _b[ hse_inc]* .2553461 
+>               + _b[ ltv_med]* .3743697 
+>               + _b[ltv_high]* .0323529 
+>               + _b[   ccred]*  2.116387 
+>               + _b[   mcred]*  1.721008 
+>               + _b[  pubrec]* .0735294 
+>               + _b[  denpmi]* .0201681 
+>               + _b[ selfemp]* .1163866 
+>               + _b[   _cons]*  1;
+
+. scalar w1 = w0 + _b[black]*1;
+
+. dis "Prob for white at means = " 1/(1+exp(-w0));
+Prob for white at means = .07022922
+
+. dis "Prob for black at means = " 1/(1+exp(-w1));
+Prob for black at means = .13070377
+
+. dis "Difference in probs     = " (1/(1+exp(-w1))) - (1/(1+exp(-w0)));
+Difference in probs     = .06047455
+
+.  ** col(3);
+.  probit deny black pi_rat hse_inc ltv_med ltv_high ccred mcred pubrec denpmi
+>  selfemp;
+
+Iteration 0:   log likelihood =  -872.0853  
+Iteration 1:   log likelihood = -643.92086  
+Iteration 2:   log likelihood = -636.87532  
+Iteration 3:   log likelihood = -636.84706  
+Iteration 4:   log likelihood = -636.84706  
+
+Probit regression                               Number of obs     =      2,380
+                                                LR chi2(10)       =     470.48
+                                                Prob > chi2       =     0.0000
+Log likelihood = -636.84706                     Pseudo R2         =     0.2697
+
+------------------------------------------------------------------------------
+        deny |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+       black |   .3891261   .0966749     4.03   0.000     .1996468    .5786054
+      pi_rat |   2.441787   .5279727     4.62   0.000     1.406979    3.476594
+     hse_inc |  -.1846764   .6519372    -0.28   0.777     -1.46245    1.093097
+     ltv_med |   .2139677   .0819881     2.61   0.009      .053274    .3746614
+    ltv_high |   .7910831   .1744755     4.53   0.000     .4491174    1.133049
+       ccred |   .1546224   .0214869     7.20   0.000     .1125089     .196736
+       mcred |   .1477082   .0735792     2.01   0.045     .0034956    .2919209
+      pubrec |   .6974496   .1190143     5.86   0.000     .4641859    .9307134
+      denpmi |   2.556796   .2814955     9.08   0.000     2.005075    3.108517
+     selfemp |   .3586252     .11169     3.21   0.001     .1397168    .5775336
+       _cons |  -3.040568   .2014292   -15.09   0.000    -3.435362   -2.645774
+------------------------------------------------------------------------------
+
+. probit deny black pi_rat hse_inc ltv_med ltv_high ccred mcred pubrec denpmi
+>  selfemp, r;
+
+Iteration 0:   log pseudolikelihood =  -872.0853  
+Iteration 1:   log pseudolikelihood = -643.92086  
+Iteration 2:   log pseudolikelihood = -636.87532  
+Iteration 3:   log pseudolikelihood = -636.84706  
+Iteration 4:   log pseudolikelihood = -636.84706  
+
+Probit regression                               Number of obs     =      2,380
+                                                Wald chi2(10)     =     293.99
+                                                Prob > chi2       =     0.0000
+Log pseudolikelihood = -636.84706               Pseudo R2         =     0.2697
+
+------------------------------------------------------------------------------
+             |               Robust
+        deny |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+       black |   .3891261   .0977879     3.98   0.000     .1974653    .5807869
+      pi_rat |   2.441787   .6092459     4.01   0.000     1.247687    3.635887
+     hse_inc |  -.1846764   .6753349    -0.27   0.785    -1.508308    1.138956
+     ltv_med |   .2139677   .0815119     2.62   0.009     .0542073    .3737281
+    ltv_high |   .7910831   .1797445     4.40   0.000     .4387903    1.143376
+       ccred |   .1546224   .0209979     7.36   0.000     .1134672    .1957776
+       mcred |   .1477082    .072594     2.03   0.042     .0054266    .2899899
+      pubrec |   .6974496   .1153109     6.05   0.000     .4714445    .9234548
+      denpmi |   2.556796   .2983301     8.57   0.000      1.97208    3.141512
+     selfemp |   .3586252   .1126041     3.18   0.001     .1379252    .5793252
+       _cons |  -3.040568   .2300051   -13.22   0.000     -3.49137   -2.589766
+------------------------------------------------------------------------------
+
+.  scalar z0 =  _b[black]*0
+>               + _b[ pi_rat]*  .3308136 
+>               + _b[ hse_inc]* .2553461 
+>               + _b[ ltv_med]* .3743697 
+>               + _b[ltv_high]* .0323529 
+>               + _b[   ccred]*  2.116387 
+>               + _b[   mcred]*  1.721008 
+>               + _b[  pubrec]* .0735294 
+>               + _b[  denpmi]* .0201681 
+>               + _b[ selfemp]* .1163866 
+>               + _b[   _cons]*  1;
+
+. scalar z1 = z0 + _b[black]*1;
+
+. dis "Prob for white at means = " normprob(z0);
+Prob for white at means = .07377841
+
+. dis "Prob for black at means = " normprob(z1);
+Prob for black at means = .14477956
+
+. dis "Difference in probs     = " normprob(z1)-normprob(z0);
+Difference in probs     = .07100115
+
+.  ** col(4);
+. probit deny black pi_rat hse_inc ltv_med ltv_high ccred mcred pubrec denpmi
+>  selfemp single hischl probunmp;
+
+Iteration 0:   log likelihood =  -872.0853  
+Iteration 1:   log likelihood = -636.63836  
+Iteration 2:   log likelihood =  -628.6448  
+Iteration 3:   log likelihood = -628.61368  
+Iteration 4:   log likelihood = -628.61368  
+
+Probit regression                               Number of obs     =      2,380
+                                                LR chi2(13)       =     486.94
+                                                Prob > chi2       =     0.0000
+Log likelihood = -628.61368                     Pseudo R2         =     0.2792
+
+------------------------------------------------------------------------------
+        deny |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+       black |   .3710683   .0981246     3.78   0.000     .1787477     .563389
+      pi_rat |   2.464318   .5314041     4.64   0.000     1.422785    3.505851
+     hse_inc |  -.3024734   .6550308    -0.46   0.644     -1.58631    .9813635
+     ltv_med |   .2157285   .0825715     2.61   0.009     .0538914    .3775656
+    ltv_high |   .7945421   .1756759     4.52   0.000     .4502236    1.138861
+       ccred |   .1575922   .0216547     7.28   0.000     .1151499    .2000346
+       mcred |   .1104117   .0754013     1.46   0.143    -.0373722    .2581956
+      pubrec |   .7021586   .1197005     5.87   0.000     .4675499    .9367672
+      denpmi |   2.585178   .2857295     9.05   0.000     2.025159    3.145198
+     selfemp |   .3459452   .1131198     3.06   0.002     .1242344     .567656
+      single |   .2294801   .0797936     2.88   0.004     .0730876    .3858726
+      hischl |   -.612624   .2394879    -2.56   0.011    -1.082012   -.1432364
+    probunmp |   .0300305   .0181144     1.66   0.097     -.005473     .065534
+       _cons |  -2.574574   .3206086    -8.03   0.000    -3.202955   -1.946193
+------------------------------------------------------------------------------
+
+. test single hischl probunmp;
+
+ ( 1)  [deny]single = 0
+ ( 2)  [deny]hischl = 0
+ ( 3)  [deny]probunmp = 0
+
+           chi2(  3) =   16.81
+         Prob > chi2 =    0.0008
+
+. probit deny black pi_rat hse_inc ltv_med ltv_high ccred mcred pubrec denpmi
+>  selfemp single hischl probunmp, r;
+
+Iteration 0:   log pseudolikelihood =  -872.0853  
+Iteration 1:   log pseudolikelihood = -636.63836  
+Iteration 2:   log pseudolikelihood =  -628.6448  
+Iteration 3:   log pseudolikelihood = -628.61368  
+Iteration 4:   log pseudolikelihood = -628.61368  
+
+Probit regression                               Number of obs     =      2,380
+                                                Wald chi2(13)     =     311.96
+                                                Prob > chi2       =     0.0000
+Log pseudolikelihood = -628.61368               Pseudo R2         =     0.2792
+
+------------------------------------------------------------------------------
+             |               Robust
+        deny |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+       black |   .3710683   .0987537     3.76   0.000     .1775146     .564622
+      pi_rat |   2.464318   .5992224     4.11   0.000     1.289864    3.638772
+     hse_inc |  -.3024734   .6753734    -0.45   0.654    -1.626181    1.021234
+     ltv_med |   .2157285   .0818919     2.63   0.008     .0552234    .3762336
+    ltv_high |   .7945421   .1808344     4.39   0.000     .4401132    1.148971
+       ccred |   .1575922   .0210859     7.47   0.000     .1162647    .1989198
+       mcred |   .1104117   .0757864     1.46   0.145     -.038127    .2589504
+      pubrec |   .7021586   .1160344     6.05   0.000     .4747354    .9295818
+      denpmi |   2.585178   .2937658     8.80   0.000     2.009408    3.160949
+     selfemp |   .3459452   .1147379     3.02   0.003      .121063    .5708273
+      single |   .2294801   .0798497     2.87   0.004     .0729776    .3859826
+      hischl |   -.612624   .2312135    -2.65   0.008    -1.065794    -.159454
+    probunmp |   .0300305   .0181281     1.66   0.098       -.0055     .065561
+       _cons |  -2.574574   .3352743    -7.68   0.000    -3.231699   -1.917448
+------------------------------------------------------------------------------
+
+. scalar z0 =  _b[black]*0
+>               + _b[ pi_rat]*  .3308136 
+>               + _b[ hse_inc]* .2553461 
+>               + _b[ ltv_med]* .3743697 
+>               + _b[ltv_high]* .0323529 
+>               + _b[   ccred]*  2.116387 
+>               + _b[   mcred]*  1.721008 
+>               + _b[  pubrec]* .0735294 
+>               + _b[  denpmi]* .0201681 
+>               + _b[ selfemp]* .1163866               
+>               + _b[  single]* .3932773 
+>               + _b[  hischl]* .9836134
+>               + _b[probunmp]*  3.774496
+>               + _b[   _cons]*  1;
+
+. scalar z1 = z0 + _b[black]*1;
+
+. dis "Prob for white at means = " normprob(z0);
+Prob for white at means = .07193626
+
+. dis "Prob for black at means = " normprob(z1);
+Prob for black at means = .1377569
+
+. dis "Difference in probs     = " normprob(z1)-normprob(z0);
+Difference in probs     = .06582064
+
+. test single hischl probunmp;
+
+ ( 1)  [deny]single = 0
+ ( 2)  [deny]hischl = 0
+ ( 3)  [deny]probunmp = 0
+
+           chi2(  3) =   17.54
+         Prob > chi2 =    0.0005
+
+. ** col(5);
+. probit deny black pi_rat hse_inc ltv_med ltv_high ccred mcred pubrec denpmi
+>  selfemp single hischl probunmp mcred3 mcred4 ccred3 ccred4 ccred5 ccred6 condo;
+
+Iteration 0:   log likelihood =  -872.0853  
+Iteration 1:   log likelihood = -633.80684  
+Iteration 2:   log likelihood = -625.09937  
+Iteration 3:   log likelihood = -625.06446  
+Iteration 4:   log likelihood = -625.06445  
+
+Probit regression                               Number of obs     =      2,380
+                                                LR chi2(20)       =     494.04
+                                                Prob > chi2       =     0.0000
+Log likelihood = -625.06445                     Pseudo R2         =     0.2833
+
+------------------------------------------------------------------------------
+        deny |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+       black |   .3627695   .1002796     3.62   0.000     .1662252    .5593138
+      pi_rat |   2.622164   .5465828     4.80   0.000     1.550882    3.693447
+     hse_inc |  -.5023815   .6737587    -0.75   0.456    -1.822924    .8181614
+     ltv_med |     .21508   .0838755     2.56   0.010     .0506872    .3794729
+    ltv_high |   .8355667   .1780007     4.69   0.000     .4866917    1.184442
+       ccred |   .3444342   .1070834     3.22   0.001     .1345546    .5543139
+       mcred |   .1620425    .098931     1.64   0.101    -.0318588    .3559438
+      pubrec |   .7171932    .121701     5.89   0.000     .4786636    .9557229
+      denpmi |   2.588853   .2869354     9.02   0.000      2.02647    3.151236
+     selfemp |   .3416594   .1147439     2.98   0.003     .1167655    .5665532
+      single |   .2298971   .0830523     2.77   0.006     .0671177    .3926766
+      hischl |  -.6037497    .240583    -2.51   0.012    -1.075284   -.1322157
+    probunmp |   .0279591   .0183906     1.52   0.128     -.008086    .0640041
+      mcred3 |  -.1065596   .2852411    -0.37   0.709    -.6656218    .4525027
+      mcred4 |  -.3827154   .4321711    -0.89   0.376    -1.229755    .4643244
+      ccred3 |  -.2262049   .2367345    -0.96   0.339    -.6901959    .2377861
+      ccred4 |  -.2514078   .3403345    -0.74   0.460    -.9184512    .4156356
+      ccred5 |  -.7892635   .4126943    -1.91   0.056     -1.59813    .0196026
+      ccred6 |  -.9048611   .5124114    -1.77   0.077    -1.909169    .0994468
+       condo |  -.0549583   .0909076    -0.60   0.545     -.233134    .1232174
+       _cons |  -2.896153   .3764731    -7.69   0.000    -3.634027    -2.15828
+------------------------------------------------------------------------------
+
+. test single hischl probunmp;
+
+ ( 1)  [deny]single = 0
+ ( 2)  [deny]hischl = 0
+ ( 3)  [deny]probunmp = 0
+
+           chi2(  3) =   15.69
+         Prob > chi2 =    0.0013
+
+. test mcred3 mcred4 ccred3 ccred4 ccred5 ccred6;
+
+ ( 1)  [deny]mcred3 = 0
+ ( 2)  [deny]mcred4 = 0
+ ( 3)  [deny]ccred3 = 0
+ ( 4)  [deny]ccred4 = 0
+ ( 5)  [deny]ccred5 = 0
+ ( 6)  [deny]ccred6 = 0
+
+           chi2(  6) =    6.88
+         Prob > chi2 =    0.3322
+
+. test condo;
+
+ ( 1)  [deny]condo = 0
+
+           chi2(  1) =    0.37
+         Prob > chi2 =    0.5455
+
+. probit deny black pi_rat hse_inc ltv_med ltv_high ccred mcred pubrec denpmi
+>  selfemp single hischl probunmp mcred3 mcred4 ccred3 ccred4 ccred5 ccred6 condo, r;
+
+Iteration 0:   log pseudolikelihood =  -872.0853  
+Iteration 1:   log pseudolikelihood = -633.80684  
+Iteration 2:   log pseudolikelihood = -625.09937  
+Iteration 3:   log pseudolikelihood = -625.06446  
+Iteration 4:   log pseudolikelihood = -625.06445  
+
+Probit regression                               Number of obs     =      2,380
+                                                Wald chi2(20)     =     304.43
+                                                Prob > chi2       =     0.0000
+Log pseudolikelihood = -625.06445               Pseudo R2         =     0.2833
+
+------------------------------------------------------------------------------
+             |               Robust
+        deny |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+       black |   .3627695   .0997689     3.64   0.000      .167226     .558313
+      pi_rat |   2.622164   .6104407     4.30   0.000     1.425723    3.818606
+     hse_inc |  -.5023815   .6968566    -0.72   0.471    -1.868195    .8634324
+     ltv_med |     .21508   .0832763     2.58   0.010     .0518614    .3782987
+    ltv_high |   .8355667   .1818635     4.59   0.000     .4791207    1.192013
+       ccred |   .3444342   .1060281     3.25   0.001      .136623    .5522454
+       mcred |   .1620425   .1019977     1.59   0.112    -.0378694    .3619544
+      pubrec |   .7171932   .1170008     6.13   0.000     .4878759    .9465106
+      denpmi |   2.588853   .2983341     8.68   0.000     2.004129    3.173577
+     selfemp |   .3416594   .1148723     2.97   0.003     .1165137     .566805
+      single |   .2298971    .084764     2.71   0.007     .0637626    .3960316
+      hischl |  -.6037497    .236641    -2.55   0.011    -1.067557   -.1399419
+    probunmp |   .0279591   .0178572     1.57   0.117    -.0070404    .0629585
+      mcred3 |  -.1065596   .2914909    -0.37   0.715    -.6778712    .4647521
+      mcred4 |  -.3827154   .4266523    -0.90   0.370    -1.218939    .4535079
+      ccred3 |  -.2262049   .2415353    -0.94   0.349    -.6996054    .2471956
+      ccred4 |  -.2514078   .3344922    -0.75   0.452    -.9070005     .404185
+      ccred5 |  -.7892635   .4067159    -1.94   0.052    -1.586412     .007885
+      ccred6 |  -.9048611   .5075612    -1.78   0.075    -1.899663    .0899406
+       condo |  -.0549583   .0934145    -0.59   0.556    -.2380474    .1281308
+       _cons |  -2.896153   .3879434    -7.47   0.000    -3.656508   -2.135798
+------------------------------------------------------------------------------
+
+. scalar z0 =  _b[black]*0
+>               + _b[ pi_rat]*  .3308136 
+>               + _b[ hse_inc]* .2553461 
+>               + _b[ ltv_med]* .3743697 
+>               + _b[ltv_high]* .0323529 
+>               + _b[   ccred]*  2.116387 
+>               + _b[   mcred]*  1.721008 
+>               + _b[  pubrec]* .0735294 
+>               + _b[  denpmi]* .0201681 
+>               + _b[ selfemp]* .1163866               
+>               + _b[  single]* .3932773 
+>               + _b[  hischl]* .9836134
+>               + _b[probunmp]*  3.774496
+>               + _b[  mcred3]* .0172269              
+>               + _b[  mcred4]* .0088235             
+>               + _b[  ccred3]* .0529412
+>               + _b[  ccred4]* .0323529
+>               + _b[  ccred5]* .0764706
+>               + _b[  ccred6]* .0844538 
+>               + _b[   condo]* .2882353                                                                     
+>               + _b[   _cons]*  1;
+
+. scalar z1 = z0 + _b[black]*1;
+
+. dis "Prob for white at means = " normprob(z0);
+Prob for white at means = .07041072
+
+. dis "Prob for black at means = " normprob(z1);
+Prob for black at means = .13350609
+
+. dis "Difference in probs     = " normprob(z1)-normprob(z0);
+Difference in probs     = .06309538
+
+. test single hischl probunmp;
+
+ ( 1)  [deny]single = 0
+ ( 2)  [deny]hischl = 0
+ ( 3)  [deny]probunmp = 0
+
+           chi2(  3) =   15.66
+         Prob > chi2 =    0.0013
+
+. test mcred3 mcred4 ccred3 ccred4 ccred5 ccred6;
+
+ ( 1)  [deny]mcred3 = 0
+ ( 2)  [deny]mcred4 = 0
+ ( 3)  [deny]ccred3 = 0
+ ( 4)  [deny]ccred4 = 0
+ ( 5)  [deny]ccred5 = 0
+ ( 6)  [deny]ccred6 = 0
+
+           chi2(  6) =    7.33
+         Prob > chi2 =    0.2911
+
+. test condo;
+
+ ( 1)  [deny]condo = 0
+
+           chi2(  1) =    0.35
+         Prob > chi2 =    0.5563
+
+. ** col(6);
+. probit deny black pi_rat hse_inc ltv_med ltv_high ccred mcred pubrec denpmi
+>  selfemp single hischl probunmp blk_pi blk_hse;
+
+Iteration 0:   log likelihood =  -872.0853  
+Iteration 1:   log likelihood = -636.10667  
+Iteration 2:   log likelihood = -628.37393  
+Iteration 3:   log likelihood = -628.33217  
+Iteration 4:   log likelihood = -628.33216  
+
+Probit regression                               Number of obs     =      2,380
+                                                LR chi2(15)       =     487.51
+                                                Prob > chi2       =     0.0000
+Log likelihood = -628.33216                     Pseudo R2         =     0.2795
+
+------------------------------------------------------------------------------
+        deny |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+       black |   .2462823   .3938629     0.63   0.532    -.5256748    1.018239
+      pi_rat |   2.571702   .5854259     4.39   0.000     1.424288    3.719116
+     hse_inc |  -.5380259   .7255947    -0.74   0.458    -1.960165    .8841136
+     ltv_med |   .2158857   .0826142     2.61   0.009     .0539649    .3778065
+    ltv_high |   .7881879   .1761974     4.47   0.000     .4428474    1.133529
+       ccred |   .1578707    .021675     7.28   0.000     .1153884    .2003529
+       mcred |   .1114918   .0754066     1.48   0.139    -.0363023     .259286
+      pubrec |   .7047677   .1198014     5.88   0.000     .4699612    .9395742
+      denpmi |   2.590097   .2858882     9.06   0.000     2.029766    3.150427
+     selfemp |   .3475272   .1130931     3.07   0.002     .1258687    .5691856
+      single |   .2255941   .0801531     2.81   0.005      .068497    .3826912
+      hischl |  -.6198276    .239398    -2.59   0.010    -1.089039   -.1506162
+    probunmp |   .0297126    .018134     1.64   0.101    -.0058293    .0652546
+      blk_pi |  -.5792648   1.378903    -0.42   0.674    -3.281865    2.123335
+     blk_hse |   1.231736   1.663421     0.74   0.459    -2.028509     4.49198
+       _cons |  -2.543412   .3276657    -7.76   0.000    -3.185625   -1.901199
+------------------------------------------------------------------------------
+
+. test single hischl probunmp;
+
+ ( 1)  [deny]single = 0
+ ( 2)  [deny]hischl = 0
+ ( 3)  [deny]probunmp = 0
+
+           chi2(  3) =   16.63
+         Prob > chi2 =    0.0008
+
+. test black blk_pi blk_hse;
+
+ ( 1)  [deny]black = 0
+ ( 2)  [deny]blk_pi = 0
+ ( 3)  [deny]blk_hse = 0
+
+           chi2(  3) =   14.87
+         Prob > chi2 =    0.0019
+
+. test blk_pi blk_hse;
+
+ ( 1)  [deny]blk_pi = 0
+ ( 2)  [deny]blk_hse = 0
+
+           chi2(  2) =    0.56
+         Prob > chi2 =    0.7561
+
+. probit deny black pi_rat hse_inc ltv_med ltv_high ccred mcred pubrec denpmi
+>  selfemp single hischl probunmp blk_pi blk_hse, r;
+
+Iteration 0:   log pseudolikelihood =  -872.0853  
+Iteration 1:   log pseudolikelihood = -636.10667  
+Iteration 2:   log pseudolikelihood = -628.37393  
+Iteration 3:   log pseudolikelihood = -628.33217  
+Iteration 4:   log pseudolikelihood = -628.33216  
+
+Probit regression                               Number of obs     =      2,380
+                                                Wald chi2(15)     =     315.60
+                                                Prob > chi2       =     0.0000
+Log pseudolikelihood = -628.33216               Pseudo R2         =     0.2795
+
+------------------------------------------------------------------------------
+             |               Robust
+        deny |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+       black |   .2462823   .4480002     0.55   0.582     -.631782    1.124347
+      pi_rat |   2.571702   .6623891     3.88   0.000     1.273443    3.869961
+     hse_inc |  -.5380259   .7429056    -0.72   0.469    -1.994094    .9180423
+     ltv_med |   .2158857   .0819145     2.64   0.008     .0553362    .3764352
+    ltv_high |   .7881879   .1814846     4.34   0.000     .4324847    1.143891
+       ccred |   .1578707   .0211387     7.47   0.000     .1164396    .1993017
+       mcred |   .1114918   .0758759     1.47   0.142    -.0372223    .2602059
+      pubrec |   .7047677   .1156898     6.09   0.000     .4780198    .9315156
+      denpmi |   2.590097   .2937427     8.82   0.000     2.014371    3.165822
+     selfemp |   .3475272   .1145316     3.03   0.002     .1230494     .572005
+      single |   .2255941   .0802929     2.81   0.005     .0682229    .3829653
+      hischl |  -.6198276   .2308051    -2.69   0.007    -1.072197    -.167458
+    probunmp |   .0297126   .0181141     1.64   0.101    -.0057903    .0652156
+      blk_pi |  -.5792648   1.472873    -0.39   0.694    -3.466043    2.307514
+     blk_hse |   1.231736   1.693551     0.73   0.467    -2.087564    4.551035
+       _cons |  -2.543412   .3487455    -7.29   0.000    -3.226941   -1.859884
+------------------------------------------------------------------------------
+
+. scalar z0 =  _b[black]*0
+>               + _b[ pi_rat]*  .3308136 
+>               + _b[ hse_inc]* .2553461 
+>               + _b[ ltv_med]* .3743697 
+>               + _b[ltv_high]* .0323529 
+>               + _b[   ccred]*  2.116387 
+>               + _b[   mcred]*  1.721008 
+>               + _b[  pubrec]* .0735294 
+>               + _b[ selfemp]* .1163866               
+>               + _b[  denpmi]* .0201681 
+>               + _b[  single]* .3932773 
+>               + _b[  hischl]* .9836134
+>               + _b[probunmp]*  3.774496
+>               + _b[   _cons]*  1;
+
+. scalar z1 = z0 + _b[black]*1 
+>           + _b[blk_pi]*1* .3308136 
+>           + _b[blk_hse]*1* .2553461 ;
+
+.  dis "Prob for white at means = " normprob(z0);
+Prob for white at means = .07186792
+
+. dis "Prob for black at means = " normprob(z1);
+Prob for black at means = .13723047
+
+. dis "Difference in probs     = " normprob(z1)-normprob(z0);
+Difference in probs     = .06536255
+
+.  test single hischl probunmp;
+
+ ( 1)  [deny]single = 0
+ ( 2)  [deny]hischl = 0
+ ( 3)  [deny]probunmp = 0
+
+           chi2(  3) =   17.36
+         Prob > chi2 =    0.0006
+
+. test black blk_pi blk_hse;
+
+ ( 1)  [deny]black = 0
+ ( 2)  [deny]blk_pi = 0
+ ( 3)  [deny]blk_hse = 0
+
+           chi2(  3) =   14.89
+         Prob > chi2 =    0.0019
+
+. test blk_pi blk_hse;
+
+ ( 1)  [deny]blk_pi = 0
+ ( 2)  [deny]blk_hse = 0
+
+           chi2(  2) =    0.53
+         Prob > chi2 =    0.7658
+
+. log close;
+      name:  <unnamed>
+       log:  /Users/mwatson/Dropbox/TB/4E/WebSupplements/ForStudents/SW_4E_ReplicationFiles/Chapter_11/ch11.log
+  log type:  text
+ closed on:  24 Sep 2018, 15:28:54
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

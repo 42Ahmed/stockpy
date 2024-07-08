@@ -1,0 +1,172 @@
+*
+* Replication file for SW4 Chapter 17
+* Read in Factors and Carry out pseudo-out-of-sample forecasts
+* Part 3
+*
+calendar 1957 1 4
+all 0 2018:1
+clear(all)
+open data /Users/mwatson/Dropbox/TB/4E/WebSupplements/ForStudents/SW_4E_ReplicationFiles/Replication_Data/us_macro_quarterly.rat
+data(for=rats) / gdpc1 pcectpi
+close data
+open data /Users/mwatson/Dropbox/TB/4E/WebSupplements/ForStudents/SW_4E_ReplicationFiles/Replication_Data/us_macro_monthly.rat
+data(for=rats,compact=average) / gs10 gs1 tb3ms payems wpu0561 djia
+open data factor_4.asc
+data(for=free,org=obs) 1959:3 2017:4 fac1 fac2 fac3 fac4
+
+* 4-quarter growth in GDP
+set d4_gdp / = 100*log(gdpc1(t)/gdpc1(t-4))
+* 1-quarter growth in GDP
+set d_gdp / = 100*log(gdpc1(t)/gdpc1(t-1))
+set d_emp / = 100*log(payems(t)/payems(t-1))
+set d_poil / = 100*log(wpu0561(t)/wpu0561(t-1))
+set d_gs10 / = gs10(t)-gs10(t-1)
+set d_sp / = 100*log(djia(t)/djia(t-1))
+
+set fac1_acc4 / = fac1(t)+fac1(t-1)+fac1(t-2)+fac1(t-3)
+set fac2_acc4 / = fac2(t)+fac2(t-1)+fac2(t-2)+fac2(t-3)
+set fac3_acc4 / = fac3(t)+fac3(t-1)+fac3(t-2)+fac3(t-3)
+set fac4_acc4 / = fac4(t)+fac4(t-1)+fac4(t-2)+fac4(t-3)
+
+compute nfirst_e = (1960:1)
+compute nfirst = (1961:1)
+compute nlast = (2017:4)
+
+linreg d_gdp nfirst_e nlast d_gdp_res
+# constant fac1 fac2 fac3 fac4
+
+set d_gdp_fit nfirst_e nlast = d_gdp(t)-d_gdp_res
+set d_gdp_4 nfirst nlast = d_gdp(t)+d_gdp(t-1)+d_gdp(t-2)+d_gdp(t-3)
+set d_gdp_fit_4 nfirst nlast = d_gdp_fit(t)+d_gdp_fit(t-1)+d_gdp_fit(t-2)+d_gdp_fit(t-3)
+
+linreg d_emp nfirst_e nlast  d_emp_res
+# constant fac1 fac2 fac3 fac4
+
+set d_emp_fit nfirst_e nlast = d_emp(t)-d_emp_res
+set d_emp_4 nfirst nlast = d_emp(t)+d_emp(t-1)+d_emp(t-2)+d_emp(t-3)
+set d_emp_fit_4 nfirst nlast = d_emp_fit(t)+d_emp_fit(t-1)+d_emp_fit(t-2)+d_emp_fit(t-3)
+
+linreg d_poil nfirst_e nlast  d_poil_res
+# constant fac1 fac2 fac3 fac4
+
+set d_poil_fit nfirst_e nlast = d_poil(t)-d_poil_res
+set d_poil_4 nfirst nlast = d_poil(t)+d_poil(t-1)+d_poil(t-2)+d_poil(t-3)
+set d_poil_fit_4 nfirst nlast = d_poil_fit(t)+d_poil_fit(t-1)+d_poil_fit(t-2)+d_poil_fit(t-3)
+
+linreg d_gs10 nfirst_e nlast  d_gs10_res
+# constant fac1 fac2 fac3 fac4
+
+set d_gs10_fit nfirst_e nlast  = d_gs10(t)-d_gs10_res
+set d_gs10_4 nfirst nlast = d_gs10(t)+d_gs10(t-1)+d_gs10(t-2)+d_gs10(t-3)
+set d_gs10_fit_4 nfirst nlast = d_gs10_fit(t)+d_gs10_fit(t-1)+d_gs10_fit(t-2)+d_gs10_fit(t-3)
+
+linreg d_sp nfirst_e nlast  d_sp_res
+# constant fac1 fac2 fac3 fac4
+
+set d_sp_fit nfirst_e nlast = d_sp(t)-d_sp_res
+set d_sp_4 nfirst nlast = d_sp(t)+d_sp(t-1)+d_sp(t-2)+d_sp(t-3)
+set d_sp_fit_4 nfirst nlast = d_sp_fit(t)+d_sp_fit(t-1)+d_sp_fit(t-2)+d_sp_fit(t-3)
+
+
+*graph 2;# d_gdp_4 1962:1 2017:4;# d_gdp_fit_4 1962:1 2017:4
+*graph 2;# d_emp_4 1962:1 2017:4;# d_emp_fit_4 1962:1 2017:4
+*graph 2;# d_poil_4 1962:1 2017:4;# d_poil_fit_4 1962:1 2017:4
+*graph 2;# d_gs10_4 1962:1 2017:4;# d_gs10_fit_4 1962:1 2017:4
+*graph 2;# d_sp_4 1962:1 2017:4;# d_sp_fit_4 1962:1 2017:4
+
+
+****** Data plotted in Panels (a)-(c) for Figure 17.4
+spgraph(vfields=2,hfields=2,header='Figure 17.4 Four-Quarter Growth Rates, Actual and Common Component, 1960-2017')
+graph(hlabel='(a) Real GDP',vlabel='Percent',patterns) 2
+# d_gdp_4 nfirst_e nlast
+# d_gdp_fit_4 nfirst nlast
+graph(hlabel='(c) Oil Prices',vlabel='Percent',patterns) 2
+# d_poil_4 nfirst_e nlast
+# d_poil_fit_4 nfirst nlast
+graph(hlabel='(b) Employment',vlabel='Percent',patterns) 2
+# d_emp_4 nfirst_e nlast
+# d_emp_fit_4 nfirst nlast
+graph(hlabel='(d) Stock Prices',vlabel='Precent',patterns) 2
+# d_sp_4 nfirst_e nlast
+# d_sp_fit_4 nfirst nlast
+spgraph(done)
+*
+smpl 1960:1 2017:4
+open copy fig17_4_ad.xls
+copy(org=obs,for=xls,dates) / d_gdp_4 d_gdp_fit_4 d_emp_4 d_emp_fit_4 d_poil_4 d_poil_fit_4 d_sp_4 d_sp_fit_4
+close copy
+
+* Pseudo-out-of-sample forecasts for Real GDP growth
+compute h = 8
+smpl 1957:1 2017:4
+set dy / = log(gdpc1(t)/gdpc1(t-1))
+set dy_h / = log(gdpc1(t)/gdpc1(t-h))
+* Scale so units are average annual growth
+set dy_h / = (400/h)*dy_h(t)
+
+set rlong / = gs10(t)
+set rshort / = tb3ms(t)
+set rspread / = rlong(t)-rshort(t)
+set d_rspread / = rspread(t)-rspread(t-1)
+set d_rlong / = rlong(t)-rlong(t-1)
+set d_rshort / = rshort(t)-rshort(t-1)
+
+*
+* Out-of-sample forecasting .. figure 15.6
+*
+compute ps_sfirst = (1981:1)
+compute ps_ffirst = (2002:4)
+compute s_last = (2017:4)
+
+set fcst_ar ps_ffirst+h s_last = 9999.0
+set fcst_adl ps_ffirst+h s_last = 9999.0
+set fcst_dfm ps_ffirst+h s_last = 9999.0
+
+linreg(print) dy_h ps_sfirst ps_ffirst res coef
+ # constant dy{h to h+1}
+linreg(print) dy_h ps_sfirst ps_ffirst res coef
+ # constant dy{h to h+1} rspread{h to h+1}
+ exclude 
+ # rspread{h to h+1}
+linreg(print) dy_h ps_sfirst ps_ffirst res coef
+ # constant dy{h to h+1} fac1{h} fac2{h} fac3{h} fac4{h}
+
+do t1=ps_ffirst, s_last-h
+ linreg(noprint) dy_h ps_sfirst t1 res coef
+ # constant dy{h to h+1}
+ prj dfcst t1+h t1+h
+ set fcst_ar t1+h t1+h = dfcst
+ linreg(noprint) dy_h ps_sfirst t1 res coef
+ # constant dy{h to h+1} rspread{h to h+1}
+ prj dfcst t1+h t1+h
+ set fcst_adl t1+h t1+h = dfcst
+ linreg(noprint) dy_h ps_sfirst t1 res coef
+ # constant dy{h to h+1} fac1{h} fac2{h} fac3{h} fac4{h}
+ prj dfcst t1+h t1+h
+ set fcst_dfm t1+h t1+h = dfcst
+ 
+end do t1
+set fcst_err_ar  ps_ffirst+h s_last = dy_h-fcst_ar
+set fcst_err2_ar ps_ffirst+h s_last = fcst_err_ar*fcst_err_ar
+statistics fcst_err_ar ps_ffirst+h  s_last
+statistics fcst_err2_ar ps_ffirst+h  s_last
+set fcst_err_adl  ps_ffirst+h s_last = dy_h-fcst_adl
+set fcst_err2_adl ps_ffirst+h s_last = fcst_err_adl*fcst_err_adl
+statistics fcst_err_adl ps_ffirst+h  s_last
+statistics fcst_err2_adl ps_ffirst+h  s_last
+set fcst_err_dfm  ps_ffirst+h s_last = dy_h-fcst_dfm
+set fcst_err2_dfm ps_ffirst+h s_last = fcst_err_dfm*fcst_err_dfm
+statistics fcst_err_dfm ps_ffirst+h  s_last
+statistics fcst_err2_dfm ps_ffirst+h  s_last
+
+
+*statistics fcst_err2_ar 2010:1  s_last
+*statistics fcst_err2_adl 2010:1  s_last
+*statistics fcst_err2_dfm 2010:1  s_last
+
+*
+*graph(patterns, header='Figure 17.5 Four-quarter GDP Growth and Four-quarter-ahead AR and DFM Forecasts, 2003-2017',vlabel = 'Percent') 3
+*# dy_h 2003:4 2017:4
+*# fcst_ar 2003:4 2017:4
+*# fcst_dfm 2003:4 2017:4
+*

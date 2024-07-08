@@ -1,0 +1,534 @@
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  /Users/mwatson/Dropbox/TB/4E/WebSupplements/ForStudents/SW_4E_ReplicationFiles/Chapter_13/ch13.log
+  log type:  text
+ opened on:  24 Sep 2018, 15:33:29
+
+. ***********************************;
+. * Read In Data;
+.  * (Note: Change path name so that it is appropriate for your computer);
+. use "/Users/mwatson/Dropbox/TB/4E/WebSupplements/ForStudents/SW_4E_ReplicationFiles/Replication_Data/star_sw.dta";
+
+. ********************************************;
+. *;
+. desc;
+
+Contains data from /Users/mwatson/Dropbox/TB/4E/WebSupplements/ForStudents/SW_4E_ReplicationFiles/Replication_Data/star_sw.dta
+  obs:        11,598                          
+ vars:            40                          29 Dec 2010 20:16
+ size:     1,298,976                          
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+              storage   display    value
+variable name   type    format     label      variable label
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+stark           byte    %8.0g      stark      attend project star class in kindergarten
+star1           byte    %8.0g      star1      attend project star class in 1st grade
+star2           byte    %8.0g      star2      attend project star class in 2nd grade
+star3           byte    %8.0g      star3      attend project star class in 3rd grade
+totexpk         byte    %8.0g      totexpk    years of total teaching experience - kindergarten
+treadssk        int     %8.0g                 total reading scaled score - sesat ii stanford
+tmathssk        int     %8.0g                 total math scaled score - sesat ii stanford
+totexp1         byte    %8.0g      totexp1    years of total teaching experience - 1st grade
+treadss1        int     %8.0g                 total reading scaled score - primary 1 stanford
+tmathss1        int     %8.0g                 total math scaled score - primary 1 stanford
+totexp2         byte    %8.0g      totexp2    years of total teaching experience - 2nd grade
+treadss2        int     %8.0g                 total reading scaled score - primary 2 stanford
+tmathss2        int     %8.0g                 total math scaled score - primary 2 stanford
+treadss3        int     %8.0g                 total reading scaled score - primary 3 stanford
+tmathss3        int     %8.0g                 total math scaled score - primary 3 stanford
+totexp3         byte    %8.0g      totexp3    years of total teaching experience - 3rd grade
+schidkn         int     %8.0g      schidkn    school id-k (new) kindergarten
+schid1n         int     %8.0g      schid1n    school id-g1 (new) 1st grade
+schid2n         int     %8.0g      schid2n    school id-g2 (new) 2nd grade
+schid3n         int     %8.0g      schid3n    school id-g3 (new) 3rd grade
+tscorek         float   %9.0g                 
+tscore1         float   %9.0g                 
+tscore2         float   %9.0g                 
+tscore3         float   %9.0g                 
+sck             float   %9.0g                 
+sc1             float   %9.0g                 
+sc2             float   %9.0g                 
+sc3             float   %9.0g                 
+rak             float   %9.0g                 
+ra1             float   %9.0g                 
+ra2             float   %9.0g                 
+ra3             float   %9.0g                 
+white           float   %9.0g                 
+black           float   %9.0g                 
+other           float   %9.0g                 
+boy             float   %9.0g                 
+freelunk        float   %9.0g                 
+freelun1        float   %9.0g                 
+freelun2        float   %9.0g                 
+freelun3        float   %9.0g                 
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Sorted by: 
+
+. *;
+. *************************************************************;
+. * The following command are not executed.  They are included to;
+. * document how the variables in STAR_SW were computed from ;
+. * WEBSTAR;
+. *************************************************************;
+. *gen tscorek = tmathssk+treadssk;
+. *gen tscore1 = tmathss1+treadss1;
+. *gen tscore2 = tmathss2+treadss2;
+. *gen tscore3 = tmathss3+treadss3;
+. *gen sck = cltypek==1 if cltypek<9;
+. *gen sc1 = cltype1==1 if cltype1<9;
+. *gen sc2 = cltype2==1 if cltype2<9;
+. *gen sc3 = cltype3==1 if cltype3<9;
+. *gen rak = cltypek==3 if cltypek<9;
+. *gen ra1 = cltype1==3 if cltype1<9;
+. *gen ra2 = cltype2==3 if cltype2<9;
+. *gen ra3 = cltype3==3 if cltype3<9;
+. *gen white = (srace==1) if srace<=6;
+. *gen black = (srace==2) if srace<=6;
+. *gen other = (srace>2) if srace<=6;
+. *gen boy = (ssex==1) if ssex<=2;
+. *gen freelunk = (sesk==1) if sesk<=2;
+. *gen freelun1 = (ses1==1) if ses1<=2;
+. *gen freelun2 = (ses2==1) if ses2<=2;
+. *gen freelun3 = (ses3==1) if ses3<=2;
+. *************************************************************;
+. * Table 13.1: differences estimators;
+. *----- summary for K -----;
+. preserve;
+
+.  keep if stark==1;
+(5,273 observations deleted)
+
+.  summ tscorek sck rak schidkn;
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+     tscorek |      5,786    922.3287     73.7466        635       1253
+         sck |      6,325    .3003953    .4584661          0          1
+         rak |      6,325    .3527273    .4778565          0          1
+     schidkn |      6,325    39.88933    22.70935          1         80
+
+.  reg tscorek sck rak, vce(robust);
+
+Linear regression                               Number of obs     =      5,786
+                                                F(2, 5783)        =      20.33
+                                                Prob > F          =     0.0000
+                                                R-squared         =     0.0073
+                                                Root MSE          =      73.49
+
+------------------------------------------------------------------------------
+             |               Robust
+     tscorek |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+         sck |   13.89899   2.454093     5.66   0.000     9.088053    18.70994
+         rak |   .3139354   2.270976     0.14   0.890    -4.138027    4.765898
+       _cons |   918.0429   1.633391   562.05   0.000     914.8408     921.245
+------------------------------------------------------------------------------
+
+.  reg tscorek sck rak, vce(cluster schidkn);
+
+Linear regression                               Number of obs     =      5,786
+                                                F(2, 78)          =       6.49
+                                                Prob > F          =     0.0025
+                                                R-squared         =     0.0073
+                                                Root MSE          =      73.49
+
+                               (Std. Err. adjusted for 79 clusters in schidkn)
+------------------------------------------------------------------------------
+             |               Robust
+     tscorek |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+         sck |   13.89899   4.230917     3.29   0.002     5.475885     22.3221
+         rak |   .3139354   3.769589     0.08   0.934    -7.190739     7.81861
+       _cons |   918.0429   4.822501   190.37   0.000      908.442    927.6438
+------------------------------------------------------------------------------
+
+.  sum tscorek;
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+     tscorek |      5,786    922.3287     73.7466        635       1253
+
+.  gen tsk_std = tscorek/r(sd);
+(539 missing values generated)
+
+.  reg tsk_std sck rak, vce(cluster schidkn);
+
+Linear regression                               Number of obs     =      5,786
+                                                F(2, 78)          =       6.49
+                                                Prob > F          =     0.0025
+                                                R-squared         =     0.0073
+                                                Root MSE          =     .99652
+
+                               (Std. Err. adjusted for 79 clusters in schidkn)
+------------------------------------------------------------------------------
+             |               Robust
+     tsk_std |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+         sck |   .1884696    .057371     3.29   0.002     .0742527    .3026866
+         rak |   .0042569   .0511154     0.08   0.934    -.0975061    .1060199
+       _cons |   12.44861   .0653929   190.37   0.000     12.31843     12.5788
+------------------------------------------------------------------------------
+
+. restore;
+
+. *----- summary for 1 -----;
+. preserve;
+
+.  keep if star1==1;
+(4,769 observations deleted)
+
+.  summ tscore1 sc1 ra1 schid1n;
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+     tscore1 |      6,379    1051.872    91.28273        827       1327
+         sc1 |      6,829    .2818861    .4499511          0          1
+         ra1 |      6,829    .3397276    .4736514          0          1
+     schid1n |      6,829    41.08976    22.76066          1         80
+
+.  reg tscore1 sc1 ra1, vce(robust);
+
+Linear regression                               Number of obs     =      6,379
+                                                F(2, 6376)        =      55.33
+                                                Prob > F          =     0.0000
+                                                R-squared         =     0.0174
+                                                Root MSE          =     90.501
+
+------------------------------------------------------------------------------
+             |               Robust
+     tscore1 |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+         sc1 |   29.78077   2.831141    10.52   0.000     24.23078    35.33076
+         ra1 |   11.95872    2.65201     4.51   0.000     6.759889    17.15755
+       _cons |   1039.393   1.784573   582.43   0.000     1035.894    1042.891
+------------------------------------------------------------------------------
+
+.  reg tscore1 sc1 ra1, vce(cluster schid1n);
+
+Linear regression                               Number of obs     =      6,379
+                                                F(2, 74)          =      19.39
+                                                Prob > F          =     0.0000
+                                                R-squared         =     0.0174
+                                                Root MSE          =     90.501
+
+                               (Std. Err. adjusted for 75 clusters in schid1n)
+------------------------------------------------------------------------------
+             |               Robust
+     tscore1 |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+         sc1 |   29.78077   4.786648     6.22   0.000     20.24317    39.31837
+         ra1 |   11.95872   4.861755     2.46   0.016     2.271463    21.64598
+       _cons |   1039.393   5.820783   178.57   0.000     1027.794    1050.991
+------------------------------------------------------------------------------
+
+.  sum tscore1;
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+     tscore1 |      6,379    1051.872    91.28273        827       1327
+
+.  gen ts1_std = tscore1/r(sd);
+(450 missing values generated)
+
+.  reg ts1_std sc1 ra1, vce(cluster schid1n);
+
+Linear regression                               Number of obs     =      6,379
+                                                F(2, 74)          =      19.39
+                                                Prob > F          =     0.0000
+                                                R-squared         =     0.0174
+                                                Root MSE          =     .99143
+
+                               (Std. Err. adjusted for 75 clusters in schid1n)
+------------------------------------------------------------------------------
+             |               Robust
+     ts1_std |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+         sc1 |   .3262476   .0524376     6.22   0.000     .2217634    .4307318
+         ra1 |   .1310075   .0532604     2.46   0.016     .0248838    .2371311
+       _cons |   11.38652   .0637665   178.57   0.000     11.25946    11.51358
+------------------------------------------------------------------------------
+
+. restore;
+
+. *----- summary for 2 -----;
+. preserve;
+
+.  keep if star2==1;
+(4,758 observations deleted)
+
+.  summ tscore2 sc2 ra2 schid2n;
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+     tscore2 |      6,049    1164.807    84.07682        930       1453
+         sc2 |      6,840    .2947368    .4559577          0          1
+         ra2 |      6,840    .3647661    .4813997          0          1
+     schid2n |      6,840    40.38216    22.61842          1         80
+
+.  reg tscore2 sc2 ra2, vce(robust);
+
+Linear regression                               Number of obs     =      6,049
+                                                F(2, 6046)        =      28.29
+                                                Prob > F          =     0.0000
+                                                R-squared         =     0.0094
+                                                Root MSE          =     83.694
+
+------------------------------------------------------------------------------
+             |               Robust
+     tscore2 |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+         sc2 |   19.39437   2.711666     7.15   0.000     14.07854     24.7102
+         ra2 |   3.479138   2.544725     1.37   0.172     -1.50943    8.467707
+       _cons |   1157.807    1.81508   637.88   0.000     1154.248    1161.365
+------------------------------------------------------------------------------
+
+.  reg tscore2 sc2 ra2, vce(cluster schid2n);
+
+Linear regression                               Number of obs     =      6,049
+                                                F(2, 73)          =       8.36
+                                                Prob > F          =     0.0005
+                                                R-squared         =     0.0094
+                                                Root MSE          =     83.694
+
+                               (Std. Err. adjusted for 74 clusters in schid2n)
+------------------------------------------------------------------------------
+             |               Robust
+     tscore2 |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+         sc2 |   19.39437   5.123563     3.79   0.000     9.183121    29.60561
+         ra2 |   3.479138   4.910299     0.71   0.481    -6.307074    13.26535
+       _cons |   1157.807    5.28994   218.87   0.000     1147.264    1168.349
+------------------------------------------------------------------------------
+
+.  sum tscore2;
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+     tscore2 |      6,049    1164.807    84.07682        930       1453
+
+.  gen ts2_std = tscore2/r(sd);
+(791 missing values generated)
+
+.  reg ts2_std sc2 ra2, vce(cluster schid2n);
+
+Linear regression                               Number of obs     =      6,049
+                                                F(2, 73)          =       8.36
+                                                Prob > F          =     0.0005
+                                                R-squared         =     0.0094
+                                                Root MSE          =     .99545
+
+                               (Std. Err. adjusted for 74 clusters in schid2n)
+------------------------------------------------------------------------------
+             |               Robust
+     ts2_std |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+         sc2 |   .2306744   .0609391     3.79   0.000      .109223    .3521257
+         ra2 |   .0413805   .0584025     0.71   0.481    -.0750156    .1577765
+       _cons |   13.77082   .0629179   218.87   0.000     13.64542    13.89621
+------------------------------------------------------------------------------
+
+. restore;
+
+. *----- summary for 3 -----;
+. preserve;
+
+.  keep if star3==1;
+(4,796 observations deleted)
+
+.  summ tscore3 sc3 ra3 schid3n;
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+     tscore3 |      5,967     1233.37    73.26685       1009       1527
+         sc3 |      6,802    .3196119    .4663605          0          1
+         ra3 |      6,802    .3738606    .4838629          0          1
+     schid3n |      6,802    40.84828    22.82068          1         80
+
+.  reg tscore3 sc3 ra3, vce(robust);
+
+Linear regression                               Number of obs     =      5,967
+                                                F(2, 5964)        =      29.53
+                                                Prob > F          =     0.0000
+                                                R-squared         =     0.0100
+                                                Root MSE          =      72.91
+
+------------------------------------------------------------------------------
+             |               Robust
+     tscore3 |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+         sc3 |    15.5866   2.396042     6.51   0.000     10.88949    20.28371
+         ra3 |  -.2909386   2.272708    -0.13   0.898    -4.746269    4.164392
+       _cons |   1228.506   1.680013   731.25   0.000     1225.213      1231.8
+------------------------------------------------------------------------------
+
+.  reg tscore3 sc3 ra3, vce(cluster schid3n);
+
+Linear regression                               Number of obs     =      5,967
+                                                F(2, 73)          =      11.26
+                                                Prob > F          =     0.0001
+                                                R-squared         =     0.0100
+                                                Root MSE          =      72.91
+
+                               (Std. Err. adjusted for 74 clusters in schid3n)
+------------------------------------------------------------------------------
+             |               Robust
+     tscore3 |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+         sc3 |    15.5866   4.205103     3.71   0.000      7.20584    23.96736
+         ra3 |  -.2909386    4.04216    -0.07   0.943    -8.346952    7.765075
+       _cons |   1228.506   4.662779   263.47   0.000     1219.213    1237.799
+------------------------------------------------------------------------------
+
+.  sum tscore3;
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+     tscore3 |      5,967     1233.37    73.26685       1009       1527
+
+.  gen ts3_std = tscore3/r(sd);
+(835 missing values generated)
+
+.  reg ts3_std sc3 ra3, vce(cluster schid3n);
+
+Linear regression                               Number of obs     =      5,967
+                                                F(2, 73)          =      11.26
+                                                Prob > F          =     0.0001
+                                                R-squared         =     0.0100
+                                                Root MSE          =     .99513
+
+                               (Std. Err. adjusted for 74 clusters in schid3n)
+------------------------------------------------------------------------------
+             |               Robust
+     ts3_std |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+         sc3 |   .2127374   .0573943     3.71   0.000     .0983506    .3271241
+         ra3 |  -.0039709   .0551704    -0.07   0.943    -.1139254    .1059835
+       _cons |   16.76756   .0636411   263.47   0.000     16.64072     16.8944
+------------------------------------------------------------------------------
+
+. restore;
+
+. ******************************************************;
+. * Table 13.2: differences estimators with X's for K;
+. preserve;
+
+.  keep if stark==1;
+(5,273 observations deleted)
+
+.  reg tscorek sck rak, vce(cluster schidkn);
+
+Linear regression                               Number of obs     =      5,786
+                                                F(2, 78)          =       6.49
+                                                Prob > F          =     0.0025
+                                                R-squared         =     0.0073
+                                                Root MSE          =      73.49
+
+                               (Std. Err. adjusted for 79 clusters in schidkn)
+------------------------------------------------------------------------------
+             |               Robust
+     tscorek |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+         sck |   13.89899   4.230917     3.29   0.002     5.475885     22.3221
+         rak |   .3139354   3.769589     0.08   0.934    -7.190739     7.81861
+       _cons |   918.0429   4.822501   190.37   0.000      908.442    927.6438
+------------------------------------------------------------------------------
+
+. ;
+.  dis "Adjusted Rsquared = " _result(8);
+Adjusted Rsquared = .00695666
+
+.  reg tscorek sck rak totexpk, vce(cluster schidkn);
+
+Linear regression                               Number of obs     =      5,766
+                                                F(3, 78)          =       8.19
+                                                Prob > F          =     0.0001
+                                                R-squared         =     0.0203
+                                                Root MSE          =     73.085
+
+                               (Std. Err. adjusted for 79 clusters in schidkn)
+------------------------------------------------------------------------------
+             |               Robust
+     tscorek |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+         sck |   14.00613   4.245587     3.30   0.001      5.55382    22.45845
+         rak |  -.6005832   3.840652    -0.16   0.876    -8.246733    7.045567
+     totexpk |    1.46903   .4378088     3.36   0.001     .5974199    2.340641
+       _cons |   904.7212   6.204157   145.83   0.000     892.3697    917.0728
+------------------------------------------------------------------------------
+
+. ;
+.   dis "Adjusted Rsquared = " _result(8);
+Adjusted Rsquared = .01982162
+
+. xtset schidkn;
+       panel variable:  schidkn (unbalanced)
+
+. xtreg tscorek sck rak totexpk, fe vce(cluster schidkn);
+
+Fixed-effects (within) regression               Number of obs     =      5,766
+Group variable: schidkn                         Number of groups  =         79
+
+R-sq:                                           Obs per group:
+     within  = 0.0144                                         min =         34
+     between = 0.0648                                         avg =       73.0
+     overall = 0.0175                                         max =        137
+
+                                                F(3,78)           =       7.99
+corr(u_i, Xb)  = 0.0474                         Prob > F          =     0.0001
+
+                               (Std. Err. adjusted for 79 clusters in schidkn)
+------------------------------------------------------------------------------
+             |               Robust
+     tscorek |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+         sck |   15.93308    4.07972     3.91   0.000     7.810984    24.05518
+         rak |   1.215196   3.643987     0.33   0.740    -6.039424    8.469816
+     totexpk |   .7431059   .3539371     2.10   0.039     .0384713    1.447741
+       _cons |   910.2591   3.798667   239.63   0.000     902.6966    917.8217
+-------------+----------------------------------------------------------------
+     sigma_u |  34.803319
+     sigma_e |  65.075344
+         rho |  .22241188   (fraction of variance due to u_i)
+------------------------------------------------------------------------------
+
+. xtreg tscorek sck rak totexpk boy freelunk black other, fe vce(cluster schidkn);
+
+Fixed-effects (within) regression               Number of obs     =      5,748
+Group variable: schidkn                         Number of groups  =         79
+
+R-sq:                                           Obs per group:
+     within  = 0.0880                                         min =         34
+     between = 0.1364                                         avg =       72.8
+     overall = 0.0969                                         max =        136
+
+                                                F(7,78)           =      42.07
+corr(u_i, Xb)  = -0.1303                        Prob > F          =     0.0000
+
+                               (Std. Err. adjusted for 79 clusters in schidkn)
+------------------------------------------------------------------------------
+             |               Robust
+     tscorek |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+         sck |   15.89005   3.944904     4.03   0.000     8.036349    23.74375
+         rak |   1.786938    3.60025     0.50   0.621    -5.380609    8.954485
+     totexpk |   .6627251   .3569075     1.86   0.067    -.0478231    1.373273
+         boy |  -12.09051   1.544744    -7.83   0.000    -15.16586   -9.015162
+    freelunk |   -34.7033   2.466046   -14.07   0.000    -39.61282   -29.79378
+       black |  -25.43051     4.5183    -5.63   0.000    -34.42576   -16.43527
+       other |  -8.500753   12.64004    -0.67   0.503    -33.66514    16.66364
+       _cons |    942.006   4.343112   216.90   0.000     933.3595    950.6525
+-------------+----------------------------------------------------------------
+     sigma_u |  33.309649
+     sigma_e |  62.662599
+         rho |  .22031438   (fraction of variance due to u_i)
+------------------------------------------------------------------------------
+
+. restore;
+
+. ******************************************************;
+. log close;
+      name:  <unnamed>
+       log:  /Users/mwatson/Dropbox/TB/4E/WebSupplements/ForStudents/SW_4E_ReplicationFiles/Chapter_13/ch13.log
+  log type:  text
+ closed on:  24 Sep 2018, 15:33:29
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

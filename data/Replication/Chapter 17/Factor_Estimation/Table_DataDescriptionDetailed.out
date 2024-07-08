@@ -1,0 +1,145 @@
+~Name~Description~Smpl~Trans~Outlier~FacEst 
+~~NIPA~~~ 
+1  ~Cons:Dur~Real personal consumption expenditures: Durable goods (chain-type~1959:Q1-2017:Q4~5~0~1 
+2  ~Cons:Svc~Real personal consumption expenditures: Services (chain-type quantity~1959:Q1-2017:Q4~5~0~1 
+3  ~Cons:NonDur~Real personal consumption expenditures: Nondurable goods (chain-type~1959:Q1-2017:Q4~5~0~1 
+4  ~Inv:NonResStruct~Real private fixed investment: Nonresidential: Structures (chain-type quantity index), Quarterly, Seasonally Adjusted~1959:Q1-2017:Q4~5~0~1 
+5  ~Inv:IP~Real Gross Private Domestic Investment: Fixed Investment: Nonresidential: Intellectual Property Products (chain-type quantity index), Quarterly, Seasonally Adjusted~1959:Q1-2017:Q4~5~0~1 
+6  ~Inv:ResStruct~Real private fixed investment: Residential: Structures (chain-type quantity index), Quarterly, Seasonally Adjusted~1959:Q1-2017:Q4~5~0~1 
+7  ~Inv:Equip~Real Gross Private Domestic Investment: Fixed Investment: Nonresidential: Equipment (chain-type quantity index~1959:Q1-2017:Q4~5~0~1 
+8  ~Gov:Fed~Real government consumption expenditures and gross investment: Federal~1959:Q1-2017:Q4~5~0~1 
+9  ~Real_Gov Receipts~Government Current Receipts (Nominal) Defl by GDP Def~1959:Q1-2017:Q3~5~0~1 
+10 ~Gov:State&Local~Real government consumption expenditures and gross investment: State and local~1959:Q1-2017:Q4~5~0~1 
+11 ~Exports~Real exports of goods and services (chain-type quantity index)~1959:Q1-2017:Q4~5~0~1 
+12 ~Ch. Inv/GDP~Ch. Inv/GDP~1959:Q1-2017:Q4~1~0~1 
+13 ~Imports~Real imports of goods and services (chain-type quantity index)~1959:Q1-2017:Q4~5~0~1 
+~~Industrial Production~~~ 
+14 ~IP: Energy Prds~IP: Consumer Energy Products~1959:Q1-2017:Q4~5~0~1 
+15 ~IP: Dur gds materials~Industrial Production: Durable Materials~1959:Q1-2017:Q4~5~0~1 
+16 ~IP: Nondur gds materials~Industrial Production: nondurable Materials~1959:Q1-2017:Q4~5~0~1 
+17 ~IP: Dur Cons. Goods~Industrial Production: Durable Consumer Goods~1959:Q1-2017:Q4~5~0~1 
+18 ~IP: Auto ~IP: Automotive products~1959:Q1-2016:Q3~5~0~1 
+19 ~IP:NonDur Cons God~Industrial Production: Nondurable Consumer Goods~1959:Q1-2017:Q4~5~0~1 
+20 ~IP: Equip~Industrial Production: Business Equipment~1959:Q1-2017:Q4~5~0~1 
+21 ~Capu Tot~Capacity Utilization: Total Industry~1967:Q1-2017:Q4~2~0~1 
+~~Employment and Unemployment~~~ 
+22 ~Emp: DurGoods~All Employees: Durable Goods Manufacturing~1959:Q1-2017:Q4~5~0~1 
+23 ~Emp: Const~All Employees: Construction~1959:Q1-2017:Q4~5~0~1 
+24 ~Emp: Edu&Health~All Employees: Education & Health Services~1959:Q1-2017:Q4~5~0~1 
+25 ~Emp: Finance~All Employees: Financial Activities~1959:Q1-2017:Q4~5~0~1 
+26 ~Emp: Infor~All Employees: Information Services~1959:Q1-2017:Q4~5~1~1 
+27 ~Emp: Bus Serv~All Employees: Professional & Business Services~1959:Q1-2017:Q4~5~0~1 
+28 ~Emp:Leisure~All Employees: Leisure & Hospitality~1959:Q1-2017:Q4~5~0~1 
+29 ~Emp:OtherSvcs~All Employees: Other Services~1959:Q1-2017:Q4~5~0~1 
+30 ~Emp: Mining/NatRes~All Employees: Natural Resources & Mining~1959:Q1-2017:Q4~5~1~1 
+31 ~Emp:Trade&Trans~All Employees: Trade  Transportation & Utilities~1959:Q1-2017:Q4~5~0~1 
+32 ~Emp:Retail~All Employees: Retail Trade~1959:Q1-2017:Q4~5~0~1 
+33 ~Emp:Wholesal~All Employees: Wholesale Trade~1959:Q1-2017:Q4~5~0~1 
+34 ~Emp: Gov(Fed)~Employment Federal Government~1959:Q1-2017:Q4~5~2~1 
+35 ~Emp: Gov (State)~Employment State government~1959:Q1-2017:Q4~5~0~1 
+36 ~Emp: Gov (Local)~Employment Local government~1959:Q1-2017:Q4~5~0~1 
+37 ~Urate: Age16-19~Unemployment Rate - 16-19 yrs~1959:Q1-2017:Q4~2~0~1 
+38 ~Urate:Age>20 Men~Unemployment Rate - 20 yrs. & over  Men~1959:Q1-2017:Q4~2~0~1 
+39 ~Urate: Age>20 Women~Unemployment Rate - 20 yrs. & over  Women~1959:Q1-2017:Q4~2~0~1 
+40 ~U:dur>15-26wks~Civilians Unemployed for 15-26 Weeks~1959:Q1-2017:Q4~5~0~1 
+41 ~U: Dur>27wks~Number Unemployed for 27 Weeks & over~1959:Q1-2017:Q4~5~0~1 
+42 ~U:Dur5-14wks~Number Unemployed for 5-14 Weeks~1959:Q1-2017:Q4~5~0~1 
+43 ~U: Dur<5wks~Number Unemployed for Less than 5 Weeks~1959:Q1-2017:Q4~5~0~1 
+44 ~U: LF Reenty~Unemployment Level - Reentrants to Labor Force~1967:Q1-2017:Q4~5~1~1 
+45 ~U: Job losers~Unemployment Level - Job Losers~1967:Q1-2017:Q4~5~0~1 
+46 ~U: New Entrants~Unemployment Level - New Entrants~1967:Q1-2017:Q4~5~1~1 
+47 ~U: Job Leavers~Unemployment Level - Job Leavers~1967:Q1-2017:Q4~5~0~1 
+48 ~Emp:SlackWk~Employment Level - Part-Time for Economic Reasons  All Industries~1959:Q1-2017:Q4~5~1~1 
+49 ~AWH Man~Average Weekly Hours: Manufacturing~1959:Q1-2017:Q4~1~0~1 
+50 ~AWH Privat~Average Weekly Hours: Total Private Industrie~1964:Q1-2017:Q4~2~0~1 
+51 ~AWH Overtime~Average Weekly Hours: Overtime: Manufacturing~1959:Q1-2017:Q4~2~0~1 
+~~Orders, Inventories, and Sales~~~ 
+52 ~Real_Unfilled Oders MFG~Value of Manufacturers' Unfilled Orders for Durable Goods Industries, Monthly, Seasonally Adjusted Defl by PCE(LFE) Def~1992:Q1-2017:Q4~5~0~1 
+53 ~Real_Orders: Dur Cons Goods~Value of Manufacturers' New Orders for Consumer Goods: Consumer Durable Goods Industries, Monthly, Seasonally Adjusted Defl by PCE(LFE) Def~1992:Q2-2017:Q4~5~0~1 
+54 ~Real_Shipments MFG~Value of Manufacturers' Shipments for All Manufacturing Industries, Monthly, Seasonally Adjusted Defl by PCE(LFE) Def~1992:Q1-2017:Q4~5~0~1 
+55 ~Inv2Shif MFG~Ratio of Manufacturers' Total Inventories to Shipments for All Manufacturing Industries, Monthly, Seasonally Adjusted~1992:Q1-2017:Q4~2~0~1 
+56 ~Real_NewOrders CG MFG~Manufacturers' New Orders: Nondefense Capital Goods Excluding Aircraft, Monthly, Seasonally Adjusted Defl by PCE(LFE) Def~1992:Q2-2017:Q4~5~0~1 
+57 ~Inv2Sales Busines~Total Business: Inventories to Sales Ratio, Monthly, Seasonally Adjusted~1992:Q1-2017:Q4~2~0~1 
+~~Housing Starts and Permits~~~ 
+58 ~Hpermits~New Private Housing Units Authorized by Building Permit~1960:Q1-2017:Q4~5~0~1 
+59 ~Hstarts:MW~Housing Starts in Midwest Census Region~1959:Q1-2017:Q4~5~0~1 
+60 ~Hstarts:NE~Housing Starts in Northeast Census Region~1959:Q1-2017:Q4~5~0~1 
+61 ~Real_Const Spending~Total Construction Spending, Monthly, Seasonally Adjusted Annual Rate Defl by PCE(LFE) Def~1993:Q1-2017:Q4~5~0~1 
+62 ~Hstarts:S~Housing Starts in South Census Region~1959:Q1-2017:Q4~5~0~1 
+63 ~Hstarts:W~Housing Starts in West Census Region~1959:Q1-2017:Q4~5~0~1 
+~~Prices~~~ 
+64 ~GPDI Defl~Gross Private Domestic Investment: Chain-type Price Index~1959:Q1-2017:Q4~6~0~1 
+65 ~BusSec Defl~Business Sector: Implicit Price Deflator~1959:Q1-2017:Q4~6~0~1 
+66 ~PCED_MotorVec~Motor vehicles and parts~1959:Q1-2017:Q4~6~0~1 
+67 ~PCED_DurHousehold~Furnishings and durable household equipment~1959:Q1-2017:Q4~6~0~1 
+68 ~PCED_Recreation~Recreational goods and vehicles~1959:Q1-2017:Q4~6~0~1 
+69 ~PCED_OthDurGds~Other durable goods~1959:Q1-2017:Q4~6~0~1 
+70 ~PCED_Food_Bev~Food and beverages purchased for off-premises consumption~1959:Q1-2017:Q4~6~0~1 
+71 ~PCED_Clothing~Clothing and footwear~1959:Q1-2017:Q4~6~0~1 
+72 ~PCED_Gas_Enrgy~Gasoline and other energy goods~1959:Q1-2017:Q4~6~0~1 
+73 ~PCED_OthNDurGds~Other nondurable goods~1959:Q1-2017:Q4~6~0~1 
+74 ~PCED_Housing-Utilities~Housing and utilities~1959:Q1-2017:Q4~6~0~1 
+75 ~PCED_HealthCare~Health care~1959:Q1-2017:Q4~6~0~1 
+76 ~PCED_TransSvg~Transportation services~1959:Q1-2017:Q4~6~0~1 
+77 ~PCED_RecServices~Recreation services~1959:Q1-2017:Q4~6~0~1 
+78 ~PCED_FoodServ_Acc.~Food services and accommodations~1959:Q1-2017:Q4~6~0~1 
+79 ~PCED_FIRE~Financial services and insurance~1959:Q1-2017:Q4~6~0~1 
+80 ~PCED_OtherServices~Other services~1959:Q1-2017:Q4~6~0~1 
+81 ~PPI:FinConsGds~Producer Price Index by Commodity for Final Demand: Personal Consumption Goods (Finished Consumer Goods)~1959:Q1-2017:Q4~6~0~1 
+82 ~PPI:FinConsGds(Food)~Producer Price Index by Commodity for Final Demand: Finished Consumer Foods~1959:Q1-2017:Q4~6~0~1 
+83 ~PPI:IndCom~Producer Price Index: Industrial Commodities~1959:Q1-2017:Q4~6~0~1 
+84 ~PPI:IntMat~Producer Price Index by Commodity for Intermediate Demand by Commodity Type: Materials and Components for Manufacturing~1959:Q1-2017:Q4~6~0~1 
+85 ~Real_Price:NatGas~PPI: Natural Gas Defl by PCE(LFE) Def~1967:Q1-2017:Q4~5~0~1 
+~~Productivity and Earnings~~~ 
+86 ~CPH:NFB~Nonfarm Business Sector: Real Compensation Per Hour~1959:Q1-2017:Q4~5~0~1 
+87 ~CPH:Bus~Business Sector: Real Compensation Per Hour~1959:Q1-2017:Q4~5~0~1 
+88 ~OPH:nfb~Nonfarm Business Sector: Output Per Hour of All Persons~1959:Q1-2017:Q4~5~0~1 
+89 ~ULC:NFB~Nonfarm Business Sector: Unit Labor Cost~1959:Q1-2017:Q4~5~0~1 
+90 ~UNLPay:nfb~Nonfarm Business Sector: Unit Nonlabor Payments~1959:Q1-2017:Q4~5~0~1 
+~~Interest Rates~~~ 
+91 ~FEDFUNDS_TB3MS~Spread: FEDFUNDS_TB3MS~1959:Q1-2017:Q4~1~0~1 
+92 ~TB-3Mth~3-Month Treasury Bill: Secondary Market Rate~1959:Q1-2017:Q4~2~0~1 
+93 ~TB6MS_TB3MS~Spread: TB6MS_TB3MS~1959:Q1-2017:Q4~1~0~1 
+94 ~GS1_TB3MS~Spread: GS1_TB3MS~1959:Q1-2017:Q4~1~0~1 
+95 ~GS10_TB3MS~Spread: GS10_TB3MS~1959:Q1-2017:Q4~1~0~1 
+96 ~DCPF3M_TB3MS~Spread: DCPF3M_TB3MS~1959:Q1-2017:Q4~1~0~1 
+97 ~MORTGAGE30US_TB3MS~Spread: MORTGAGE30US_TB3MS~1971:Q2-2017:Q4~1~0~1 
+98 ~AAA_TB3MS~Spread: AAA_TB3MS~1959:Q1-2017:Q4~1~0~1 
+99 ~BAA_TB3MS~Spread: BAA_TB3MS~1959:Q1-2017:Q4~1~0~1 
+100~Ted_spr~TED Spread FRED~1986:Q1-2017:Q4~1~0~1 
+~~Money and Credit~~~ 
+101~Real_C&Lloand~Commercial and Industrial Loans at All Commercial Banks Defl by PCE(LFE) Def~1959:Q1-2017:Q4~5~0~1 
+102~Real_ConsLoans~Consumer (Individual) Loans at All Commercial Banks  Outlier Code because of change in data in April 2010  see FRB H8 Release Defl by PCE(LFE) Def~1959:Q1-2017:Q4~5~1~1 
+103~Real_NonRevCredit~Total Nonrevolving Credit Outstanding Defl by PCE(LFE) Def~1959:Q1-2017:Q4~5~0~1 
+104~Real_LoansRealEst~Real Estate Loans at All Commercial Banks Defl by PCE(LFE) Def~1959:Q1-2017:Q4~5~0~1 
+105~Real_RevolvCredit~Total Revolving Credit Outstanding Defl by PCE(LFE) Def~1968:Q1-2017:Q4~5~1~1 
+106~FRBSLO_Consumers~FRB Senior Loans Officer Opions. Net Percentage of Domestic Respondents Reporting Increased Willingness to Make Consumer Installment Loans~1982:Q2-2017:Q4~1~0~1 
+~~International Variables~~~ 
+107~Ex rate: major~FRB Nominal Major Currencies Dollar Index (Linked to EXRUS in 1973:1) ~1959:Q1-2017:Q4~5~0~1 
+108~Ex rate: Euro~U.S. / Euro Foreign Exchange Rate~1999:Q1-2017:Q4~5~0~1 
+109~Ex rate: Switz~Switzerland / U.S. Foreign Exchange Rate~1959:Q1-2017:Q4~5~0~1 
+110~Ex rate: Japan~Japan / U.S. Foreign Exchange Rate~1959:Q1-2017:Q4~5~0~1 
+111~Ex rate: UK~U.S. / U.K. Foreign Exchange Rate~1959:Q1-2017:Q4~5~0~1 
+112~EX rate: Canada~Canada / U.S. Foreign Exchange Rate~1959:Q1-2017:Q4~5~0~1 
+113~OECD GDP~OECD: Gross Domestic Product by Expenditure in Constant Prices: Total Gross; Growth Rate (Quartely); Fred Series NAEXKP01O1Q657S~1962:Q2-2017:Q2~1~0~1 
+114~IP Europe~OECD: Total Ind. Prod (excl Consturction) Europe Growth Rate (Quarterly); Fred Series PRINTO01OEQ657S~1960:Q2-2017:Q2~1~0~1 
+~~Asset Prices, Wealth, and Household Balance Sheets~~~ 
+115~S&P 500~S&P'S COMMON STOCK PRICE INDEX: COMPOSITE (1941-43=10)  daily .. Use FRED to Aggregate to montly~1959:Q1-2017:Q4~5~0~1 
+116~Real_HHW:TL~Real Total Liabilities of Households and Non Profits, $Billions (Seas Adj by RATS-X11) Defl by PCE(LFE) Def~1959:Q1-2017:Q4~5~0~1 
+117~Real_HHW:TA_Fin~Total Financial Assets of households and and Nonprofits, $Billions  (Seas Adj by RATS-X11) Defl by PCE(LFE) Def~1959:Q1-2017:Q4~5~0~1 
+118~Real_HHW:TA_RE~Households and nonprofit organizations; real estate at market value, Level, Quarterly, Not Seasonally Adjusted Millions of $  (Seas Adj by RATS-X11) Defl by PCE(LFE) Def~1959:Q1-2017:Q4~5~0~1 
+119~Real_HHW:TA_NonFin_XRE~HHW:Total NonFinanicial Assets less Real Estate Defl by PCE(LFE) Def~1959:Q1-2017:Q4~5~0~1 
+120~DJIA~COMMON STOCK PRICES: DOW JONES INDUSTRIAL AVERAGE  daily .. Use FRED to Aggregate to montly~1959:Q1-2017:Q4~5~0~1 
+121~VXO~VXO  daily .. Use FRED to Aggregate to montly~1986:Q1-2017:Q4~1~0~1 
+122~Real_Hprice:OFHEO~House Price Index for the United States Defl by PCE(LFE) Def~1975:Q1-2017:Q4~5~0~1 
+123~Real_CS_10~Case-Shiller 10 City Average Defl by PCE(LFE) Def~1987:Q1-2017:Q4~5~0~1 
+124~Real_CS_20~Case-Shiller 20 City Average Defl by PCE(LFE) Def~2000:Q1-2017:Q4~5~0~1 
+~~Other~~~ 
+125~Cons.Sent~University of Michigan  Consumer Sentiment~1978:Q1-2017:Q4~1~0~1 
+126~PoilcyUncertainty~Economic Policy Uncertainty Index for United States, Daily, Not Seasonally Adjusted Daily 7 day .. Have FRED aggegate to quarterly (note  quarterly series back to 1985 available on BBD webapge)~1985:Q1-2017:Q4~1~0~1 
+~~Oil Market Variables~~~ 
+127~Real_Price:Oil~PPI: Crude Petroleum Defl by PCE(LFE) Def~1959:Q1-2017:Q4~5~0~1 
+128~Real_Crudeoil Price~Crude Oil: West Texas Intermediate (WTI) - Cushing Oklahoma Defl by PCE(LFE) Def~1986:Q1-2017:Q4~5~0~1 
+129~Real_CrudeOil~Crude Oil Prices: Brent - Europe Defl by PCE(LFE) Def~1987:Q3-2017:Q4~5~0~1 
+130~Real_Price Gasoline~Conventional Gasoline Prices: New York Harbor  Regular Defl by PCE(LFE) Def~1986:Q3-2017:Q4~5~0~1 
+131~Real_CPI Gasoline~CPI Gasoline (NSA) BLS: CUUR0000SETB01 Defl by PCE(LFE) Def~1967:Q1-2017:Q4~5~0~1 

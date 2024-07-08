@@ -1,0 +1,195 @@
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  /Users/mwatson/Dropbox/TB/4E/WebSupplements/ForStudents/SW_4E_ReplicationFiles/Chapter_6/ch6_7_ex1_4.log
+  log type:  text
+ opened on:  24 Sep 2018, 14:44:53
+
+. ***********************************;
+. * Read In Data;
+.  use "/Users/mwatson/Dropbox/TB/4E/WebSupplements/ForStudents/SW_4E_ReplicationFiles/Replication_Data/cps15_ex_ch6_ch7.dta";
+
+. *;
+. *;
+. gen Northeast = (gereg == 1);
+
+. gen Midwest = (gereg == 2);
+
+. gen South = (gereg == 3);
+
+. gen West = (gereg == 4);
+
+. desc;
+
+Contains data from /Users/mwatson/Dropbox/TB/4E/WebSupplements/ForStudents/SW_4E_ReplicationFiles/Replication_Data/cps15_ex_ch6_ch7.dta
+  obs:         7,178                          
+ vars:            10                          22 Oct 2017 19:17
+ size:       265,586                          (_dta has notes)
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+              storage   display    value
+variable name   type    format     label      variable label
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+gereg           byte    %9.0g      gereg    * Region
+year            float   %9.0g                 
+ahe             float   %9.0g                 
+bachelor        float   %9.0g                 
+female          float   %9.0g                 
+age             float   %9.0g                 
+Northeast       float   %9.0g                 
+Midwest         float   %9.0g                 
+South           float   %9.0g                 
+West            float   %9.0g                 
+                                            * indicated variables have notes
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Sorted by: 
+     Note: Dataset has changed since last saved.
+
+. sum;
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+       gereg |      7,178    2.771803     1.02404          1          4
+        year |      7,178        2015           0       2015       2015
+         ahe |      7,178    21.73704    13.29609   2.040816   120.1923
+    bachelor |      7,178    .5289774    .4991944          0          1
+      female |      7,178    .4147395    .4927113          0          1
+-------------+---------------------------------------------------------
+         age |      7,178    29.64628     2.87879         25         34
+   Northeast |      7,178    .1560323    .3629113          0          1
+     Midwest |      7,178    .1962942    .3972213          0          1
+       South |      7,178    .3675118     .482161          0          1
+        West |      7,178    .2801616    .4491093          0          1
+
+. reg ahe bachelor female, robust;
+
+Linear regression                               Number of obs     =      7,178
+                                                F(2, 7175)        =     674.06
+                                                Prob > F          =     0.0000
+                                                R-squared         =     0.1649
+                                                Root MSE          =     12.152
+
+------------------------------------------------------------------------------
+             |               Robust
+         ahe |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+    bachelor |   10.46759   .2891045    36.21   0.000      9.90086    11.03432
+      female |  -4.693023   .2895853   -16.21   0.000    -5.260695    -4.12535
+       _cons |    18.1463   .1922924    94.37   0.000     17.76935    18.52325
+------------------------------------------------------------------------------
+
+. dis "Adjusted Rsquared = " _result(8);
+Adjusted Rsquared = .16469627
+
+. reg ahe bachelor female age, robust;
+
+Linear regression                               Number of obs     =      7,178
+                                                F(3, 7174)        =     484.44
+                                                Prob > F          =     0.0000
+                                                R-squared         =     0.1822
+                                                Root MSE          =     12.027
+
+------------------------------------------------------------------------------
+             |               Robust
+         ahe |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+    bachelor |   10.43972   .2860869    36.49   0.000     9.878907    11.00054
+      female |  -4.562133   .2865055   -15.92   0.000    -5.123768   -4.000498
+         age |   .6070147   .0493782    12.29   0.000     .5102189    .7038104
+       _cons |   .1110292   1.459285     0.08   0.939    -2.749599    2.971658
+------------------------------------------------------------------------------
+
+. dis "Adjusted Rsquared = " _result(8);
+Adjusted Rsquared = .181837
+
+. reg ahe bachelor female age Northeast Midwest South, robust;
+
+Linear regression                               Number of obs     =      7,178
+                                                F(6, 7171)        =     245.22
+                                                Prob > F          =     0.0000
+                                                R-squared         =     0.1850
+                                                Root MSE          =     12.008
+
+------------------------------------------------------------------------------
+             |               Robust
+         ahe |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+    bachelor |   10.42801   .2883602    36.16   0.000     9.862737    10.99328
+      female |  -4.566149   .2867246   -15.93   0.000    -5.128214   -4.004084
+         age |    .611728   .0493534    12.39   0.000     .5149808    .7084752
+   Northeast |   .7389781    .474254     1.56   0.119    -.1906996    1.668656
+     Midwest |   -1.54302   .3960851    -3.90   0.000    -2.319463    -.766576
+       South |  -.4436773   .3664378    -1.21   0.226    -1.162003    .2746488
+       _cons |   .3297984   1.467297     0.22   0.822    -2.546536    3.206133
+------------------------------------------------------------------------------
+
+. dis "Adjusted Rsquared = " _result(8);
+Adjusted Rsquared = .18433559
+
+. test Northeast Midwest South;
+
+ ( 1)  Northeast = 0
+ ( 2)  Midwest = 0
+ ( 3)  South = 0
+
+       F(  3,  7171) =    9.32
+            Prob > F =    0.0000
+
+. 
+end of do-file
+
+. ch6_caschools
+command ch6_caschools is unrecognized
+r(199);
+
+. do ch6_caschools
+
+. # delimit ;
+delimiter now ;
+. set more off;
+
+. set linesize 200;
+
+. clear all;
+
+. *************************************************************;
+. *Replication program for Chapter 6 in SW 4E
+> * Caschool.do;
+. *************************************************************;
+. log using ch6_caschools.log,replace;
+log file already open
+r(604);
+
+end of do-file
+
+r(604);
+
+. cd "/Users/mwatson/Dropbox/TB/4E/WebSupplements/ForStudents/SW_4E_ReplicationFiles/Chapter_7"
+/Users/mwatson/Dropbox/TB/4E/WebSupplements/ForStudents/SW_4E_ReplicationFiles/Chapter_7
+
+. do ch7_caschools
+
+. # delimit ;
+delimiter now ;
+. set more off;
+
+. set linesize 200;
+
+. clear all;
+
+. *************************************************************;
+. *Replication program for Chapter 7 in SW 4E
+> * Caschool.do;
+. *************************************************************;
+. log using ch7_caschools.log,replace;
+log file already open
+r(604);
+
+end of do-file
+
+r(604);
+
+. log close
+      name:  <unnamed>
+       log:  /Users/mwatson/Dropbox/TB/4E/WebSupplements/ForStudents/SW_4E_ReplicationFiles/Chapter_6/ch6_7_ex1_4.log
+  log type:  text
+ closed on:  24 Sep 2018, 14:46:57
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

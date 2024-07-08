@@ -1,0 +1,199 @@
+*
+* Replication file for SW4 Chapter 17
+* Note: This file borrows heavily from ESTIMA's replication files for SW3E (www.estima.com)
+*
+* Part 1
+
+calendar 1957 1 4
+all 0 2018:1
+clear(all)
+open data /Users/mwatson/Dropbox/TB/4E/WebSupplements/ForStudents/SW_4E_ReplicationFiles/Replication_Data/us_macro_quarterly.rat
+data(for=rats) / gdpc1 pcectpi
+close data
+open data /Users/mwatson/Dropbox/TB/4E/WebSupplements/ForStudents/SW_4E_ReplicationFiles/Replication_Data/us_macro_monthly.rat
+data(for=rats,compact=average) / gs10 gs1 tb3ms 
+
+
+set y / = log(gdpc1(t))
+set dy / = y(t)-y(t-1)
+set ygrowth / = 400*dy(t);
+set trend / = t
+
+set rlong / = gs10(t)
+set rshort / = tb3ms(t)
+set rspread / = rlong(t)-rshort(t)
+set d_rspread / = rspread(t)-rspread(t-1)
+set d_rlong / = rlong(t)-rlong(t-1)
+set d_rshort / = rshort(t)-rshort(t-1)
+
+set l_price / = log(pcectpi(t))
+set infl / = 400*(l_price(t)-l_price(t-1))
+
+compute s_first = (1981:1)
+compute s_last = (2017:3);
+
+*
+* Equation (17.5) -- and 1-period ahead forecasts
+*
+linreg(robust) ygrowth s_first s_last di
+# constant ygrowth{1 to 2} rspread{1 to 2}
+exclude
+# rspread {1 to 2}
+prj fcst_ygrowth 2017:4 2017:4
+*
+* Equation (17.6)
+*
+linreg(robust) rspread s_first s_last di
+# constant ygrowth{1 to 2} rspread{1 to 2}
+exclude
+# ygrowth {1 to 2}
+display 'forecasts and actuals for 2017:4'
+prj fcst_rspread 2017:4 2017:4
+print(dates) 2017:4 2017:4 fcst_ygrowth fcst_rspread ygrowth rspread
+*
+* Iterated Multi-period forecasts
+*
+* AR(1) model -- equation (17.7)
+linreg(robust, define=areq) ygrowth 1962:1 2017:3
+# constant ygrowth{1}
+uforecast(equation=areq) twostep 2017:4 2018:1
+disp 'Forecast for 2017:4 GDP Growth Using 2017:3 Data' twostep(2017:4)
+disp 'Forecast for 2018:1 GDP Growth Using 2017:3 Data' twostep(2018:1)
+*
+* AR(2) model -- equation (17.8)
+linreg(robust, define=areq) ygrowth 1962:1 2017:3
+# constant ygrowth{1 to 2}
+uforecast(equation=areq) twostep 2017:4 2018:1
+disp 'Forecast for 2017:4 GDP Growth Using 2017:3 Data' twostep(2017:4)
+disp 'Forecast for 2018:1 GDP Growth Using 2017:3 Data' twostep(2018:1)
+**
+** VAR Iterated Forecast 
+**
+* Iterated VAR forecast
+* Redo equations 17.5 and 17.6; define equations for forecasting
+* purposes.
+*
+linreg(robust,define=ygrowtheq) ygrowth s_first s_last di
+# constant ygrowth{1 to 2} rspread{1 to 2}
+linreg(robust,define=rspreadeq) rspread s_first s_last di
+# constant ygrowth{1 to 2} rspread{1 to 2}
+*
+* Forecasts with multiple equation systems are done using the FORECAST
+* instruction. FORECAST 2 2 2013:1 means two equations, two periods
+* starting 2017:4. The two equations to use are shown on the extra lines.
+* Note that the values are slightly different than those shown in the text
+* because these are done at full precision.
+*
+forecast(print) 2 2 2017:4
+# ygrowtheq
+# rspreadeq
+print(dates) 2017:4 2018:1 ygrowth rspread
+*
+*
+*** Direct Multistep Forecasts
+**
+** Newey-West standard errors
+** Use rule of thumb for number of lags (.75*n**(1/3))
+**
+compute num_obs = s_last-s_first+1;
+compute [integer] nlags = 1+fix(0.75*(num_obs**0.333))
+display 'number of lags in NW'
+dis nlags
+**
+** Equation (17.13)
+**
+**
+linreg(robust,lags=nlags,lwindow=newey) ygrowth s_first s_last
+# constant ygrowth{2 to 3} rspread{2 to 3}
+prj twostep 2018:1 2018:1
+disp 'Forecast for 2018:1 for ygrowth Using 2017:3 Data' twostep(2018:1)
+*
+* Figure 17.1
+*
+*
+spgraph(vfields=2,header='Figure 17.1 The Logarithm of the Price Level and the Infation Rate in the United States, 1960-2017')
+graph(hlabel='(a) Logarithm of the PCE Price Index', vlabel = 'Logarithm')
+# l_price 1960:1 2017:4
+graph(hlabel='(b) Inflation',vlabel = 'Percent per annum')
+# infl 1960:1 2017:4
+spgraph(done)
+open copy fig17_1.xls
+copy(org=obs,for=xls,dates) 1960:1 2017:4 l_price infl
+close copy
+*
+* Cointegration Analysis
+*
+
+smpl 1962:1 2017:4
+
+display '   Lags   AIC  '
+compute [integer] maxlag = 0
+linreg(noprint) d_rshort /
+# constant rshort{1}
+  compute c2 = %rss/float(%nobs)
+  compute c3 = log(c2)
+  compute c4 = float(%nreg)*2.0/float(%nobs)
+  compute aic = c3+c4
+  display @5 #### maxlag @+3  ##.### aIC
+do maxlag=1,6
+linreg(noprint) d_rshort /
+# constant rshort{1} d_rshort{1 to maxlag}
+  compute c2 = %rss/float(%nobs)
+  compute c3 = log(c2)
+  compute c4 = float(%nreg)*2.0/float(%nobs)
+  compute aic = c3+c4
+  display @5 #### maxlag @+3  ##.### aIC
+end do
+
+linreg(print) d_rshort /
+# constant rshort{1} d_rshort{1 to 6}
+
+display '   Lags   AIC  '
+compute [integer] maxlag = 0
+linreg(noprint) d_rlong /
+# constant rlong{1}
+  compute c2 = %rss/float(%nobs)
+  compute c3 = log(c2)
+  compute c4 = float(%nreg)*2.0/float(%nobs)
+  compute aic = c3+c4
+  display @5 #### maxlag @+3  ##.### aIC
+do maxlag=1,6
+linreg(noprint) d_rlong /
+# constant rlong{1} d_rlong{1 to maxlag}
+  compute c2 = %rss/float(%nobs)
+  compute c3 = log(c2)
+  compute c4 = float(%nreg)*2.0/float(%nobs)
+  compute aic = c3+c4
+  display @5 #### maxlag @+3  ##.### aIC
+end do
+
+linreg(print) d_rlong /
+# constant rlong{1} d_rlong{1 to 6}
+
+display '   Lags   AIC  '
+compute [integer] maxlag = 0
+linreg(noprint) d_rspread /
+# constant rspread{1}
+  compute c2 = %rss/float(%nobs)
+  compute c3 = log(c2)
+  compute c4 = float(%nreg)*2.0/float(%nobs)
+  compute aic = c3+c4
+  display @5 #### maxlag @+3  ##.### aIC
+do maxlag=1,6
+linreg(noprint) d_rspread /
+# constant rspread{1} d_rspread{1 to maxlag}
+  compute c2 = %rss/float(%nobs)
+  compute c3 = log(c2)
+  compute c4 = float(%nreg)*2.0/float(%nobs)
+  compute aic = c3+c4
+  display @5 #### maxlag @+3  ##.### aIC
+end do
+
+linreg(print) d_rspread /
+# constant rspread{1} d_rspread{1 to 6}
+*
+* DOLS
+*
+linreg(print,robust,lags=7,lwindow=newey) rshort /
+# constant rlong d_rlong{-4 to 4}
+*

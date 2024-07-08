@@ -1,0 +1,77 @@
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  /Users/mwatson/Dropbox/TB/4E/WebSupplements/ForStudents/SW_4E_ReplicationFiles/Chapter_5/SW_4E_ch5.log
+  log type:  text
+ opened on:  24 Sep 2018, 14:39:10
+
+. ***********************************;
+. * Read In Data;
+.  * (Note: Change path name so that it is appropriate for your computer);
+. use "/Users/mwatson/Dropbox/TB/4E/WebSupplements/ForStudents/SW_4E_ReplicationFiles/Replication_Data/caschool.dta";
+
+. *;
+. *;
+. * Decription of Data;
+. * dist_code -- district Code;
+. * Read_scr  -- avg Reading Score;
+. * Math_scr  -- avg Math Score;
+. * County   --  county;
+. * District -- District;
+. * gr_span -- grade span of district;
+. * enrl_tot -- total enrollment;
+. * teachers -- number of teachers;
+. * computer -- number of computers;
+. * testscr -- avg test score (= (read_scr+math_scr)/2 );
+. * comp_stu -- computers per student ( = computer/enrl_tot);
+. * expn_stu -- expentitures per student;
+. * str -- student teacher ration (teachers/enrl_tot);
+. * el_pct -- percent of English Learners;
+. * Meal_pct -- Percent qualifying for reduced-price lunch;
+. * clw_pct -- Percent qualifying for CalWorks;
+. * aving -- district average income (in $1000's);
+. **************************************************************;
+. ***** Equation 5.8 ******
+> **************************************************************;
+. reg testscr str, r;
+
+Linear regression                               Number of obs     =        420
+                                                F(1, 418)         =      19.26
+                                                Prob > F          =     0.0000
+                                                R-squared         =     0.0512
+                                                Root MSE          =     18.581
+
+------------------------------------------------------------------------------
+             |               Robust
+     testscr |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+         str |  -2.279808   .5194892    -4.39   0.000    -3.300945   -1.258671
+       _cons |    698.933   10.36436    67.44   0.000     678.5602    719.3057
+------------------------------------------------------------------------------
+
+. **************************************************************;
+. ***** Equation 5.18 ******
+> **************************************************************;
+. gen d = (str<20);
+
+. reg testscr d, r;
+
+Linear regression                               Number of obs     =        420
+                                                F(1, 418)         =      16.34
+                                                Prob > F          =     0.0001
+                                                R-squared         =     0.0369
+                                                Root MSE          =     18.721
+
+------------------------------------------------------------------------------
+             |               Robust
+     testscr |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+           d |    7.37241   1.823578     4.04   0.000     3.787884    10.95694
+       _cons |   649.9788   1.322892   491.33   0.000     647.3785    652.5792
+------------------------------------------------------------------------------
+
+. log close;
+      name:  <unnamed>
+       log:  /Users/mwatson/Dropbox/TB/4E/WebSupplements/ForStudents/SW_4E_ReplicationFiles/Chapter_5/SW_4E_ch5.log
+  log type:  text
+ closed on:  24 Sep 2018, 14:39:10
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

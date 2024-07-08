@@ -1,0 +1,309 @@
+calendar 1957 1 4
+all 0 2017:4
+clear(all)
+
+***************** Read in Data ****************
+**** Read in Quarterly data ****
+open data /Users/mwatson/Dropbox/TB/4E/ReplicationMaterials/Final/ReplicationData/us_macro_quarterly.rat
+data(for=rats) / gdpc1 japan_ip
+close data
+***** Read in Monthly data ***
+open data /Users/mwatson/Dropbox/TB/4E/WebSupplements/ForStudents/SW_4E_ReplicationFiles/Replication_Data/us_macro_monthly.rat
+data(for=rats,compact=average) / cpiaucsl gs10 gs1 tb3ms fedfunds unrate exusuk
+close data
+************************************************
+*
+*************** Transformations *****************
+set y / = log(gdpc1(t))
+set dy / = y(t)-y(t-1)
+set ygrowth / = 400*dy(t);
+set trend / = t
+
+set rlong / = gs10(t)
+set rshort / = tb3ms(t)
+set rspread / = rlong(t)-rshort(t)
+set d_rspread / = rspread(t)-rspread(t-1)
+set d_rlong / = rlong(t)-rlong(t-1)
+set d_rshort / = rshort(t)-rshort(t-1)
+
+set ln_jap_ip = log(japan_ip(t))
+set jap_ip_growth = 400*(ln_jap_ip(t)-ln_jap_ip(t-1))
+
+*********** Graph log GDP and GDP growth rates for Figure 15.1 ***********
+* Figure 15.1
+* This uses the SPGRAPH instruction which (among other things) can put
+* multiple graphs on a single page. The VFIELDS=2 indicates two fields
+* in the vertical direction, one atop the other. The SPGRAPH(DONE) after
+* the two graph instructions signals that the overall graph is finished.
+*
+* The recession indicator series isn't provided on the data set
+* It's generated here, using the NBER series. The shading option on
+* the GRAPH for the unemployment rate is employed to shade the sets of
+* entries where the RECESSION series is 1.
+*
+set recession = 0.0
+set recession 1960:2 1961:1 = 1.0
+set recession 1969:4 1970:4 = 1.0
+set recession 1973:4 1975:1 = 1.0
+set recession 1980:1 1980:3 = 1.0
+set recession 1981:3 1982:4 = 1.0
+set recession 1990:3 1991:1 = 1.0
+set recession 2001:1 2001:4 = 1.0
+set recession 2007:4 2009:2 = 1.0
+*
+spgraph(vfields=2,header='Figure 15.1 The Laograithm and the Growth Rate of Real GDP in the United States, 1960-2017')
+graph(hlabel='(a) US GDP ($2009, Billions)', vlabel = 'Logarithm',shading=recession)
+# y 1960:1 2017:4
+graph(hlabel='(b) Growth Rate in US GDP',vlabel = 'Percent at an annual rate',shading=recession)
+# ygrowth 1960:1 2017:1
+spgraph(done)
+smpl 1960:1 2017:4
+open copy fig15_1.xls
+copy(org=obs,for=xls,dates) / y ygrowth recession
+close copy
+*
+* Some Values referenced in text
+*
+print(nodates) 1960:1 2017:4 ygrowth
+print(dates) 1960:1 2017:4 gdpc1 y ygrowth
+print(dates) 2016:3 2017:4 y ygrowth
+statistics ygrowth 1960:1 2017:4
+*
+****** First 4 Autocorrelations reported in Text 
+cor(number = 4, method = yule) ygrowth 1960:1 2017:4
+*****
+*
+****** Data plotted in Panels (a)-(c) for Figure 15.2
+spgraph(vfields=2,hfields=2,header='Figure 15.2 Four Economic Time Series')
+graph(hlabel='(a) US Uenmployment Rate',vlabel='Percent')
+# unrate 1960:1 2017:4
+graph(hlabel='(c) Logarithm of Index of Industrial Production in Japan',vlabel='Logarithm')
+# ln_jap_ip 1960:1 2017:4
+graph(hlabel='(b) U.S. Dollar/British Pound Exchagne Rate',min=0,max=3,vlabel='Dollars per pound')
+# exusuk 1960:1 2017:4
+spgraph(done)
+*
+smpl 1960:1 2017:4
+open copy fig15_2_ac.xls
+copy(org=obs,for=xls,dates) / unrate exusuk ln_jap_ip
+close copy
+*
+*
+********* AR Models for Real GDP
+* Estimation Sample Period
+compute s_first = (1962:1)
+compute s_last = (2017:3);
+*
+* AR(1)
+linreg(robust) ygrowth s_first s_last
+# constant ygrowth{1 to 1}
+compute forc_2017q4=%beta(1)+%beta(2)*ygrowth(2017:3)
+disp 'AR(1) Forecast of GDP Growth' @30 forc_2017q4
+disp 'Actual GDP Growth' @30 ygrowth(2017:4)
+
+
+* AR(2)
+linreg(robust) ygrowth s_first s_last
+# constant ygrowth{1 to 2}
+compute forc_2017q4=%beta(1)+%beta(2)*ygrowth(2017:3)+%beta(3)*ygrowth(2017:2)
+disp 'AR(2) Forecast of GDP Growth' @30 forc_2017q4
+disp 'Actual GDP Growth' @30 ygrowth(2017:4)
+*
+*
+******** Figure 15.3 **** Term Spread *********
+spgraph(vfields=2,header='Figure 15.3 Interest Rates and the Term Spread, 1960-2017')
+graph(hlabel='(a) 10-Year Interest Rate and Three-Month Interest Rate', vlabel = 'Percent per annum',shading=recession) 2
+# gs10 1960:1 2017:4
+# tb3ms 1960:1 2017:4
+grtext(entry=1985:3,y=13.9,valign=center) '10-Year Interest Rate'
+grtext(entry=1977:1,y=4.0,valign=center) '3-Month Interest Rate'
+graph(hlabel='(b) Term Spread',vlabel = 'Percent per annum',shading=recession)
+# rspread 1960:1 2017:4
+spgraph(done)
+*
+smpl 1960:1 2017:4
+open copy fig15_3.xls
+copy(org=obs,for=xls,dates) / gs10 tb3ms rspread recession
+close copy
+print(dates) / gs10 tb3ms rspread
+print(nodates) 1960:1 2017:4 rspread
+**** ADL Models ***
+** ADL(2,1) **
+linreg(robust) ygrowth s_first s_last
+# constant ygrowth{1 to 2} rspread{1}
+compute forc_2017q4=%beta(1)+%beta(2)*ygrowth(2017:3)+%beta(3)*ygrowth(2017:2)+%beta(4)*rspread(2017:3)
+disp 'ADL(2,1) Forecast of GDP Growth' @30 forc_2017q4
+disp 'Actual GDP Growth' @30 ygrowth(2017:4)
+*
+** ADL(2,2) **
+linreg(robust) ygrowth s_first s_last
+# constant ygrowth{1 to 2} rspread{1 to 2}
+exclude
+# rspread{1 to 2}
+compute forc_2017q4=%beta(1)+%beta(2)*ygrowth(2017:3)+%beta(3)*ygrowth(2017:2)+%beta(4)*rspread(2017:3)+%beta(5)*rspread(2017:2)
+disp 'ADL(2,2) Forecast of GDP Growth' @30 forc_2017q4
+disp 'Actual GDP Growth' @30 ygrowth(2017:4)
+*
+* Out of sample calculations for POOS
+*
+*
+compute ps_sfirst = (1962:1)
+compute ps_ffirst = (2006:4)
+set fcst_ar1 ps_ffirst+1 2017:4 = 9999.0
+set fcst_ar2 ps_ffirst+1 2017:4 = 9999.0
+do t1=ps_ffirst, s_last
+ linreg(noprint) ygrowth ps_sfirst t1 res coef
+ # constant ygrowth{1}
+ prj dfcst t1+1 t1+1
+ set fcst_ar1 t1+1 t1+1 = dfcst
+ linreg(noprint) ygrowth ps_sfirst t1 res coef
+ # constant ygrowth{1 to 2}
+ prj dfcst t1+1 t1+1
+ set fcst_ar2 t1+1 t1+1 = dfcst
+end do t1
+set fcst_err_ar1 ps_ffirst+1 s_last+1 = ygrowth-fcst_ar1
+set fcst_err_ar2 ps_ffirst+1 s_last+1 = ygrowth-fcst_ar2
+set fcst_err2_ar1 ps_ffirst+1 s_last+1 = fcst_err_ar1*fcst_err_ar1
+set fcst_err2_ar2 ps_ffirst+1 s_last+1 = fcst_err_ar2*fcst_err_ar2
+statistics fcst_err_ar1 ps_ffirst+1  s_last+1
+statistics fcst_err2_ar1 ps_ffirst+1  s_last+1
+statistics fcst_err_ar2 ps_ffirst+1  s_last+1
+statistics fcst_err2_ar2 ps_ffirst+1  s_last+1
+*
+* AIC BIC Calculations
+*
+* 
+* AR Models
+*
+report(action=define,hlabels=||'p','SSR(p)/T','ln(SSR(p)/T)','(p+1)ln(T)/T','BIC(p)','AIC(p)','R**2'||)
+do maxlag=0,6
+   if maxlag==0 {
+      linreg(print,robust) ygrowth s_first s_last
+      # constant
+   }
+   else {
+      linreg(print,robust) ygrowth s_first s_last
+      # constant ygrowth{1 to maxlag}
+   }
+   compute c2=%rss/%nobs,c3=log(c2),c4=%nreg*log(%nobs)/%nobs,c5=%nreg*2.0/%nobs
+   compute bic=c3+c4
+   compute aic=c3+c5
+   report(row=new,atcol=1) maxlag c2 c3 c4 bic aic %rsquared
+end do
+report(action=format,picture='*.###')
+report(action=show)
+*
+* 
+* ADL Models
+*
+report(action=define,hlabels=||'p','SSR(p)/T','ln(SSR(p)/T)','(p+1)ln(T)/T','BIC(p)','AIC(p)','R**2'||)
+do maxlag=0,6
+   if maxlag==0 {
+      linreg(print,robust) ygrowth s_first s_last
+      # constant
+   }
+   else {
+      linreg(print,robust) ygrowth s_first s_last
+      # constant ygrowth{1 to maxlag} rspread{1 to maxlag}
+   }
+   compute c2=%rss/%nobs,c3=log(c2),c4=%nreg*log(%nobs)/%nobs,c5=%nreg*2.0/%nobs
+   compute bic=c3+c4
+   compute aic=c3+c5
+   report(row=new,atcol=1) maxlag c2 c3 c4 bic aic %rsquared
+end do
+report(action=format,picture='*.###')
+report(action=show)
+*
+* U.S. Unemployment Rate and Japan IP
+* 
+linreg unrate 1962:1 1985:4
+# constant ln_jap_ip
+linreg unrate 1986:1 2017:4
+# constant ln_jap_ip
+*
+*
+* Dickey Fuller
+*
+linreg dy s_first s_last
+# constant trend y{1} dy{1 to 2}
+*
+*
+* QLR Results -- Has the Term Spread forecasting regression model been stable?
+*
+compute [integer] n = s_last - s_first
+compute [integer] tskip = fix(0.15*n)
+compute t1 = s_first+tskip+1
+compute t2 = s_last-tskip-1;
+set fstat t1 t2 = 0.0
+*
+do t3 = t1,t2
+   set dc = t > t3;
+   set d1 = dc*rspread{1}
+   set d2 = dc*rspread{2}
+ linreg(noprint,robust) ygrowth s_first s_last
+ # constant ygrowth{1 to 2} rspread{1 to 2} dc d1 d2 
+ compute fac = float(%ndf)/float(%nobs)
+ exclude(noprint)
+ # dc d1 d2 
+ set fstat t3 t3 = fac*%cdstat/3.0
+end do
+*
+extremum(print) fstat
+compute qlr = %maximum
+disp 'qlr' @30 qlr
+spgraph
+graph(min = 0.0, max = 7.0,vgrid=||6.02,4.71||,header='Figure 15.5 F-Statistics for a Break in Equation (15.15) at Different Dates')
+# fstat t1 t2
+grtext(entry=1996:1,y=6.02,valign=center) '1% Critical Value'
+grtext(entry=1996:1,y=4.71,valign=center) '5% Critical Value'
+spgraph(done) 
+smpl 1960:1 2017:3
+open copy fig15_5.xls
+copy(org=obs,for=xls,dates) / fstat
+close copy
+
+print(dates) / fstat
+*
+*
+*
+*
+* Out-of-sample forecasting .. figure 15.6
+*
+compute ps_sfirst = (1981:1)
+compute ps_ffirst = (2002:4)
+* Regression for first date
+linreg(noprint) ygrowth ps_sfirst ps_ffirst
+ # constant ygrowth{1 to 2} rspread{1 to 2}
+ 
+set fcst ps_ffirst+1 s_last+1 = 9999.0
+do t1=ps_ffirst, s_last
+ linreg(noprint) ygrowth ps_sfirst t1 res coef
+ # constant ygrowth{1 to 2} rspread{1 to 2}
+ prj dfcst t1+1 t1+1
+ set fcst t1+1 t1+1 = dfcst
+end do t1
+set fcst_err  ps_ffirst+1 s_last+1 = ygrowth-fcst
+set fcst_err2 ps_ffirst+1 s_last+1 = fcst_err*fcst_err
+statistics fcst_err ps_ffirst+1  s_last+1
+statistics fcst_err ps_ffirst+1  2007:4
+statistics fcst_err 2008:1 2017:4
+statistics fcst_err 2008:1 2008:4
+statistics fcst_err2 ps_ffirst+1  s_last+1
+statistics fcst_err2 ps_ffirst+1  2007:4
+statistics fcst_err2 2008:1 2017:4
+statistics fcst_err2 2008:1 2008:4
+print(dates) ps_ffirst+1  s_last+1 ygrowth fcst fcst_err
+graph(style=lines,header='Figure 15.6 US GDP Growth Rates and Pseudo Out-of-Sample Forecasts') 2
+# ygrowth ps_ffirst+1  s_last+1
+# fcst ps_ffirst+1  s_last+1
+
+smpl ps_ffirst+1  s_last+1
+open copy fig15_6.xls
+copy(org=obs,for=xls,dates) / ygrowth fcst
+close copy
+
+
+print(dates) ps_ffirst+1  s_last+1 ygrowth fcst
+
+linreg(robust) ygrowth ps_sfirst ps_ffirst
+# constant ygrowth{1 to 2} rspread{1 to 2}
