@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Empirical Exercises &#8212; Stock and Watson Introduction to  Econometrics Python Solutions</title>
+    <title>4. Linear Regression with One Regressor &#8212; Stock and Watson Introduction to  Econometrics Python Solutions By Ahmed H. Darwish</title>
   
   
   
@@ -32,7 +32,7 @@
     <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=a3416100" />
     <link rel="stylesheet" type="text/css" href="_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css?v=be8a1c11" />
     <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css?v=4fa983c6" />
     <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=87e54e7c" />
   
@@ -62,7 +62,8 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'four';</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="prev" title="Cross Sectional Data" href="one.html" />
+    <link rel="next" title="5. Regression with a Single Regressor: Hypothesis Tests and Confidence Intervals" href="five.html" />
+    <link rel="prev" title="3. Review of Statistics" href="three.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -149,14 +150,8 @@
   
   
   
-    
-    
-      
-    
-    
-    <img src="_static/logo.png" class="logo__image only-light" alt="Stock and Watson Introduction to  Econometrics Python Solutions - Home"/>
-    <script>document.write(`<img src="_static/logo.png" class="logo__image only-dark" alt="Stock and Watson Introduction to  Econometrics Python Solutions - Home"/>`);</script>
   
+    <p class="title logo__title">Stock and Watson Introduction to  Econometrics Python Solutions By Ahmed H. Darwish</p>
   
 </a></div>
         <div class="sidebar-primary-item">
@@ -176,16 +171,30 @@
         <ul class="nav bd-sidenav bd-sidenav__home-link">
             <li class="toctree-l1">
                 <a class="reference internal" href="intro.html">
-                    Welcome to your Jupyter Book
+                    Welcome
                 </a>
             </li>
         </ul>
         <ul class="current nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="one.html">Cross Sectional Data</a></li>
-
-
-
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">Empirical Exercises</a></li>
+<li class="toctree-l1"><a class="reference internal" href="one.html">1. Economic Questions and Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="two.html">2. Review of Probability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="three.html">3. Review of Statistics</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">4. Linear Regression with One Regressor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="five.html">5. Regression with a Single Regressor: Hypothesis Tests and Confidence Intervals</a></li>
+<li class="toctree-l1"><a class="reference internal" href="six.html">6. Linear Regression with Multiple Regressors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="seven.html">7. Hypothesis Tests and Confidence Intervals in Multiple Regression</a></li>
+<li class="toctree-l1"><a class="reference internal" href="eight.html">8. Nonlinear Regression Functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="nine.html">9. Assessing Studies Based on Multiple Regression</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ten.html">10. Regression with Panel Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="eleven.html">11. Regression with a Binary Dependent Variable</a></li>
+<li class="toctree-l1"><a class="reference internal" href="twelve.html">12. Instrumental Variables Regression</a></li>
+<li class="toctree-l1"><a class="reference internal" href="thirteen.html">13. Experiments and Quasi-Experiments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fourteen.html">14. Prediction with Many Regressors and Big Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fifteen.html">15. Introduction to Time SeriesRegression and Forecasting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sixteen.html">16. Estimation of Dynamic Causal Effects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="seventeen.html">17. Additional Topics in Time Series Regression</a></li>
+<li class="toctree-l1"><a class="reference internal" href="eighteen.html">18. The Theory of Linear Regression with One Regressor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="nineteen.html">19. The Theory of Multiple Regression</a></li>
 </ul>
 
     </div>
@@ -358,7 +367,9 @@ document.write(`
   </button>
 `);
 </script>
-
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
 </div></div>
       
     </div>
@@ -369,11 +380,19 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>Empirical Exercises</h1>
+    <h1>4. Linear Regression with One Regressor</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
             
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#empirical-exercises">Empirical Exercises</a></li>
+</ul>
+            </nav>
         </div>
     </div>
 </div>
@@ -383,7 +402,9 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <div class="cell docutils container">
+  <section class="tex2jax_ignore mathjax_ignore" id="linear-regression-with-one-regressor">
+<h1>4. Linear Regression with One Regressor<a class="headerlink" href="#linear-regression-with-one-regressor" title="Link to this heading">#</a></h1>
+<div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
@@ -398,7 +419,7 @@ document.write(`
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="s2">&quot;../Econometrics4e_Replication_Files/Replication Data/caschool.xlsx&quot;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="s2">&quot;data/replication/Replication Data/caschool.xlsx&quot;</span><span class="p">)</span>
 <span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -582,56 +603,49 @@ document.write(`
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;student_teacher_ratio&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;enrl_tot&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;teachers&#39;</span><span class="p">]</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;student_teacher_ratio&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;str&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>np.float64(19.640425316571594)
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>np.float64(19.64042526199704)
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;student_teacher_ratio&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">std</span><span class="p">()</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;str&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">std</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>np.float64(1.891811778198605)
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>np.float64(1.8918117872336757)
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sns</span><span class="o">.</span><span class="n">scatterplot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s1">&#39;student_teacher_ratio&#39;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s1">&#39;testscr&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">df</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">31</span><span class="p">,</span><span class="mi">5</span><span class="p">))</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">yticks</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">600</span><span class="p">,</span><span class="mi">721</span><span class="p">,</span><span class="mi">20</span><span class="p">))</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sns</span><span class="o">.</span><span class="n">scatterplot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s1">&#39;str&#39;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s1">&#39;testscr&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">df</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">31</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">yticks</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">600</span><span class="p">,</span> <span class="mi">721</span><span class="p">,</span> <span class="mi">20</span><span class="p">))</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/266a8c23e21b0baba96d816aa8ecdd5a43780413d2176b41e3fa20d3d778f4db.png" src="_images/266a8c23e21b0baba96d816aa8ecdd5a43780413d2176b41e3fa20d3d778f4db.png" />
+<img alt="_images/2b6422083cb96b36521f5115eb2312af8c75cbf3e364d9085e2f127de7f0919d.png" src="_images/2b6422083cb96b36521f5115eb2312af8c75cbf3e364d9085e2f127de7f0919d.png" />
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;student_teacher_ratio&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">corr</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;testscr&#39;</span><span class="p">])</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;str&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">corr</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;testscr&#39;</span><span class="p">])</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>np.float64(-0.22636275333228134)
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>np.float64(-0.22636275108686532)
 </pre></div>
 </div>
 </div>
@@ -644,14 +658,14 @@ TestScore = \beta_o + \beta_1 \times STR
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sns</span><span class="o">.</span><span class="n">regplot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s1">&#39;str&#39;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s1">&#39;testscr&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">df</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">31</span><span class="p">,</span><span class="mi">5</span><span class="p">))</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">yticks</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">600</span><span class="p">,</span><span class="mi">721</span><span class="p">,</span><span class="mi">20</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">31</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">yticks</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">600</span><span class="p">,</span> <span class="mi">721</span><span class="p">,</span> <span class="mi">20</span><span class="p">))</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/86ec98a271a88d52ba849bf832129f400eea695d672316a5af101e4cbf823e3b.png" src="_images/86ec98a271a88d52ba849bf832129f400eea695d672316a5af101e4cbf823e3b.png" />
+<img alt="_images/c6836a720fd37d9ff8e7443b5f26e449800b36ee42404d6d82ece10d9e628327.png" src="_images/c6836a720fd37d9ff8e7443b5f26e449800b36ee42404d6d82ece10d9e628327.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -674,10 +688,10 @@ TestScore = \beta_o + \beta_1 \times STR
   <th>Method:</th>             <td>Least Squares</td>  <th>  F-statistic:       </th> <td>   22.58</td>
 </tr>
 <tr>
-  <th>Date:</th>             <td>Fri, 05 Jul 2024</td> <th>  Prob (F-statistic):</th> <td>2.78e-06</td>
+  <th>Date:</th>             <td>Mon, 08 Jul 2024</td> <th>  Prob (F-statistic):</th> <td>2.78e-06</td>
 </tr>
 <tr>
-  <th>Time:</th>                 <td>20:14:22</td>     <th>  Log-Likelihood:    </th> <td> -1822.2</td>
+  <th>Time:</th>                 <td>17:35:16</td>     <th>  Log-Likelihood:    </th> <td> -1822.2</td>
 </tr>
 <tr>
   <th>No. Observations:</th>      <td>   420</td>      <th>  AIC:               </th> <td>   3648.</td>
@@ -951,10 +965,10 @@ scatterplot  around the regression line as measured in points on the test.
 This large spread means that predictions of test scores made using only the student–
 teacher ratio for that district will often be wrong by a large amount.</p>
 <section id="empirical-exercises">
-<h1>Empirical Exercises<a class="headerlink" href="#empirical-exercises" title="Link to this heading">#</a></h1>
+<h2>Empirical Exercises<a class="headerlink" href="#empirical-exercises" title="Link to this heading">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df2</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="s2">&quot;../Econometrics 4e Data Files/Growth (EE 4.1, 5.2, 6.2)/Growth.xlsx&quot;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df2</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="s2">&quot;data/exercises/Growth (EE 4.1, 5.2, 6.2)/Growth.xlsx&quot;</span><span class="p">)</span>
 <span class="n">df2</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -1054,7 +1068,7 @@ teacher ratio for that district will often be wrong by a large amount.</p>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df3</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;../Earnings.csv&quot;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df3</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;data/exercises/Earnings_and_Height.csv&quot;</span><span class="p">)</span>
 <span class="n">df3</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -1168,7 +1182,7 @@ teacher ratio for that district will often be wrong by a large amount.</p>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df4</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;../stock04_additional/cps12.csv&quot;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df4</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;data/additional/cps12.csv&quot;</span><span class="p">)</span>
 <span class="n">df4</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -1246,7 +1260,7 @@ teacher ratio for that district will often be wrong by a large amount.</p>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df5</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="s2">&quot;../stock04_additional/TeachingRatings.xlsx&quot;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df5</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="s2">&quot;data/additional/TeachingRatings.xlsx&quot;</span><span class="p">)</span>
 <span class="n">df5</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -1342,7 +1356,7 @@ teacher ratio for that district will often be wrong by a large amount.</p>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df6</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="s2">&quot;../stock04_additional/CollegeDistance.xlsx&quot;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df6</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="s2">&quot;data/additional/CollegeDistance.xlsx&quot;</span><span class="p">)</span>
 <span class="n">df6</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -1473,6 +1487,7 @@ teacher ratio for that district will often be wrong by a large amount.</p>
 </div></div></div>
 </div>
 </section>
+</section>
 
     <script type="text/x-thebe-config">
     {
@@ -1505,13 +1520,22 @@ teacher ratio for that district will often be wrong by a large amount.</p>
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="one.html"
+       href="three.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Cross Sectional Data</p>
+        <p class="prev-next-title">3. Review of Statistics</p>
       </div>
+    </a>
+    <a class="right-next"
+       href="five.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">5. Regression with a Single Regressor: Hypothesis Tests and Confidence Intervals</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
     </a>
 </div>
                 </footer>
@@ -1519,6 +1543,21 @@ teacher ratio for that district will often be wrong by a large amount.</p>
             </div>
             
             
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#empirical-exercises">Empirical Exercises</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
               
             
           </div>
@@ -1539,7 +1578,7 @@ By Ahmed H. Darwish
 
   <p class="copyright">
     
-      © Copyright 2023.
+      © Copyright 2024.
       <br/>
     
   </p>
