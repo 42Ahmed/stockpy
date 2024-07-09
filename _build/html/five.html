@@ -57,6 +57,8 @@
     <script async="async" src="_static/sphinx-thebe.js?v=c100c467"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'five';</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -365,7 +367,9 @@ document.write(`
   </button>
 `);
 </script>
-
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
 </div></div>
       
     </div>
@@ -381,6 +385,34 @@ document.write(`
     <div id="print-main-content">
         <div id="jb-print-toc">
             
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#testing-hypothesis-about-one-of-the-regression-coefficients">Testing Hypothesis About One Of The Regression Coefficients</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#two-sided-hypothesis-concerning-beta-1">Two sided Hypothesis concerning <span class="math notranslate nohighlight">\(\beta_1\)</span></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#reporting-regression-equation">Reporting Regression Equation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#one-sided-hypothesis-concerning-beta-1">one sided Hypothesis concerning <span class="math notranslate nohighlight">\(\beta_1\)</span></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#confidence-intervals-for-a-regression-coefficient">Confidence Intervals for a Regression Coefficient</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#confidence-intervals-for-predicted-effects-of-changing-x">Confidence intervals for predicted effects of changing X.</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#regression-when-x-is-a-binary-variable">Regression When X Is a Binary Variable</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#heteroskedasticity-and-homoskedasticity">Heteroskedasticity and Homoskedasticity</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-concepts">Key Concepts</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#general-form-of-the-t-statistic">1. General Form of the t-Statistic</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#testing-the-hypothesis-beta-1-beta-1-0">2. Testing the Hypothesis  <span class="math notranslate nohighlight">\( \beta_1 = \beta_{1,0} \)</span></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#against-the-alternative-beta-1-neq-beta-1-0">Against the Alternative <span class="math notranslate nohighlight">\( \beta_1 \neq \beta_{1,0} \)</span></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#confidence-interval">3. Confidence Interval</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">4. Heteroskedasticity and Homoskedasticity</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exercises">Exercises</a></li>
+</ul>
+            </nav>
         </div>
     </div>
 </div>
@@ -392,7 +424,814 @@ document.write(`
                   
   <section class="tex2jax_ignore mathjax_ignore" id="regression-with-a-single-regressor-hypothesis-tests-and-confidence-intervals">
 <h1>5. Regression with a Single Regressor: Hypothesis Tests and Confidence Intervals<a class="headerlink" href="#regression-with-a-single-regressor-hypothesis-tests-and-confidence-intervals" title="Link to this heading">#</a></h1>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">statsmodels.api</span> <span class="k">as</span> <span class="nn">sm</span>
+<span class="kn">import</span> <span class="nn">statsmodels.formula.api</span> <span class="k">as</span> <span class="nn">smf</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
+<span class="kn">import</span> <span class="nn">math</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="s2">&quot;data/replication/Replication Data/caschool.xlsx&quot;</span><span class="p">)</span>
+<span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>F:\miniconda3\envs\py\Lib\site-packages\openpyxl\worksheet\_reader.py:329: UserWarning: Unknown extension is not supported and will be removed
+  warn(msg)
+</pre></div>
+</div>
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Observation Number</th>
+      <th>dist_cod</th>
+      <th>county</th>
+      <th>district</th>
+      <th>gr_span</th>
+      <th>enrl_tot</th>
+      <th>teachers</th>
+      <th>calw_pct</th>
+      <th>meal_pct</th>
+      <th>computer</th>
+      <th>testscr</th>
+      <th>comp_stu</th>
+      <th>expn_stu</th>
+      <th>str</th>
+      <th>avginc</th>
+      <th>el_pct</th>
+      <th>read_scr</th>
+      <th>math_scr</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1</td>
+      <td>75119</td>
+      <td>Alameda</td>
+      <td>Sunol Glen Unified</td>
+      <td>KK-08</td>
+      <td>195</td>
+      <td>10.900000</td>
+      <td>0.510200</td>
+      <td>2.040800</td>
+      <td>67</td>
+      <td>690.799988</td>
+      <td>0.343590</td>
+      <td>6384.911133</td>
+      <td>17.889910</td>
+      <td>22.690001</td>
+      <td>0.000000</td>
+      <td>691.599976</td>
+      <td>690.000000</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>2</td>
+      <td>61499</td>
+      <td>Butte</td>
+      <td>Manzanita Elementary</td>
+      <td>KK-08</td>
+      <td>240</td>
+      <td>11.150000</td>
+      <td>15.416700</td>
+      <td>47.916698</td>
+      <td>101</td>
+      <td>661.200012</td>
+      <td>0.420833</td>
+      <td>5099.380859</td>
+      <td>21.524664</td>
+      <td>9.824000</td>
+      <td>4.583333</td>
+      <td>660.500000</td>
+      <td>661.900024</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>3</td>
+      <td>61549</td>
+      <td>Butte</td>
+      <td>Thermalito Union Elementary</td>
+      <td>KK-08</td>
+      <td>1550</td>
+      <td>82.900002</td>
+      <td>55.032299</td>
+      <td>76.322601</td>
+      <td>169</td>
+      <td>643.599976</td>
+      <td>0.109032</td>
+      <td>5501.954590</td>
+      <td>18.697226</td>
+      <td>8.978000</td>
+      <td>30.000002</td>
+      <td>636.299988</td>
+      <td>650.900024</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>4</td>
+      <td>61457</td>
+      <td>Butte</td>
+      <td>Golden Feather Union Elementary</td>
+      <td>KK-08</td>
+      <td>243</td>
+      <td>14.000000</td>
+      <td>36.475399</td>
+      <td>77.049202</td>
+      <td>85</td>
+      <td>647.700012</td>
+      <td>0.349794</td>
+      <td>7101.831055</td>
+      <td>17.357143</td>
+      <td>8.978000</td>
+      <td>0.000000</td>
+      <td>651.900024</td>
+      <td>643.500000</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>5</td>
+      <td>61523</td>
+      <td>Butte</td>
+      <td>Palermo Union Elementary</td>
+      <td>KK-08</td>
+      <td>1335</td>
+      <td>71.500000</td>
+      <td>33.108601</td>
+      <td>78.427002</td>
+      <td>171</td>
+      <td>640.849976</td>
+      <td>0.128090</td>
+      <td>5235.987793</td>
+      <td>18.671329</td>
+      <td>9.080333</td>
+      <td>13.857677</td>
+      <td>641.799988</td>
+      <td>639.900024</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<section id="testing-hypothesis-about-one-of-the-regression-coefficients">
+<h2>Testing Hypothesis About One Of The Regression Coefficients<a class="headerlink" href="#testing-hypothesis-about-one-of-the-regression-coefficients" title="Link to this heading">#</a></h2>
+<section id="two-sided-hypothesis-concerning-beta-1">
+<h3>Two sided Hypothesis concerning <span class="math notranslate nohighlight">\(\beta_1\)</span><a class="headerlink" href="#two-sided-hypothesis-concerning-beta-1" title="Link to this heading">#</a></h3>
+<p>If taxpayer claims that class size has no effect on test score <span class="math notranslate nohighlight">\(\beta_{class size} = 0\)</span></p>
+<p>Use Heteroskedasticity-Robust Standard Errors<br />
+$<span class="math notranslate nohighlight">\(  \hat{\sigma}^2_{\beta_0} = \frac{1}{n} \times \frac{\frac{1}{n-2} \sum H_i^2\hat{u}^2_i}{{(\frac{1}{n}\sum H_i^2)}^2} \)</span>$</p>
+<div class="math notranslate nohighlight">
+\[ H_i^2 = 1 - (\frac{\bar{x}}{\frac{1}{n}\sum X^2_i})X_i\]</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">smf</span><span class="o">.</span><span class="n">ols</span><span class="p">(</span><span class="s1">&#39;testscr ~ str&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">df</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">cov_type</span><span class="o">=</span><span class="s1">&#39;HC2&#39;</span><span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="simpletable">
+<caption>OLS Regression Results</caption>
+<tr>
+  <th>Dep. Variable:</th>         <td>testscr</td>     <th>  R-squared:         </th> <td>   0.051</td>
+</tr>
+<tr>
+  <th>Model:</th>                   <td>OLS</td>       <th>  Adj. R-squared:    </th> <td>   0.049</td>
+</tr>
+<tr>
+  <th>Method:</th>             <td>Least Squares</td>  <th>  F-statistic:       </th> <td>   19.13</td>
+</tr>
+<tr>
+  <th>Date:</th>             <td>Tue, 09 Jul 2024</td> <th>  Prob (F-statistic):</th> <td>1.55e-05</td>
+</tr>
+<tr>
+  <th>Time:</th>                 <td>13:02:21</td>     <th>  Log-Likelihood:    </th> <td> -1822.2</td>
+</tr>
+<tr>
+  <th>No. Observations:</th>      <td>   420</td>      <th>  AIC:               </th> <td>   3648.</td>
+</tr>
+<tr>
+  <th>Df Residuals:</th>          <td>   418</td>      <th>  BIC:               </th> <td>   3657.</td>
+</tr>
+<tr>
+  <th>Df Model:</th>              <td>     1</td>      <th>                     </th>     <td> </td>   
+</tr>
+<tr>
+  <th>Covariance Type:</th>         <td>HC2</td>       <th>                     </th>     <td> </td>   
+</tr>
+</table>
+<table class="simpletable">
+<tr>
+      <td></td>         <th>coef</th>     <th>std err</th>      <th>z</th>      <th>P>|z|</th>  <th>[0.025</th>    <th>0.975]</th>  
+</tr>
+<tr>
+  <th>Intercept</th> <td>  698.9330</td> <td>   10.400</td> <td>   67.206</td> <td> 0.000</td> <td>  678.550</td> <td>  719.316</td>
+</tr>
+<tr>
+  <th>str</th>       <td>   -2.2798</td> <td>    0.521</td> <td>   -4.373</td> <td> 0.000</td> <td>   -3.302</td> <td>   -1.258</td>
+</tr>
+</table>
+<table class="simpletable">
+<tr>
+  <th>Omnibus:</th>       <td> 5.390</td> <th>  Durbin-Watson:     </th> <td>   0.129</td>
+</tr>
+<tr>
+  <th>Prob(Omnibus):</th> <td> 0.068</td> <th>  Jarque-Bera (JB):  </th> <td>   3.589</td>
+</tr>
+<tr>
+  <th>Skew:</th>          <td>-0.012</td> <th>  Prob(JB):          </th> <td>   0.166</td>
+</tr>
+<tr>
+  <th>Kurtosis:</th>      <td> 2.548</td> <th>  Cond. No.          </th> <td>    207.</td>
+</tr>
+</table><br/><br/>Notes:<br/>[1] Standard Errors are heteroscedasticity robust (HC2)</div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">SER</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">ssr</span><span class="o">/</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">nobs</span><span class="o">-</span><span class="mi">2</span><span class="p">))</span>
+<span class="n">SER</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>18.58096749678702
+</pre></div>
+</div>
+</div>
+</div>
+<div class="math notranslate nohighlight">
+\[ t_{act} = -4.38  \text{, p value } =  0.000 \]</div>
+<p>null hypothesis is
+rejected in favor of the two-sided alternative at the 5% significance level.</p>
+</section>
+<section id="reporting-regression-equation">
+<h3>Reporting Regression Equation<a class="headerlink" href="#reporting-regression-equation" title="Link to this heading">#</a></h3>
+<p>\begin{equation}
+\text{TestScore} = 698.9 - 2.28 \times \text{STR}
+\end{equation}</p>
+<p>\begin{equation*}
+\begin{array}{r&#64;{}r&#64;{}r}
+&amp; &amp;(10.4) &amp;(0.52)
+\end{array}
+\end{equation*}</p>
+<p>\begin{align*}
+R^2 &amp;= 0.051 \
+\text{SER} &amp;= 18.6
+\end{align*}</p>
+</section>
+<section id="one-sided-hypothesis-concerning-beta-1">
+<h3>one sided Hypothesis concerning <span class="math notranslate nohighlight">\(\beta_1\)</span><a class="headerlink" href="#one-sided-hypothesis-concerning-beta-1" title="Link to this heading">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># two sided against specific value</span>
+<span class="n">hypothesis</span> <span class="o">=</span> <span class="s1">&#39;str = 0&#39;</span>
+<span class="n">t_test</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">t_test</span><span class="p">(</span><span class="n">hypothesis</span><span class="p">)</span>
+<span class="n">t_test</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;class &#39;statsmodels.stats.contrast.ContrastResults&#39;&gt;
+                             Test for Constraints                             
+==============================================================================
+                 coef    std err          z      P&gt;|z|      [0.025      0.975]
+------------------------------------------------------------------------------
+c0            -2.2798      0.521     -4.373      0.000      -3.302      -1.258
+==============================================================================
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">t_stat</span> <span class="o">=</span> <span class="n">t_test</span><span class="o">.</span><span class="n">statistic</span>
+<span class="n">t_stat</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([[-4.37340446]])
+</pre></div>
+</div>
+</div>
+</div>
+<div class="math notranslate nohighlight">
+\[  H_1: \beta_1 &lt; 0 \]</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">stats</span>
+
+<span class="n">degree</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">nobs</span> <span class="o">-</span> <span class="mi">2</span>
+<span class="n">t_stat</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">tvalues</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">p_value</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">t</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">t_stat</span><span class="p">,</span> <span class="n">degree</span><span class="p">)</span>
+<span class="n">p_value</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>np.float64(7.730976280937029e-06)
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">int</span><span class="p">(</span><span class="mf">7.730976280937029e-06</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0
+</pre></div>
+</div>
+</div>
+</div>
+<p>reject the null hypthesis,<br />
+you can reject the angry taxpayer’s assertion that the negative estimate of the slope arose purely because of
+random sampling variation at the 1% significance level.</p>
+</section>
+</section>
+<section id="confidence-intervals-for-a-regression-coefficient">
+<h2>Confidence Intervals for a Regression Coefficient<a class="headerlink" href="#confidence-intervals-for-a-regression-coefficient" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">model</span><span class="o">.</span><span class="n">conf_int</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>0</th>
+      <th>1</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>Intercept</th>
+      <td>678.549739</td>
+      <td>719.316166</td>
+    </tr>
+    <tr>
+      <th>str</th>
+      <td>-3.301516</td>
+      <td>-1.258100</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<p>The value <span class="math notranslate nohighlight">\(\beta_1 = 0\)</span> is not contained in this confidence interval,  the hypothesis <span class="math notranslate nohighlight">\(\beta_1 = 0\)</span> can be rejected at
+the 5% significance level.</p>
+<section id="confidence-intervals-for-predicted-effects-of-changing-x">
+<h3>Confidence intervals for predicted effects of changing X.<a class="headerlink" href="#confidence-intervals-for-predicted-effects-of-changing-x" title="Link to this heading">#</a></h3>
+<p>If  the student teacher ratio is reduced  by 2</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">model</span><span class="o">.</span><span class="n">conf_int</span><span class="p">()[</span><span class="mi">1</span><span class="p">:]</span><span class="o">*-</span><span class="mi">2</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>0</th>
+      <th>1</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>str</th>
+      <td>6.603032</td>
+      <td>2.516201</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<p>decreasing the
+student–teacher ratio by 2 is estimated to increase test scores by between 2.52 and
+6.60 points, with a 95% confidence level.</p>
+</section>
+</section>
+<section id="regression-when-x-is-a-binary-variable">
+<h2>Regression When X Is a Binary Variable<a class="headerlink" href="#regression-when-x-is-a-binary-variable" title="Link to this heading">#</a></h2>
+<p>suppose you have a variable <span class="math notranslate nohighlight">\(D\)</span> that equals either 0 or 1,<br />
+1 if the student–teacher ratio is less than 20,<br />
+0 otherwise</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span><span class="o">.</span><span class="n">columns</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Index([&#39;Observation Number&#39;, &#39;dist_cod&#39;, &#39;county&#39;, &#39;district&#39;, &#39;gr_span&#39;,
+       &#39;enrl_tot&#39;, &#39;teachers&#39;, &#39;calw_pct&#39;, &#39;meal_pct&#39;, &#39;computer&#39;, &#39;testscr&#39;,
+       &#39;comp_stu&#39;, &#39;expn_stu&#39;, &#39;str&#39;, &#39;avginc&#39;, &#39;el_pct&#39;, &#39;read_scr&#39;,
+       &#39;math_scr&#39;],
+      dtype=&#39;object&#39;)
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;D&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;str&#39;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">20</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+<span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Observation Number</th>
+      <th>dist_cod</th>
+      <th>county</th>
+      <th>district</th>
+      <th>gr_span</th>
+      <th>enrl_tot</th>
+      <th>teachers</th>
+      <th>calw_pct</th>
+      <th>meal_pct</th>
+      <th>computer</th>
+      <th>testscr</th>
+      <th>comp_stu</th>
+      <th>expn_stu</th>
+      <th>str</th>
+      <th>avginc</th>
+      <th>el_pct</th>
+      <th>read_scr</th>
+      <th>math_scr</th>
+      <th>D</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1</td>
+      <td>75119</td>
+      <td>Alameda</td>
+      <td>Sunol Glen Unified</td>
+      <td>KK-08</td>
+      <td>195</td>
+      <td>10.900000</td>
+      <td>0.510200</td>
+      <td>2.040800</td>
+      <td>67</td>
+      <td>690.799988</td>
+      <td>0.343590</td>
+      <td>6384.911133</td>
+      <td>17.889910</td>
+      <td>22.690001</td>
+      <td>0.000000</td>
+      <td>691.599976</td>
+      <td>690.000000</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>2</td>
+      <td>61499</td>
+      <td>Butte</td>
+      <td>Manzanita Elementary</td>
+      <td>KK-08</td>
+      <td>240</td>
+      <td>11.150000</td>
+      <td>15.416700</td>
+      <td>47.916698</td>
+      <td>101</td>
+      <td>661.200012</td>
+      <td>0.420833</td>
+      <td>5099.380859</td>
+      <td>21.524664</td>
+      <td>9.824000</td>
+      <td>4.583333</td>
+      <td>660.500000</td>
+      <td>661.900024</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>3</td>
+      <td>61549</td>
+      <td>Butte</td>
+      <td>Thermalito Union Elementary</td>
+      <td>KK-08</td>
+      <td>1550</td>
+      <td>82.900002</td>
+      <td>55.032299</td>
+      <td>76.322601</td>
+      <td>169</td>
+      <td>643.599976</td>
+      <td>0.109032</td>
+      <td>5501.954590</td>
+      <td>18.697226</td>
+      <td>8.978000</td>
+      <td>30.000002</td>
+      <td>636.299988</td>
+      <td>650.900024</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>4</td>
+      <td>61457</td>
+      <td>Butte</td>
+      <td>Golden Feather Union Elementary</td>
+      <td>KK-08</td>
+      <td>243</td>
+      <td>14.000000</td>
+      <td>36.475399</td>
+      <td>77.049202</td>
+      <td>85</td>
+      <td>647.700012</td>
+      <td>0.349794</td>
+      <td>7101.831055</td>
+      <td>17.357143</td>
+      <td>8.978000</td>
+      <td>0.000000</td>
+      <td>651.900024</td>
+      <td>643.500000</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>5</td>
+      <td>61523</td>
+      <td>Butte</td>
+      <td>Palermo Union Elementary</td>
+      <td>KK-08</td>
+      <td>1335</td>
+      <td>71.500000</td>
+      <td>33.108601</td>
+      <td>78.427002</td>
+      <td>171</td>
+      <td>640.849976</td>
+      <td>0.128090</td>
+      <td>5235.987793</td>
+      <td>18.671329</td>
+      <td>9.080333</td>
+      <td>13.857677</td>
+      <td>641.799988</td>
+      <td>639.900024</td>
+      <td>1</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">model2</span> <span class="o">=</span> <span class="n">smf</span><span class="o">.</span><span class="n">ols</span><span class="p">(</span><span class="s1">&#39;testscr ~ D&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">df</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">cov_type</span><span class="o">=</span><span class="s1">&#39;HC2&#39;</span><span class="p">)</span>
+<span class="n">model2</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="simpletable">
+<caption>OLS Regression Results</caption>
+<tr>
+  <th>Dep. Variable:</th>         <td>testscr</td>     <th>  R-squared:         </th> <td>   0.037</td>
+</tr>
+<tr>
+  <th>Model:</th>                   <td>OLS</td>       <th>  Adj. R-squared:    </th> <td>   0.035</td>
+</tr>
+<tr>
+  <th>Method:</th>             <td>Least Squares</td>  <th>  F-statistic:       </th> <td>   16.34</td>
+</tr>
+<tr>
+  <th>Date:</th>             <td>Tue, 09 Jul 2024</td> <th>  Prob (F-statistic):</th> <td>6.29e-05</td>
+</tr>
+<tr>
+  <th>Time:</th>                 <td>13:02:22</td>     <th>  Log-Likelihood:    </th> <td> -1825.4</td>
+</tr>
+<tr>
+  <th>No. Observations:</th>      <td>   420</td>      <th>  AIC:               </th> <td>   3655.</td>
+</tr>
+<tr>
+  <th>Df Residuals:</th>          <td>   418</td>      <th>  BIC:               </th> <td>   3663.</td>
+</tr>
+<tr>
+  <th>Df Model:</th>              <td>     1</td>      <th>                     </th>     <td> </td>   
+</tr>
+<tr>
+  <th>Covariance Type:</th>         <td>HC2</td>       <th>                     </th>     <td> </td>   
+</tr>
+</table>
+<table class="simpletable">
+<tr>
+      <td></td>         <th>coef</th>     <th>std err</th>      <th>z</th>      <th>P>|z|</th>  <th>[0.025</th>    <th>0.975]</th>  
+</tr>
+<tr>
+  <th>Intercept</th> <td>  649.9788</td> <td>    1.323</td> <td>  491.151</td> <td> 0.000</td> <td>  647.385</td> <td>  652.573</td>
+</tr>
+<tr>
+  <th>D</th>         <td>    7.3724</td> <td>    1.824</td> <td>    4.043</td> <td> 0.000</td> <td>    3.798</td> <td>   10.947</td>
+</tr>
+</table>
+<table class="simpletable">
+<tr>
+  <th>Omnibus:</th>       <td> 3.061</td> <th>  Durbin-Watson:     </th> <td>   0.110</td>
+</tr>
+<tr>
+  <th>Prob(Omnibus):</th> <td> 0.216</td> <th>  Jarque-Bera (JB):  </th> <td>   2.448</td>
+</tr>
+<tr>
+  <th>Skew:</th>          <td> 0.052</td> <th>  Prob(JB):          </th> <td>   0.294</td>
+</tr>
+<tr>
+  <th>Kurtosis:</th>      <td> 2.641</td> <th>  Cond. No.          </th> <td>    2.81</td>
+</tr>
+</table><br/><br/>Notes:<br/>[1] Standard Errors are heteroscedasticity robust (HC2)</div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">SER</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">model2</span><span class="o">.</span><span class="n">ssr</span><span class="o">/</span><span class="p">(</span><span class="n">model2</span><span class="o">.</span><span class="n">nobs</span><span class="o">-</span><span class="mi">2</span><span class="p">))</span>
+<span class="n">SER</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>18.721328714828324
+</pre></div>
+</div>
+</div>
+</div>
+<p>the average test score for the subsample with student–teacher ratios greater than or equal to 20 (
+D = 0) is 650.0,<br />
+the average test score for the subsample with student–teacher
+ratios less than 20 (D = 1) is 650.0 + 7.4 = 657.4.<br />
+The difference between the sample average test scores for the two groups is 7.4. This is the OLS estimate of <span class="math notranslate nohighlight">\(\beta_1\)</span></p>
+<p>t statistic for <span class="math notranslate nohighlight">\( \beta_1 \)</span> is 4.04 with p value = 0<br />
+the hypothesis that the population mean test scores in districts with high and low student–teacher
+ratios are the same can be rejected at the 5% significance level.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">model2</span><span class="o">.</span><span class="n">conf_int</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>0</th>
+      <th>1</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>Intercept</th>
+      <td>647.385073</td>
+      <td>652.572625</td>
+    </tr>
+    <tr>
+      <th>D</th>
+      <td>3.798046</td>
+      <td>10.946774</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<p>Confidence interval excludes <span class="math notranslate nohighlight">\(\beta_1 \)</span> = 0, so that the hypothesis <span class="math notranslate nohighlight">\(\beta_1 \)</span> = 0 can be rejected at the 5% significance level.</p>
+</section>
+<section id="heteroskedasticity-and-homoskedasticity">
+<h2>Heteroskedasticity and Homoskedasticity<a class="headerlink" href="#heteroskedasticity-and-homoskedasticity" title="Link to this heading">#</a></h2>
+<p>Always use heteroskedasticity-robust standard errors</p>
+</section>
+<section id="key-concepts">
+<h2>Key Concepts<a class="headerlink" href="#key-concepts" title="Link to this heading">#</a></h2>
+<section id="general-form-of-the-t-statistic">
+<h3>1. General Form of the t-Statistic<a class="headerlink" href="#general-form-of-the-t-statistic" title="Link to this heading">#</a></h3>
+<div class="math notranslate nohighlight">
+\[
+t = \frac{\text{estimator} - \text{hypothesized value}}{\text{standard error of the estimator}}
+\]</div>
+</section>
+<section id="testing-the-hypothesis-beta-1-beta-1-0">
+<h3>2. Testing the Hypothesis  <span class="math notranslate nohighlight">\( \beta_1 = \beta_{1,0} \)</span><a class="headerlink" href="#testing-the-hypothesis-beta-1-beta-1-0" title="Link to this heading">#</a></h3>
+</section>
+<section id="against-the-alternative-beta-1-neq-beta-1-0">
+<h3>Against the Alternative <span class="math notranslate nohighlight">\( \beta_1 \neq \beta_{1,0} \)</span><a class="headerlink" href="#against-the-alternative-beta-1-neq-beta-1-0" title="Link to this heading">#</a></h3>
+<ol class="arabic simple">
+<li><p>Compute the standard error of <span class="math notranslate nohighlight">\( \beta_1\)</span> ,  <span class="math notranslate nohighlight">\(SE(\beta_1)\)</span></p></li>
+<li><p>Compute the t-statistic</p></li>
+<li><p>Compute the p-value <span class="math notranslate nohighlight">\( \text{p-value} = \Pr \left( |Z| &gt; |t_{\text{act}}| \right) = 2\Phi \left( -|t_{\text{act}}| \right)\)</span></p></li>
+</ol>
+<p>Reject the hypothesis at the 5% significance level if the p-value is less than 0.05 or, equivalently, if | <span class="math notranslate nohighlight">\(t_{act} \)</span>| &gt; 1.96.</p>
+</section>
+<section id="confidence-interval">
+<h3>3. Confidence Interval<a class="headerlink" href="#confidence-interval" title="Link to this heading">#</a></h3>
+<p>A 95% two-sided confidence interval for <span class="math notranslate nohighlight">\( \beta_1 \)</span> is an interval that contains the true
+value of <span class="math notranslate nohighlight">\( \beta_1 \)</span> with a 95% probability;<br />
+that is, it contains the true value of <span class="math notranslate nohighlight">\( \beta_1 \)</span> in 95%
+of all possible randomly drawn samples.<br />
+Equivalently, it is the set of values of <span class="math notranslate nohighlight">\( \beta_1 \)</span>
+that cannot be rejected by a 5% two-sided hypothesis test.<br />
+When the sample size
+is large, it is constructed as
+95% confidence interval for <span class="math notranslate nohighlight">\(\beta_1 = \hat{\beta_1} \pm 1.96 \times \text{SE}(\hat{\beta}_1) \)</span></p>
+</section>
+<section id="id1">
+<h3>4. Heteroskedasticity and Homoskedasticity<a class="headerlink" href="#id1" title="Link to this heading">#</a></h3>
+<p>The error term <span class="math notranslate nohighlight">\( u_i \)</span>  is homoskedastic if the variance of the conditional distribution of <span class="math notranslate nohighlight">\( u_i \)</span> given  <span class="math notranslate nohighlight">\( X_i \)</span><br />
+<span class="math notranslate nohighlight">\( \text{ var}(u_i \mid X_i = x) \)</span>, is constant for  <span class="math notranslate nohighlight">\( i = 1, \ldots, n \)</span>  and in particular does
+not depend on  <span class="math notranslate nohighlight">\( x \)</span>.  Otherwise, the error term is heteroskedastic.</p>
+</section>
+</section>
+<section id="exercises">
+<h2>Exercises<a class="headerlink" href="#exercises" title="Link to this heading">#</a></h2>
 <p>🚧 Under Construction</p>
+</section>
 </section>
 
     <script type="text/x-thebe-config">
@@ -449,6 +1288,41 @@ document.write(`
             </div>
             
             
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#testing-hypothesis-about-one-of-the-regression-coefficients">Testing Hypothesis About One Of The Regression Coefficients</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#two-sided-hypothesis-concerning-beta-1">Two sided Hypothesis concerning <span class="math notranslate nohighlight">\(\beta_1\)</span></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#reporting-regression-equation">Reporting Regression Equation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#one-sided-hypothesis-concerning-beta-1">one sided Hypothesis concerning <span class="math notranslate nohighlight">\(\beta_1\)</span></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#confidence-intervals-for-a-regression-coefficient">Confidence Intervals for a Regression Coefficient</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#confidence-intervals-for-predicted-effects-of-changing-x">Confidence intervals for predicted effects of changing X.</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#regression-when-x-is-a-binary-variable">Regression When X Is a Binary Variable</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#heteroskedasticity-and-homoskedasticity">Heteroskedasticity and Homoskedasticity</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-concepts">Key Concepts</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#general-form-of-the-t-statistic">1. General Form of the t-Statistic</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#testing-the-hypothesis-beta-1-beta-1-0">2. Testing the Hypothesis  <span class="math notranslate nohighlight">\( \beta_1 = \beta_{1,0} \)</span></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#against-the-alternative-beta-1-neq-beta-1-0">Against the Alternative <span class="math notranslate nohighlight">\( \beta_1 \neq \beta_{1,0} \)</span></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#confidence-interval">3. Confidence Interval</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">4. Heteroskedasticity and Homoskedasticity</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exercises">Exercises</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
               
             
           </div>
