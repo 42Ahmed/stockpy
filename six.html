@@ -57,6 +57,8 @@
     <script async="async" src="_static/sphinx-thebe.js?v=c100c467"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'six';</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -365,7 +367,9 @@ document.write(`
   </button>
 `);
 </script>
-
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
 </div></div>
       
     </div>
@@ -381,6 +385,24 @@ document.write(`
     <div id="print-main-content">
         <div id="jb-print-toc">
             
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#omitted-variable-bias">Omitted Variable Bias</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#addressing-ommited-variable-bias-by-dividing-data-into-groups">Addressing ommited variable bias by dividing data into groups</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#across-all-districts">across all districts,</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#differences-by-percentage-of-english-learners">Differences by Percentage of English Learners</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#why-the-differences">Why the Differences?</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#multiple-regression">Multiple Regression</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#multicollinearity">Multicollinearity</a></li>
+</ul>
+            </nav>
         </div>
     </div>
 </div>
@@ -392,7 +414,1105 @@ document.write(`
                   
   <section class="tex2jax_ignore mathjax_ignore" id="linear-regression-with-multiple-regressors">
 <h1>6. Linear Regression with Multiple Regressors<a class="headerlink" href="#linear-regression-with-multiple-regressors" title="Link to this heading">#</a></h1>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">statsmodels.api</span> <span class="k">as</span> <span class="nn">sm</span>
+<span class="kn">import</span> <span class="nn">statsmodels.formula.api</span> <span class="k">as</span> <span class="nn">smf</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
+<span class="kn">import</span> <span class="nn">math</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="s2">&quot;data/replication/Replication Data/caschool.xlsx&quot;</span><span class="p">)</span>
+<span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>F:\miniconda3\envs\py\Lib\site-packages\openpyxl\worksheet\_reader.py:329: UserWarning: Unknown extension is not supported and will be removed
+  warn(msg)
+</pre></div>
+</div>
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Observation Number</th>
+      <th>dist_cod</th>
+      <th>county</th>
+      <th>district</th>
+      <th>gr_span</th>
+      <th>enrl_tot</th>
+      <th>teachers</th>
+      <th>calw_pct</th>
+      <th>meal_pct</th>
+      <th>computer</th>
+      <th>testscr</th>
+      <th>comp_stu</th>
+      <th>expn_stu</th>
+      <th>str</th>
+      <th>avginc</th>
+      <th>el_pct</th>
+      <th>read_scr</th>
+      <th>math_scr</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1</td>
+      <td>75119</td>
+      <td>Alameda</td>
+      <td>Sunol Glen Unified</td>
+      <td>KK-08</td>
+      <td>195</td>
+      <td>10.900000</td>
+      <td>0.510200</td>
+      <td>2.040800</td>
+      <td>67</td>
+      <td>690.799988</td>
+      <td>0.343590</td>
+      <td>6384.911133</td>
+      <td>17.889910</td>
+      <td>22.690001</td>
+      <td>0.000000</td>
+      <td>691.599976</td>
+      <td>690.000000</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>2</td>
+      <td>61499</td>
+      <td>Butte</td>
+      <td>Manzanita Elementary</td>
+      <td>KK-08</td>
+      <td>240</td>
+      <td>11.150000</td>
+      <td>15.416700</td>
+      <td>47.916698</td>
+      <td>101</td>
+      <td>661.200012</td>
+      <td>0.420833</td>
+      <td>5099.380859</td>
+      <td>21.524664</td>
+      <td>9.824000</td>
+      <td>4.583333</td>
+      <td>660.500000</td>
+      <td>661.900024</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>3</td>
+      <td>61549</td>
+      <td>Butte</td>
+      <td>Thermalito Union Elementary</td>
+      <td>KK-08</td>
+      <td>1550</td>
+      <td>82.900002</td>
+      <td>55.032299</td>
+      <td>76.322601</td>
+      <td>169</td>
+      <td>643.599976</td>
+      <td>0.109032</td>
+      <td>5501.954590</td>
+      <td>18.697226</td>
+      <td>8.978000</td>
+      <td>30.000002</td>
+      <td>636.299988</td>
+      <td>650.900024</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>4</td>
+      <td>61457</td>
+      <td>Butte</td>
+      <td>Golden Feather Union Elementary</td>
+      <td>KK-08</td>
+      <td>243</td>
+      <td>14.000000</td>
+      <td>36.475399</td>
+      <td>77.049202</td>
+      <td>85</td>
+      <td>647.700012</td>
+      <td>0.349794</td>
+      <td>7101.831055</td>
+      <td>17.357143</td>
+      <td>8.978000</td>
+      <td>0.000000</td>
+      <td>651.900024</td>
+      <td>643.500000</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>5</td>
+      <td>61523</td>
+      <td>Butte</td>
+      <td>Palermo Union Elementary</td>
+      <td>KK-08</td>
+      <td>1335</td>
+      <td>71.500000</td>
+      <td>33.108601</td>
+      <td>78.427002</td>
+      <td>171</td>
+      <td>640.849976</td>
+      <td>0.128090</td>
+      <td>5235.987793</td>
+      <td>18.671329</td>
+      <td>9.080333</td>
+      <td>13.857677</td>
+      <td>641.799988</td>
+      <td>639.900024</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<section id="omitted-variable-bias">
+<h2>Omitted Variable Bias<a class="headerlink" href="#omitted-variable-bias" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span><span class="o">.</span><span class="n">columns</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Index([&#39;Observation Number&#39;, &#39;dist_cod&#39;, &#39;county&#39;, &#39;district&#39;, &#39;gr_span&#39;,
+       &#39;enrl_tot&#39;, &#39;teachers&#39;, &#39;calw_pct&#39;, &#39;meal_pct&#39;, &#39;computer&#39;, &#39;testscr&#39;,
+       &#39;comp_stu&#39;, &#39;expn_stu&#39;, &#39;str&#39;, &#39;avginc&#39;, &#39;el_pct&#39;, &#39;read_scr&#39;,
+       &#39;math_scr&#39;],
+      dtype=&#39;object&#39;)
+</pre></div>
+</div>
+</div>
+</div>
+<p>Students who are still learning English might perform worse on standardized tests than
+native English speakers.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;str&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">corr</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;el_pct&quot;</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>np.float64(0.18764236785449276)
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="s1">&#39;str&#39;</span><span class="p">,</span><span class="s1">&#39;el_pct&#39;</span><span class="p">,</span> <span class="n">kind</span> <span class="o">=</span> <span class="s1">&#39;scatter&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Axes: xlabel=&#39;str&#39;, ylabel=&#39;el_pct&#39;&gt;
+</pre></div>
+</div>
+<img alt="_images/53429fc38492e736f65acc82c58f379ec00538559a8cc6ba0690cf4568ad247e.png" src="_images/53429fc38492e736f65acc82c58f379ec00538559a8cc6ba0690cf4568ad247e.png" />
+</div>
+</div>
+<p>This small but positive correlation suggests that districts with more
+English learners tend to have a higher student–teacher ratio (larger classes)</p>
+<p>It is plausible that students who are still learning English will do
+worse on standardized tests than native English speakers</p>
+<p><strong>Percentage of English learners</strong>:
+correlated with student teacher ratio ✅<br />
+determinant of test score ✅<br />
+<span class="math notranslate nohighlight">\( \therefore\)</span> omitting it leads to ommited variable bias</p>
+<p><strong>Time of day of the test</strong>:<br />
+uncorrelated with student teacher ratio ❌<br />
+determinant of test score ✅<br />
+<span class="math notranslate nohighlight">\( \therefore\)</span> omitting it does not lead to ommited variable bias</p>
+<p><strong>Parking lot space per pupil</strong>:
+(the area of the teacher parking lot divided by the number of students)</p>
+<p>correlated with student teacher ratio ✅<br />
+determinant of test score ❌<br />
+<span class="math notranslate nohighlight">\( \therefore\)</span> omitting it does not lead to ommited variable bias</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;el_pct&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0       0.000000
+1       4.583333
+2      30.000002
+3       0.000000
+4      13.857677
+         ...    
+415     5.995935
+416     4.726101
+417    24.263039
+418     2.970297
+419     5.005624
+Name: el_pct, Length: 420, dtype: float64
+</pre></div>
+</div>
+</div>
+</div>
+<section id="addressing-ommited-variable-bias-by-dividing-data-into-groups">
+<h3>Addressing ommited variable bias by dividing data into groups<a class="headerlink" href="#addressing-ommited-variable-bias-by-dividing-data-into-groups" title="Link to this heading">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">bins</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mf">1.9</span><span class="p">,</span> <span class="mf">8.8</span><span class="p">,</span> <span class="mi">23</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;inf&#39;</span><span class="p">)]</span>
+<span class="n">labels</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;&lt; 1.9&#39;</span><span class="p">,</span> <span class="s1">&#39;1.9-8.8&#39;</span><span class="p">,</span> <span class="s1">&#39;8.8-23&#39;</span><span class="p">,</span> <span class="s1">&#39;&gt; 23&#39;</span><span class="p">]</span>
+
+<span class="n">df</span><span class="p">[</span><span class="s1">&#39;el_pct_category&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">cut</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;el_pct&#39;</span><span class="p">],</span> <span class="n">bins</span><span class="o">=</span><span class="n">bins</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="n">labels</span><span class="p">,</span> <span class="n">right</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+<span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Observation Number</th>
+      <th>dist_cod</th>
+      <th>county</th>
+      <th>district</th>
+      <th>gr_span</th>
+      <th>enrl_tot</th>
+      <th>teachers</th>
+      <th>calw_pct</th>
+      <th>meal_pct</th>
+      <th>computer</th>
+      <th>testscr</th>
+      <th>comp_stu</th>
+      <th>expn_stu</th>
+      <th>str</th>
+      <th>avginc</th>
+      <th>el_pct</th>
+      <th>read_scr</th>
+      <th>math_scr</th>
+      <th>el_pct_category</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1</td>
+      <td>75119</td>
+      <td>Alameda</td>
+      <td>Sunol Glen Unified</td>
+      <td>KK-08</td>
+      <td>195</td>
+      <td>10.900000</td>
+      <td>0.510200</td>
+      <td>2.040800</td>
+      <td>67</td>
+      <td>690.799988</td>
+      <td>0.343590</td>
+      <td>6384.911133</td>
+      <td>17.889910</td>
+      <td>22.690001</td>
+      <td>0.000000</td>
+      <td>691.599976</td>
+      <td>690.000000</td>
+      <td>&lt; 1.9</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>2</td>
+      <td>61499</td>
+      <td>Butte</td>
+      <td>Manzanita Elementary</td>
+      <td>KK-08</td>
+      <td>240</td>
+      <td>11.150000</td>
+      <td>15.416700</td>
+      <td>47.916698</td>
+      <td>101</td>
+      <td>661.200012</td>
+      <td>0.420833</td>
+      <td>5099.380859</td>
+      <td>21.524664</td>
+      <td>9.824000</td>
+      <td>4.583333</td>
+      <td>660.500000</td>
+      <td>661.900024</td>
+      <td>1.9-8.8</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>3</td>
+      <td>61549</td>
+      <td>Butte</td>
+      <td>Thermalito Union Elementary</td>
+      <td>KK-08</td>
+      <td>1550</td>
+      <td>82.900002</td>
+      <td>55.032299</td>
+      <td>76.322601</td>
+      <td>169</td>
+      <td>643.599976</td>
+      <td>0.109032</td>
+      <td>5501.954590</td>
+      <td>18.697226</td>
+      <td>8.978000</td>
+      <td>30.000002</td>
+      <td>636.299988</td>
+      <td>650.900024</td>
+      <td>&gt; 23</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>4</td>
+      <td>61457</td>
+      <td>Butte</td>
+      <td>Golden Feather Union Elementary</td>
+      <td>KK-08</td>
+      <td>243</td>
+      <td>14.000000</td>
+      <td>36.475399</td>
+      <td>77.049202</td>
+      <td>85</td>
+      <td>647.700012</td>
+      <td>0.349794</td>
+      <td>7101.831055</td>
+      <td>17.357143</td>
+      <td>8.978000</td>
+      <td>0.000000</td>
+      <td>651.900024</td>
+      <td>643.500000</td>
+      <td>&lt; 1.9</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>5</td>
+      <td>61523</td>
+      <td>Butte</td>
+      <td>Palermo Union Elementary</td>
+      <td>KK-08</td>
+      <td>1335</td>
+      <td>71.500000</td>
+      <td>33.108601</td>
+      <td>78.427002</td>
+      <td>171</td>
+      <td>640.849976</td>
+      <td>0.128090</td>
+      <td>5235.987793</td>
+      <td>18.671329</td>
+      <td>9.080333</td>
+      <td>13.857677</td>
+      <td>641.799988</td>
+      <td>639.900024</td>
+      <td>8.8-23</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;D&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;str&#39;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">20</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+<span class="n">df</span><span class="p">[</span><span class="s1">&#39;D&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;D&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">({</span><span class="mi">0</span><span class="p">:</span> <span class="s1">&#39;&gt;= 20&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span> <span class="s1">&#39;&lt; 20&#39;</span><span class="p">})</span>
+<span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Observation Number</th>
+      <th>dist_cod</th>
+      <th>county</th>
+      <th>district</th>
+      <th>gr_span</th>
+      <th>enrl_tot</th>
+      <th>teachers</th>
+      <th>calw_pct</th>
+      <th>meal_pct</th>
+      <th>computer</th>
+      <th>testscr</th>
+      <th>comp_stu</th>
+      <th>expn_stu</th>
+      <th>str</th>
+      <th>avginc</th>
+      <th>el_pct</th>
+      <th>read_scr</th>
+      <th>math_scr</th>
+      <th>el_pct_category</th>
+      <th>D</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1</td>
+      <td>75119</td>
+      <td>Alameda</td>
+      <td>Sunol Glen Unified</td>
+      <td>KK-08</td>
+      <td>195</td>
+      <td>10.900000</td>
+      <td>0.510200</td>
+      <td>2.040800</td>
+      <td>67</td>
+      <td>690.799988</td>
+      <td>0.343590</td>
+      <td>6384.911133</td>
+      <td>17.889910</td>
+      <td>22.690001</td>
+      <td>0.000000</td>
+      <td>691.599976</td>
+      <td>690.000000</td>
+      <td>&lt; 1.9</td>
+      <td>&lt; 20</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>2</td>
+      <td>61499</td>
+      <td>Butte</td>
+      <td>Manzanita Elementary</td>
+      <td>KK-08</td>
+      <td>240</td>
+      <td>11.150000</td>
+      <td>15.416700</td>
+      <td>47.916698</td>
+      <td>101</td>
+      <td>661.200012</td>
+      <td>0.420833</td>
+      <td>5099.380859</td>
+      <td>21.524664</td>
+      <td>9.824000</td>
+      <td>4.583333</td>
+      <td>660.500000</td>
+      <td>661.900024</td>
+      <td>1.9-8.8</td>
+      <td>&gt;= 20</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>3</td>
+      <td>61549</td>
+      <td>Butte</td>
+      <td>Thermalito Union Elementary</td>
+      <td>KK-08</td>
+      <td>1550</td>
+      <td>82.900002</td>
+      <td>55.032299</td>
+      <td>76.322601</td>
+      <td>169</td>
+      <td>643.599976</td>
+      <td>0.109032</td>
+      <td>5501.954590</td>
+      <td>18.697226</td>
+      <td>8.978000</td>
+      <td>30.000002</td>
+      <td>636.299988</td>
+      <td>650.900024</td>
+      <td>&gt; 23</td>
+      <td>&lt; 20</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>4</td>
+      <td>61457</td>
+      <td>Butte</td>
+      <td>Golden Feather Union Elementary</td>
+      <td>KK-08</td>
+      <td>243</td>
+      <td>14.000000</td>
+      <td>36.475399</td>
+      <td>77.049202</td>
+      <td>85</td>
+      <td>647.700012</td>
+      <td>0.349794</td>
+      <td>7101.831055</td>
+      <td>17.357143</td>
+      <td>8.978000</td>
+      <td>0.000000</td>
+      <td>651.900024</td>
+      <td>643.500000</td>
+      <td>&lt; 1.9</td>
+      <td>&lt; 20</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>5</td>
+      <td>61523</td>
+      <td>Butte</td>
+      <td>Palermo Union Elementary</td>
+      <td>KK-08</td>
+      <td>1335</td>
+      <td>71.500000</td>
+      <td>33.108601</td>
+      <td>78.427002</td>
+      <td>171</td>
+      <td>640.849976</td>
+      <td>0.128090</td>
+      <td>5235.987793</td>
+      <td>18.671329</td>
+      <td>9.080333</td>
+      <td>13.857677</td>
+      <td>641.799988</td>
+      <td>639.900024</td>
+      <td>8.8-23</td>
+      <td>&lt; 20</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">grouped</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">&#39;D&#39;</span><span class="p">,</span> <span class="s1">&#39;el_pct_category&#39;</span><span class="p">],</span> <span class="n">observed</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">grouped</span><span class="o">.</span><span class="n">agg</span><span class="p">(</span>
+    <span class="n">avg_test_score</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;testscr&#39;</span><span class="p">,</span> <span class="s1">&#39;mean&#39;</span><span class="p">),</span>
+    <span class="n">n</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;testscr&#39;</span><span class="p">,</span> <span class="s1">&#39;size&#39;</span><span class="p">)</span>
+<span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>D</th>
+      <th>el_pct_category</th>
+      <th>avg_test_score</th>
+      <th>n</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>&lt; 20</td>
+      <td>&lt; 1.9</td>
+      <td>664.470391</td>
+      <td>76</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>&lt; 20</td>
+      <td>1.9-8.8</td>
+      <td>665.157029</td>
+      <td>64</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>&lt; 20</td>
+      <td>8.8-23</td>
+      <td>654.882406</td>
+      <td>54</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>&lt; 20</td>
+      <td>&gt; 23</td>
+      <td>636.730687</td>
+      <td>44</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>&gt;= 20</td>
+      <td>&lt; 1.9</td>
+      <td>665.370377</td>
+      <td>27</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>&gt;= 20</td>
+      <td>1.9-8.8</td>
+      <td>661.828405</td>
+      <td>44</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>&gt;= 20</td>
+      <td>8.8-23</td>
+      <td>649.713007</td>
+      <td>50</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>&gt;= 20</td>
+      <td>&gt; 23</td>
+      <td>634.836888</td>
+      <td>61</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">mean_crosstab</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">crosstab</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;D&#39;</span><span class="p">],</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;el_pct_category&#39;</span><span class="p">],</span>
+                            <span class="n">values</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;testscr&#39;</span><span class="p">],</span> <span class="n">aggfunc</span><span class="o">=</span><span class="s1">&#39;mean&#39;</span><span class="p">)</span>
+<span class="n">mean_crosstab</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>el_pct_category</th>
+      <th>&lt; 1.9</th>
+      <th>1.9-8.8</th>
+      <th>8.8-23</th>
+      <th>&gt; 23</th>
+    </tr>
+    <tr>
+      <th>D</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>&lt; 20</th>
+      <td>664.470391</td>
+      <td>665.157029</td>
+      <td>654.882406</td>
+      <td>636.730687</td>
+    </tr>
+    <tr>
+      <th>&gt;= 20</th>
+      <td>665.370377</td>
+      <td>661.828405</td>
+      <td>649.713007</td>
+      <td>634.836888</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">count_crosstab</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">crosstab</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;D&#39;</span><span class="p">],</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;el_pct_category&#39;</span><span class="p">])</span>
+<span class="n">count_crosstab</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>el_pct_category</th>
+      <th>&lt; 1.9</th>
+      <th>1.9-8.8</th>
+      <th>8.8-23</th>
+      <th>&gt; 23</th>
+    </tr>
+    <tr>
+      <th>D</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>&lt; 20</th>
+      <td>76</td>
+      <td>64</td>
+      <td>54</td>
+      <td>44</td>
+    </tr>
+    <tr>
+      <th>&gt;= 20</th>
+      <td>27</td>
+      <td>44</td>
+      <td>50</td>
+      <td>61</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">averageScoreSmallRatio</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;D&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;&lt; 20&#39;</span><span class="p">][</span><span class="s1">&#39;testscr&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+<span class="n">averageScoreSmallRatio</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>np.float64(657.3512591193704)
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">averageScorelargeRatio</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;D&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;&gt;= 20&#39;</span><span class="p">][</span><span class="s1">&#39;testscr&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+<span class="n">averageScorelargeRatio</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>np.float64(649.9788489708534)
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">averageScoreSmallRatio</span> <span class="o">-</span> <span class="n">averageScorelargeRatio</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>np.float64(7.3724101485170195)
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">stats</span>
+<span class="n">t_stat</span><span class="p">,</span> <span class="n">p_value</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">ttest_ind</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;D&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;&gt;= 20&#39;</span><span class="p">][</span><span class="s1">&#39;testscr&#39;</span><span class="p">],</span>
+                                   <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;D&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;&lt; 20&#39;</span><span class="p">][</span><span class="s1">&#39;testscr&#39;</span><span class="p">],</span> <span class="n">equal_var</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+<span class="n">t_stat</span><span class="p">,</span> <span class="n">p_value</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(np.float64(-4.042581848666498), np.float64(6.332554425244588e-05))
+</pre></div>
+</div>
+</div>
+</div>
+<p>null hypothesis that the mean test score is the same in the two
+groups is rejected at the 1% significance level</p>
+<section id="across-all-districts">
+<h4>across all districts,<a class="headerlink" href="#across-all-districts" title="Link to this heading">#</a></h4>
+<p>those with a low student–teacher ratio have, on average, a test score 7.4 points higher than those with a high student–teacher ratio. The t-statistic of 4.04 indicates that this difference is statistically significant.</p>
+</section>
+<section id="differences-by-percentage-of-english-learners">
+<h4>Differences by Percentage of English Learners<a class="headerlink" href="#differences-by-percentage-of-english-learners" title="Link to this heading">#</a></h4>
+<p>&lt;= 1.9%:</p>
+<p>Average test score for districts with low student–teacher ratio: 664.5<br />
+Average test score for districts with high student–teacher ratio: 665.4<br />
+Difference in test scores: -0.9<br />
+t-statistic: -0.30</p>
+<p>1.9–8.8%:</p>
+<p>Average test score for districts with low student–teacher ratio: 665.2<br />
+Average test score for districts with high student–teacher ratio: 661.8<br />
+Difference in test scores: 3.3<br />
+t-statistic: 1.13</p>
+<p>8.8–23.0%:</p>
+<p>Average test score for districts with low student–teacher ratio: 654.9<br />
+Average test score for districts with high student–teacher ratio: 649.7<br />
+Difference in test scores: 5.2<br />
+t-statistic: 1.72</p>
+<p>23.0%:</p>
+<p>Average test score for districts with low student–teacher ratio: 636.7<br />
+Average test score for districts with high student–teacher ratio: 634.8<br />
+Difference in test scores: 1.9<br />
+t-statistic: 0.68</p>
+<p>Overall Effect: The overall difference in test scores suggests that districts with low student–teacher ratios tend to have higher test scores.</p>
+<p>By Quartile: When breaking down by the percentage of English learners, the differences in test scores are smaller and less consistent. This suggests that the effect of student–teacher ratio on test scores is influenced by the percentage of English learners in the district.</p>
+</section>
+<section id="why-the-differences">
+<h4>Why the Differences?<a class="headerlink" href="#why-the-differences" title="Link to this heading">#</a></h4>
+<p>Districts with more English learners tend to have both higher student–teacher ratios and lower test scores.<br />
+The large overall difference in test scores (7.4 points) is partly due to the fact that districts with fewer English learners (who generally have higher test scores) also tend to have lower student–teacher ratios.<br />
+When you control for the percentage of English learners, the differences in test scores between low and high student–teacher ratio districts are smaller. This indicates that the percentage of English learners is an important factor that affects test scores.</p>
+</section>
+</section>
+</section>
+<section id="multiple-regression">
+<h2>Multiple Regression<a class="headerlink" href="#multiple-regression" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">smf</span><span class="o">.</span><span class="n">ols</span><span class="p">(</span><span class="s2">&quot;testscr ~ str&quot;</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">df</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">cov_type</span><span class="o">=</span><span class="s1">&#39;HC2&#39;</span><span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="simpletable">
+<caption>OLS Regression Results</caption>
+<tr>
+  <th>Dep. Variable:</th>         <td>testscr</td>     <th>  R-squared:         </th> <td>   0.051</td>
+</tr>
+<tr>
+  <th>Model:</th>                   <td>OLS</td>       <th>  Adj. R-squared:    </th> <td>   0.049</td>
+</tr>
+<tr>
+  <th>Method:</th>             <td>Least Squares</td>  <th>  F-statistic:       </th> <td>   19.13</td>
+</tr>
+<tr>
+  <th>Date:</th>             <td>Tue, 09 Jul 2024</td> <th>  Prob (F-statistic):</th> <td>1.55e-05</td>
+</tr>
+<tr>
+  <th>Time:</th>                 <td>14:46:53</td>     <th>  Log-Likelihood:    </th> <td> -1822.2</td>
+</tr>
+<tr>
+  <th>No. Observations:</th>      <td>   420</td>      <th>  AIC:               </th> <td>   3648.</td>
+</tr>
+<tr>
+  <th>Df Residuals:</th>          <td>   418</td>      <th>  BIC:               </th> <td>   3657.</td>
+</tr>
+<tr>
+  <th>Df Model:</th>              <td>     1</td>      <th>                     </th>     <td> </td>   
+</tr>
+<tr>
+  <th>Covariance Type:</th>         <td>HC2</td>       <th>                     </th>     <td> </td>   
+</tr>
+</table>
+<table class="simpletable">
+<tr>
+      <td></td>         <th>coef</th>     <th>std err</th>      <th>z</th>      <th>P>|z|</th>  <th>[0.025</th>    <th>0.975]</th>  
+</tr>
+<tr>
+  <th>Intercept</th> <td>  698.9330</td> <td>   10.400</td> <td>   67.206</td> <td> 0.000</td> <td>  678.550</td> <td>  719.316</td>
+</tr>
+<tr>
+  <th>str</th>       <td>   -2.2798</td> <td>    0.521</td> <td>   -4.373</td> <td> 0.000</td> <td>   -3.302</td> <td>   -1.258</td>
+</tr>
+</table>
+<table class="simpletable">
+<tr>
+  <th>Omnibus:</th>       <td> 5.390</td> <th>  Durbin-Watson:     </th> <td>   0.129</td>
+</tr>
+<tr>
+  <th>Prob(Omnibus):</th> <td> 0.068</td> <th>  Jarque-Bera (JB):  </th> <td>   3.589</td>
+</tr>
+<tr>
+  <th>Skew:</th>          <td>-0.012</td> <th>  Prob(JB):          </th> <td>   0.166</td>
+</tr>
+<tr>
+  <th>Kurtosis:</th>      <td> 2.548</td> <th>  Cond. No.          </th> <td>    207.</td>
+</tr>
+</table><br/><br/>Notes:<br/>[1] Standard Errors are heteroscedasticity robust (HC2)</div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">model</span><span class="o">.</span><span class="n">rsquared</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>np.float64(0.051240095079614356)
+</pre></div>
+</div>
+</div>
+</div>
+<p>Student Teacher Ratio explains only 5% of the variation in test scores</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">model2</span> <span class="o">=</span> <span class="n">smf</span><span class="o">.</span><span class="n">ols</span><span class="p">(</span><span class="s2">&quot;testscr ~ str + el_pct&quot;</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">df</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">cov_type</span><span class="o">=</span><span class="s1">&#39;HC2&#39;</span><span class="p">)</span>
+<span class="n">model2</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="simpletable">
+<caption>OLS Regression Results</caption>
+<tr>
+  <th>Dep. Variable:</th>         <td>testscr</td>     <th>  R-squared:         </th> <td>   0.426</td>
+</tr>
+<tr>
+  <th>Model:</th>                   <td>OLS</td>       <th>  Adj. R-squared:    </th> <td>   0.424</td>
+</tr>
+<tr>
+  <th>Method:</th>             <td>Least Squares</td>  <th>  F-statistic:       </th> <td>   222.8</td>
+</tr>
+<tr>
+  <th>Date:</th>             <td>Tue, 09 Jul 2024</td> <th>  Prob (F-statistic):</th> <td>1.56e-66</td>
+</tr>
+<tr>
+  <th>Time:</th>                 <td>14:46:53</td>     <th>  Log-Likelihood:    </th> <td> -1716.6</td>
+</tr>
+<tr>
+  <th>No. Observations:</th>      <td>   420</td>      <th>  AIC:               </th> <td>   3439.</td>
+</tr>
+<tr>
+  <th>Df Residuals:</th>          <td>   417</td>      <th>  BIC:               </th> <td>   3451.</td>
+</tr>
+<tr>
+  <th>Df Model:</th>              <td>     2</td>      <th>                     </th>     <td> </td>   
+</tr>
+<tr>
+  <th>Covariance Type:</th>         <td>HC2</td>       <th>                     </th>     <td> </td>   
+</tr>
+</table>
+<table class="simpletable">
+<tr>
+      <td></td>         <th>coef</th>     <th>std err</th>      <th>z</th>      <th>P>|z|</th>  <th>[0.025</th>    <th>0.975]</th>  
+</tr>
+<tr>
+  <th>Intercept</th> <td>  686.0322</td> <td>    8.754</td> <td>   78.365</td> <td> 0.000</td> <td>  668.874</td> <td>  703.190</td>
+</tr>
+<tr>
+  <th>str</th>       <td>   -1.1013</td> <td>    0.434</td> <td>   -2.537</td> <td> 0.011</td> <td>   -1.952</td> <td>   -0.250</td>
+</tr>
+<tr>
+  <th>el_pct</th>    <td>   -0.6498</td> <td>    0.031</td> <td>  -20.888</td> <td> 0.000</td> <td>   -0.711</td> <td>   -0.589</td>
+</tr>
+</table>
+<table class="simpletable">
+<tr>
+  <th>Omnibus:</th>       <td> 0.631</td> <th>  Durbin-Watson:     </th> <td>   0.686</td>
+</tr>
+<tr>
+  <th>Prob(Omnibus):</th> <td> 0.729</td> <th>  Jarque-Bera (JB):  </th> <td>   0.550</td>
+</tr>
+<tr>
+  <th>Skew:</th>          <td> 0.088</td> <th>  Prob(JB):          </th> <td>   0.760</td>
+</tr>
+<tr>
+  <th>Kurtosis:</th>      <td> 3.024</td> <th>  Cond. No.          </th> <td>    301.</td>
+</tr>
+</table><br/><br/>Notes:<br/>[1] Standard Errors are heteroscedasticity robust (HC2)</div></div>
+</div>
+<p>coefficient of str became half (-1.10 vs -2.28) cuz it controls for english percentage</p>
+<p>among
+schools within the same quartile of percentage of English learners, the difference in test
+scores between schools with a high vs. a low student–teacher ratio is less than the difference if one does not hold constant the percentage of English learners.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">model2</span><span class="o">.</span><span class="n">ssr</span><span class="o">/</span><span class="p">(</span><span class="n">model2</span><span class="o">.</span><span class="n">nobs</span> <span class="o">-</span> <span class="mi">3</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>14.4644849557101
+</pre></div>
+</div>
+</div>
+</div>
+<p>standard error decreased, predictions are more precise</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">model2</span><span class="o">.</span><span class="n">rsquared</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>np.float64(0.4264313614327716)
+</pre></div>
+</div>
+</div>
+</div>
+<p>when EL_pct is added to the regression, 42.6% of the variation in test scores is explained</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">model2</span><span class="o">.</span><span class="n">rsquared_adj</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>np.float64(0.4236804327106266)
+</pre></div>
+</div>
+</div>
+</div>
+<p>n is large and only two regressors appear, difference between <span class="math notranslate nohighlight">\(R^2\)</span> and <span class="math notranslate nohighlight">\(\bar{R}^2\)</span> is small</p>
+</section>
+<section id="multicollinearity">
+<h2>Multicollinearity<a class="headerlink" href="#multicollinearity" title="Link to this heading">#</a></h2>
 <p>🚧 Under Construction</p>
+</section>
 </section>
 
     <script type="text/x-thebe-config">
@@ -449,6 +1569,31 @@ document.write(`
             </div>
             
             
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#omitted-variable-bias">Omitted Variable Bias</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#addressing-ommited-variable-bias-by-dividing-data-into-groups">Addressing ommited variable bias by dividing data into groups</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#across-all-districts">across all districts,</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#differences-by-percentage-of-english-learners">Differences by Percentage of English Learners</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#why-the-differences">Why the Differences?</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#multiple-regression">Multiple Regression</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#multicollinearity">Multicollinearity</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
               
             
           </div>
