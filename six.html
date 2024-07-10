@@ -400,7 +400,19 @@ document.write(`
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#multiple-regression">Multiple Regression</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#multicollinearity">Multicollinearity</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#multicollinearity">Multicollinearity</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#perfect-multicollinearity">Perfect Multicollinearity</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#fraction-and-percentage">fraction and percentage</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#wrong-threshold-for-dummy-variable">wrong threshold for dummy variable</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#complementary-percentage">Complementary percentage</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#dummy-variable-trap">Dummy variable trap</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#imperfect-multicollinearity">Imperfect Multicollinearity</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#control-variables-and-conditional-mean-independence">Control Variables and Conditional Mean Independence</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exercises">Exercises</a></li>
 </ul>
             </nav>
         </div>
@@ -1324,66 +1336,39 @@ When you control for the percentage of English learners, the differences in test
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">smf</span><span class="o">.</span><span class="n">ols</span><span class="p">(</span><span class="s2">&quot;testscr ~ str&quot;</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">df</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">cov_type</span><span class="o">=</span><span class="s1">&#39;HC2&#39;</span><span class="p">)</span>
-<span class="n">model</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_html"><table class="simpletable">
-<caption>OLS Regression Results</caption>
-<tr>
-  <th>Dep. Variable:</th>         <td>testscr</td>     <th>  R-squared:         </th> <td>   0.051</td>
-</tr>
-<tr>
-  <th>Model:</th>                   <td>OLS</td>       <th>  Adj. R-squared:    </th> <td>   0.049</td>
-</tr>
-<tr>
-  <th>Method:</th>             <td>Least Squares</td>  <th>  F-statistic:       </th> <td>   19.13</td>
-</tr>
-<tr>
-  <th>Date:</th>             <td>Tue, 09 Jul 2024</td> <th>  Prob (F-statistic):</th> <td>1.55e-05</td>
-</tr>
-<tr>
-  <th>Time:</th>                 <td>14:46:53</td>     <th>  Log-Likelihood:    </th> <td> -1822.2</td>
-</tr>
-<tr>
-  <th>No. Observations:</th>      <td>   420</td>      <th>  AIC:               </th> <td>   3648.</td>
-</tr>
-<tr>
-  <th>Df Residuals:</th>          <td>   418</td>      <th>  BIC:               </th> <td>   3657.</td>
-</tr>
-<tr>
-  <th>Df Model:</th>              <td>     1</td>      <th>                     </th>     <td> </td>   
-</tr>
-<tr>
-  <th>Covariance Type:</th>         <td>HC2</td>       <th>                     </th>     <td> </td>   
-</tr>
-</table>
-<table class="simpletable">
-<tr>
-      <td></td>         <th>coef</th>     <th>std err</th>      <th>z</th>      <th>P>|z|</th>  <th>[0.025</th>    <th>0.975]</th>  
-</tr>
-<tr>
-  <th>Intercept</th> <td>  698.9330</td> <td>   10.400</td> <td>   67.206</td> <td> 0.000</td> <td>  678.550</td> <td>  719.316</td>
-</tr>
-<tr>
-  <th>str</th>       <td>   -2.2798</td> <td>    0.521</td> <td>   -4.373</td> <td> 0.000</td> <td>   -3.302</td> <td>   -1.258</td>
-</tr>
-</table>
-<table class="simpletable">
-<tr>
-  <th>Omnibus:</th>       <td> 5.390</td> <th>  Durbin-Watson:     </th> <td>   0.129</td>
-</tr>
-<tr>
-  <th>Prob(Omnibus):</th> <td> 0.068</td> <th>  Jarque-Bera (JB):  </th> <td>   3.589</td>
-</tr>
-<tr>
-  <th>Skew:</th>          <td>-0.012</td> <th>  Prob(JB):          </th> <td>   0.166</td>
-</tr>
-<tr>
-  <th>Kurtosis:</th>      <td> 2.548</td> <th>  Cond. No.          </th> <td>    207.</td>
-</tr>
-</table><br/><br/>Notes:<br/>[1] Standard Errors are heteroscedasticity robust (HC2)</div></div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>                            OLS Regression Results                            
+==============================================================================
+Dep. Variable:                testscr   R-squared:                       0.051
+Model:                            OLS   Adj. R-squared:                  0.049
+Method:                 Least Squares   F-statistic:                     19.13
+Date:                Wed, 10 Jul 2024   Prob (F-statistic):           1.55e-05
+Time:                        14:34:50   Log-Likelihood:                -1822.2
+No. Observations:                 420   AIC:                             3648.
+Df Residuals:                     418   BIC:                             3657.
+Df Model:                           1                                         
+Covariance Type:                  HC2                                         
+==============================================================================
+                 coef    std err          z      P&gt;|z|      [0.025      0.975]
+------------------------------------------------------------------------------
+Intercept    698.9330     10.400     67.206      0.000     678.550     719.316
+str           -2.2798      0.521     -4.373      0.000      -3.302      -1.258
+==============================================================================
+Omnibus:                        5.390   Durbin-Watson:                   0.129
+Prob(Omnibus):                  0.068   Jarque-Bera (JB):                3.589
+Skew:                          -0.012   Prob(JB):                        0.166
+Kurtosis:                       2.548   Cond. No.                         207.
+==============================================================================
+
+Notes:
+[1] Standard Errors are heteroscedasticity robust (HC2)
+</pre></div>
+</div>
+</div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -1401,69 +1386,40 @@ When you control for the percentage of English learners, the differences in test
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">model2</span> <span class="o">=</span> <span class="n">smf</span><span class="o">.</span><span class="n">ols</span><span class="p">(</span><span class="s2">&quot;testscr ~ str + el_pct&quot;</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">df</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">cov_type</span><span class="o">=</span><span class="s1">&#39;HC2&#39;</span><span class="p">)</span>
-<span class="n">model2</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">model2</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_html"><table class="simpletable">
-<caption>OLS Regression Results</caption>
-<tr>
-  <th>Dep. Variable:</th>         <td>testscr</td>     <th>  R-squared:         </th> <td>   0.426</td>
-</tr>
-<tr>
-  <th>Model:</th>                   <td>OLS</td>       <th>  Adj. R-squared:    </th> <td>   0.424</td>
-</tr>
-<tr>
-  <th>Method:</th>             <td>Least Squares</td>  <th>  F-statistic:       </th> <td>   222.8</td>
-</tr>
-<tr>
-  <th>Date:</th>             <td>Tue, 09 Jul 2024</td> <th>  Prob (F-statistic):</th> <td>1.56e-66</td>
-</tr>
-<tr>
-  <th>Time:</th>                 <td>14:46:53</td>     <th>  Log-Likelihood:    </th> <td> -1716.6</td>
-</tr>
-<tr>
-  <th>No. Observations:</th>      <td>   420</td>      <th>  AIC:               </th> <td>   3439.</td>
-</tr>
-<tr>
-  <th>Df Residuals:</th>          <td>   417</td>      <th>  BIC:               </th> <td>   3451.</td>
-</tr>
-<tr>
-  <th>Df Model:</th>              <td>     2</td>      <th>                     </th>     <td> </td>   
-</tr>
-<tr>
-  <th>Covariance Type:</th>         <td>HC2</td>       <th>                     </th>     <td> </td>   
-</tr>
-</table>
-<table class="simpletable">
-<tr>
-      <td></td>         <th>coef</th>     <th>std err</th>      <th>z</th>      <th>P>|z|</th>  <th>[0.025</th>    <th>0.975]</th>  
-</tr>
-<tr>
-  <th>Intercept</th> <td>  686.0322</td> <td>    8.754</td> <td>   78.365</td> <td> 0.000</td> <td>  668.874</td> <td>  703.190</td>
-</tr>
-<tr>
-  <th>str</th>       <td>   -1.1013</td> <td>    0.434</td> <td>   -2.537</td> <td> 0.011</td> <td>   -1.952</td> <td>   -0.250</td>
-</tr>
-<tr>
-  <th>el_pct</th>    <td>   -0.6498</td> <td>    0.031</td> <td>  -20.888</td> <td> 0.000</td> <td>   -0.711</td> <td>   -0.589</td>
-</tr>
-</table>
-<table class="simpletable">
-<tr>
-  <th>Omnibus:</th>       <td> 0.631</td> <th>  Durbin-Watson:     </th> <td>   0.686</td>
-</tr>
-<tr>
-  <th>Prob(Omnibus):</th> <td> 0.729</td> <th>  Jarque-Bera (JB):  </th> <td>   0.550</td>
-</tr>
-<tr>
-  <th>Skew:</th>          <td> 0.088</td> <th>  Prob(JB):          </th> <td>   0.760</td>
-</tr>
-<tr>
-  <th>Kurtosis:</th>      <td> 3.024</td> <th>  Cond. No.          </th> <td>    301.</td>
-</tr>
-</table><br/><br/>Notes:<br/>[1] Standard Errors are heteroscedasticity robust (HC2)</div></div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>                            OLS Regression Results                            
+==============================================================================
+Dep. Variable:                testscr   R-squared:                       0.426
+Model:                            OLS   Adj. R-squared:                  0.424
+Method:                 Least Squares   F-statistic:                     222.8
+Date:                Wed, 10 Jul 2024   Prob (F-statistic):           1.56e-66
+Time:                        14:34:39   Log-Likelihood:                -1716.6
+No. Observations:                 420   AIC:                             3439.
+Df Residuals:                     417   BIC:                             3451.
+Df Model:                           2                                         
+Covariance Type:                  HC2                                         
+==============================================================================
+                 coef    std err          z      P&gt;|z|      [0.025      0.975]
+------------------------------------------------------------------------------
+Intercept    686.0322      8.754     78.365      0.000     668.874     703.190
+str           -1.1013      0.434     -2.537      0.011      -1.952      -0.250
+el_pct        -0.6498      0.031    -20.888      0.000      -0.711      -0.589
+==============================================================================
+Omnibus:                        0.631   Durbin-Watson:                   0.686
+Prob(Omnibus):                  0.729   Jarque-Bera (JB):                0.550
+Skew:                           0.088   Prob(JB):                        0.760
+Kurtosis:                       3.024   Cond. No.                         301.
+==============================================================================
+
+Notes:
+[1] Standard Errors are heteroscedasticity robust (HC2)
+</pre></div>
+</div>
+</div>
 </div>
 <p>coefficient of str became half (-1.10 vs -2.28) cuz it controls for english percentage</p>
 <p>among
@@ -1511,6 +1467,698 @@ scores between schools with a high vs. a low student–teacher ratio is less tha
 </section>
 <section id="multicollinearity">
 <h2>Multicollinearity<a class="headerlink" href="#multicollinearity" title="Link to this heading">#</a></h2>
+<section id="perfect-multicollinearity">
+<h3>Perfect Multicollinearity<a class="headerlink" href="#perfect-multicollinearity" title="Link to this heading">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">model2</span> <span class="o">=</span> <span class="n">smf</span><span class="o">.</span><span class="n">ols</span><span class="p">(</span><span class="s2">&quot;testscr ~ str + str&quot;</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">df</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">cov_type</span><span class="o">=</span><span class="s1">&#39;HC2&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">model2</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>                            OLS Regression Results                            
+==============================================================================
+Dep. Variable:                testscr   R-squared:                       0.051
+Model:                            OLS   Adj. R-squared:                  0.049
+Method:                 Least Squares   F-statistic:                     19.13
+Date:                Wed, 10 Jul 2024   Prob (F-statistic):           1.55e-05
+Time:                        14:14:50   Log-Likelihood:                -1822.2
+No. Observations:                 420   AIC:                             3648.
+Df Residuals:                     418   BIC:                             3657.
+Df Model:                           1                                         
+Covariance Type:                  HC2                                         
+==============================================================================
+                 coef    std err          z      P&gt;|z|      [0.025      0.975]
+------------------------------------------------------------------------------
+Intercept    698.9330     10.400     67.206      0.000     678.550     719.316
+str           -2.2798      0.521     -4.373      0.000      -3.302      -1.258
+==============================================================================
+Omnibus:                        5.390   Durbin-Watson:                   0.129
+Prob(Omnibus):                  0.068   Jarque-Bera (JB):                3.589
+Skew:                          -0.012   Prob(JB):                        0.166
+Kurtosis:                       2.548   Cond. No.                         207.
+==============================================================================
+
+Notes:
+[1] Standard Errors are heteroscedasticity robust (HC2)
+</pre></div>
+</div>
+</div>
+</div>
+<section id="fraction-and-percentage">
+<h4>fraction and percentage<a class="headerlink" href="#fraction-and-percentage" title="Link to this heading">#</a></h4>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;fracel&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;el_pct&#39;</span><span class="p">]</span><span class="o">/</span><span class="mi">100</span>
+<span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Observation Number</th>
+      <th>dist_cod</th>
+      <th>county</th>
+      <th>district</th>
+      <th>gr_span</th>
+      <th>enrl_tot</th>
+      <th>teachers</th>
+      <th>calw_pct</th>
+      <th>meal_pct</th>
+      <th>computer</th>
+      <th>...</th>
+      <th>comp_stu</th>
+      <th>expn_stu</th>
+      <th>str</th>
+      <th>avginc</th>
+      <th>el_pct</th>
+      <th>read_scr</th>
+      <th>math_scr</th>
+      <th>el_pct_category</th>
+      <th>D</th>
+      <th>fracel</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1</td>
+      <td>75119</td>
+      <td>Alameda</td>
+      <td>Sunol Glen Unified</td>
+      <td>KK-08</td>
+      <td>195</td>
+      <td>10.9</td>
+      <td>0.5102</td>
+      <td>2.0408</td>
+      <td>67</td>
+      <td>...</td>
+      <td>0.34359</td>
+      <td>6384.911133</td>
+      <td>17.88991</td>
+      <td>22.690001</td>
+      <td>0.0</td>
+      <td>691.599976</td>
+      <td>690.0</td>
+      <td>&lt; 1.9</td>
+      <td>&lt; 20</td>
+      <td>0.0</td>
+    </tr>
+  </tbody>
+</table>
+<p>1 rows × 21 columns</p>
+</div></div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">model3</span> <span class="o">=</span> <span class="n">smf</span><span class="o">.</span><span class="n">ols</span><span class="p">(</span><span class="s2">&quot;testscr ~ str + el_pct + fracel&quot;</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">df</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">cov_type</span><span class="o">=</span><span class="s1">&#39;HC2&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">model3</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>                            OLS Regression Results                            
+==============================================================================
+Dep. Variable:                testscr   R-squared:                       0.426
+Model:                            OLS   Adj. R-squared:                  0.424
+Method:                 Least Squares   F-statistic:                     222.8
+Date:                Wed, 10 Jul 2024   Prob (F-statistic):           1.56e-66
+Time:                        14:14:50   Log-Likelihood:                -1716.6
+No. Observations:                 420   AIC:                             3439.
+Df Residuals:                     417   BIC:                             3451.
+Df Model:                           2                                         
+Covariance Type:                  HC2                                         
+==============================================================================
+                 coef    std err          z      P&gt;|z|      [0.025      0.975]
+------------------------------------------------------------------------------
+Intercept    686.0322      8.754     78.365      0.000     668.874     703.190
+str           -1.1013      0.434     -2.537      0.011      -1.952      -0.250
+el_pct        -0.6497      0.031    -20.888      0.000      -0.711      -0.589
+fracel        -0.0065      0.000    -20.888      0.000      -0.007      -0.006
+==============================================================================
+Omnibus:                        0.631   Durbin-Watson:                   0.686
+Prob(Omnibus):                  0.729   Jarque-Bera (JB):                0.550
+Skew:                           0.088   Prob(JB):                        0.760
+Kurtosis:                       3.024   Cond. No.                     5.10e+17
+==============================================================================
+
+Notes:
+[1] Standard Errors are heteroscedasticity robust (HC2)
+[2] The smallest eigenvalue is 1.32e-30. This might indicate that there are
+strong multicollinearity problems or that the design matrix is singular.
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>F:\miniconda3\envs\py\Lib\site-packages\statsmodels\base\model.py:1894: ValueWarning: covariance of constraints does not have full rank. The number of constraints is 3, but rank is 2
+  warnings.warn(&#39;covariance of constraints does not have full &#39;
+</pre></div>
+</div>
+</div>
+</div>
+<p>OLS fails because you are asking, What is the effect of a unit change in the
+percentage of English learners, holding constant the fraction of English learners?<br />
+Because the percentage of English learners and the fraction of English learners move
+together in a perfect linear relationship, this question makes no sense, and OLS cannot answer it</p>
+</section>
+<section id="wrong-threshold-for-dummy-variable">
+<h4>wrong threshold for dummy variable<a class="headerlink" href="#wrong-threshold-for-dummy-variable" title="Link to this heading">#</a></h4>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;NVS&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;str&#39;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mi">12</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+<span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Observation Number</th>
+      <th>dist_cod</th>
+      <th>county</th>
+      <th>district</th>
+      <th>gr_span</th>
+      <th>enrl_tot</th>
+      <th>teachers</th>
+      <th>calw_pct</th>
+      <th>meal_pct</th>
+      <th>computer</th>
+      <th>...</th>
+      <th>expn_stu</th>
+      <th>str</th>
+      <th>avginc</th>
+      <th>el_pct</th>
+      <th>read_scr</th>
+      <th>math_scr</th>
+      <th>el_pct_category</th>
+      <th>D</th>
+      <th>fracel</th>
+      <th>NVS</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1</td>
+      <td>75119</td>
+      <td>Alameda</td>
+      <td>Sunol Glen Unified</td>
+      <td>KK-08</td>
+      <td>195</td>
+      <td>10.9</td>
+      <td>0.5102</td>
+      <td>2.0408</td>
+      <td>67</td>
+      <td>...</td>
+      <td>6384.911133</td>
+      <td>17.88991</td>
+      <td>22.690001</td>
+      <td>0.0</td>
+      <td>691.599976</td>
+      <td>690.0</td>
+      <td>&lt; 1.9</td>
+      <td>&lt; 20</td>
+      <td>0.0</td>
+      <td>1</td>
+    </tr>
+  </tbody>
+</table>
+<p>1 rows × 22 columns</p>
+</div></div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;NVS&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>NVS
+1    420
+Name: count, dtype: int64
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;str&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">describe</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>count    420.000000
+mean      19.640425
+std        1.891812
+min       14.000000
+25%       18.582360
+50%       19.723208
+75%       20.871815
+max       25.799999
+Name: str, dtype: float64
+</pre></div>
+</div>
+</div>
+</div>
+<p>Minimum str is 14, hence NVS is always 1, can be written as perfect linear relationship with the intercept</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">model4</span> <span class="o">=</span> <span class="n">smf</span><span class="o">.</span><span class="n">ols</span><span class="p">(</span><span class="s2">&quot;testscr ~ str + NVS &quot;</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">df</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">cov_type</span><span class="o">=</span><span class="s1">&#39;HC2&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">model4</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>                            OLS Regression Results                            
+==============================================================================
+Dep. Variable:                testscr   R-squared:                       0.051
+Model:                            OLS   Adj. R-squared:                  0.049
+Method:                 Least Squares   F-statistic:                 2.646e+05
+Date:                Wed, 10 Jul 2024   Prob (F-statistic):               0.00
+Time:                        14:14:50   Log-Likelihood:                -1822.2
+No. Observations:                 420   AIC:                             3648.
+Df Residuals:                     418   BIC:                             3657.
+Df Model:                           1                                         
+Covariance Type:                  HC2                                         
+==============================================================================
+                 coef    std err          z      P&gt;|z|      [0.025      0.975]
+------------------------------------------------------------------------------
+Intercept    349.4665      5.200     67.206      0.000     339.275     359.658
+str           -2.2798      0.521     -4.373      0.000      -3.302      -1.258
+NVS          349.4665      5.200     67.206      0.000     339.275     359.658
+==============================================================================
+Omnibus:                        5.390   Durbin-Watson:                   0.129
+Prob(Omnibus):                  0.068   Jarque-Bera (JB):                3.589
+Skew:                          -0.012   Prob(JB):                        0.166
+Kurtosis:                       2.548   Cond. No.                     5.69e+19
+==============================================================================
+
+Notes:
+[1] Standard Errors are heteroscedasticity robust (HC2)
+[2] The smallest eigenvalue is 5.07e-35. This might indicate that there are
+strong multicollinearity problems or that the design matrix is singular.
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="complementary-percentage">
+<h4>Complementary percentage<a class="headerlink" href="#complementary-percentage" title="Link to this heading">#</a></h4>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># percentage of english speakers</span>
+<span class="n">df</span><span class="p">[</span><span class="s1">&#39;es_pct&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">-</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;el_pct&#39;</span><span class="p">]</span>
+<span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Observation Number</th>
+      <th>dist_cod</th>
+      <th>county</th>
+      <th>district</th>
+      <th>gr_span</th>
+      <th>enrl_tot</th>
+      <th>teachers</th>
+      <th>calw_pct</th>
+      <th>meal_pct</th>
+      <th>computer</th>
+      <th>...</th>
+      <th>str</th>
+      <th>avginc</th>
+      <th>el_pct</th>
+      <th>read_scr</th>
+      <th>math_scr</th>
+      <th>el_pct_category</th>
+      <th>D</th>
+      <th>fracel</th>
+      <th>NVS</th>
+      <th>es_pct</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1</td>
+      <td>75119</td>
+      <td>Alameda</td>
+      <td>Sunol Glen Unified</td>
+      <td>KK-08</td>
+      <td>195</td>
+      <td>10.9</td>
+      <td>0.5102</td>
+      <td>2.0408</td>
+      <td>67</td>
+      <td>...</td>
+      <td>17.88991</td>
+      <td>22.690001</td>
+      <td>0.0</td>
+      <td>691.599976</td>
+      <td>690.0</td>
+      <td>&lt; 1.9</td>
+      <td>&lt; 20</td>
+      <td>0.0</td>
+      <td>1</td>
+      <td>100.0</td>
+    </tr>
+  </tbody>
+</table>
+<p>1 rows × 23 columns</p>
+</div></div></div>
+</div>
+<p>es_pct = 100 - el_pct = 100 * X0i - el_pct<br />
+must exclude intercept or the complementary percentage</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">model5</span> <span class="o">=</span> <span class="n">smf</span><span class="o">.</span><span class="n">ols</span><span class="p">(</span><span class="s2">&quot;testscr ~ es_pct + el_pct &quot;</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">df</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">cov_type</span><span class="o">=</span><span class="s1">&#39;HC2&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">model5</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>                            OLS Regression Results                            
+==============================================================================
+Dep. Variable:                testscr   R-squared:                       0.415
+Model:                            OLS   Adj. R-squared:                  0.413
+Method:                 Least Squares   F-statistic:                 4.466e+05
+Date:                Wed, 10 Jul 2024   Prob (F-statistic):               0.00
+Time:                        14:14:51   Log-Likelihood:                -1720.7
+No. Observations:                 420   AIC:                             3445.
+Df Residuals:                     418   BIC:                             3454.
+Df Model:                           1                                         
+Covariance Type:                  HC2                                         
+==============================================================================
+                 coef    std err          z      P&gt;|z|      [0.025      0.975]
+------------------------------------------------------------------------------
+Intercept      0.1262      0.000    548.782      0.000       0.126       0.127
+es_pct         6.6461      0.010    682.550      0.000       6.627       6.665
+el_pct         5.9750      0.026    227.777      0.000       5.924       6.026
+==============================================================================
+Omnibus:                        4.048   Durbin-Watson:                   0.680
+Prob(Omnibus):                  0.132   Jarque-Bera (JB):                3.793
+Skew:                           0.211   Prob(JB):                        0.150
+Kurtosis:                       3.195   Cond. No.                     6.59e+17
+==============================================================================
+
+Notes:
+[1] Standard Errors are heteroscedasticity robust (HC2)
+[2] The smallest eigenvalue is 7.33e-30. This might indicate that there are
+strong multicollinearity problems or that the design matrix is singular.
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="dummy-variable-trap">
+<h4>Dummy variable trap<a class="headerlink" href="#dummy-variable-trap" title="Link to this heading">#</a></h4>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;D&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;str&#39;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">20</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">get_dummies</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;D&#39;</span><span class="p">],</span> <span class="n">drop_first</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Observation Number</th>
+      <th>dist_cod</th>
+      <th>county</th>
+      <th>district</th>
+      <th>gr_span</th>
+      <th>enrl_tot</th>
+      <th>teachers</th>
+      <th>calw_pct</th>
+      <th>meal_pct</th>
+      <th>computer</th>
+      <th>...</th>
+      <th>avginc</th>
+      <th>el_pct</th>
+      <th>read_scr</th>
+      <th>math_scr</th>
+      <th>el_pct_category</th>
+      <th>fracel</th>
+      <th>NVS</th>
+      <th>es_pct</th>
+      <th>D_0</th>
+      <th>D_1</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1</td>
+      <td>75119</td>
+      <td>Alameda</td>
+      <td>Sunol Glen Unified</td>
+      <td>KK-08</td>
+      <td>195</td>
+      <td>10.9</td>
+      <td>0.5102</td>
+      <td>2.0408</td>
+      <td>67</td>
+      <td>...</td>
+      <td>22.690001</td>
+      <td>0.0</td>
+      <td>691.599976</td>
+      <td>690.0</td>
+      <td>&lt; 1.9</td>
+      <td>0.0</td>
+      <td>1</td>
+      <td>100.0</td>
+      <td>False</td>
+      <td>True</td>
+    </tr>
+  </tbody>
+</table>
+<p>1 rows × 24 columns</p>
+</div></div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">model6</span> <span class="o">=</span> <span class="n">smf</span><span class="o">.</span><span class="n">ols</span><span class="p">(</span><span class="s2">&quot;testscr ~ D_0 + D_1 &quot;</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">df</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">cov_type</span><span class="o">=</span><span class="s1">&#39;HC2&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">model6</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>                            OLS Regression Results                            
+==============================================================================
+Dep. Variable:                testscr   R-squared:                       0.037
+Model:                            OLS   Adj. R-squared:                  0.035
+Method:                 Least Squares   F-statistic:                 2.578e+05
+Date:                Wed, 10 Jul 2024   Prob (F-statistic):               0.00
+Time:                        14:14:51   Log-Likelihood:                -1825.4
+No. Observations:                 420   AIC:                             3655.
+Df Residuals:                     418   BIC:                             3663.
+Df Model:                           1                                         
+Covariance Type:                  HC2                                         
+===============================================================================
+                  coef    std err          z      P&gt;|z|      [0.025      0.975]
+-------------------------------------------------------------------------------
+Intercept     435.7767      0.608    716.860      0.000     434.585     436.968
+D_0[T.True]   214.2021      0.976    219.384      0.000     212.288     216.116
+D_1[T.True]   221.5746      0.946    234.294      0.000     219.721     223.428
+==============================================================================
+Omnibus:                        3.061   Durbin-Watson:                   0.110
+Prob(Omnibus):                  0.216   Jarque-Bera (JB):                2.448
+Skew:                           0.052   Prob(JB):                        0.294
+Kurtosis:                       2.641   Cond. No.                     1.03e+16
+==============================================================================
+
+Notes:
+[1] Standard Errors are heteroscedasticity robust (HC2)
+[2] The smallest eigenvalue is 5.93e-30. This might indicate that there are
+strong multicollinearity problems or that the design matrix is singular.
+</pre></div>
+</div>
+</div>
+</div>
+<p>Must have reference dummy variable</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">model7</span> <span class="o">=</span> <span class="n">smf</span><span class="o">.</span><span class="n">ols</span><span class="p">(</span><span class="s2">&quot;testscr ~  D_1 &quot;</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">df</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">cov_type</span><span class="o">=</span><span class="s1">&#39;HC2&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">model7</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>                            OLS Regression Results                            
+==============================================================================
+Dep. Variable:                testscr   R-squared:                       0.037
+Model:                            OLS   Adj. R-squared:                  0.035
+Method:                 Least Squares   F-statistic:                     16.34
+Date:                Wed, 10 Jul 2024   Prob (F-statistic):           6.29e-05
+Time:                        14:16:00   Log-Likelihood:                -1825.4
+No. Observations:                 420   AIC:                             3655.
+Df Residuals:                     418   BIC:                             3663.
+Df Model:                           1                                         
+Covariance Type:                  HC2                                         
+===============================================================================
+                  coef    std err          z      P&gt;|z|      [0.025      0.975]
+-------------------------------------------------------------------------------
+Intercept     649.9788      1.323    491.151      0.000     647.385     652.573
+D_1[T.True]     7.3724      1.824      4.043      0.000       3.798      10.947
+==============================================================================
+Omnibus:                        3.061   Durbin-Watson:                   0.110
+Prob(Omnibus):                  0.216   Jarque-Bera (JB):                2.448
+Skew:                           0.052   Prob(JB):                        0.294
+Kurtosis:                       2.641   Cond. No.                         2.81
+==============================================================================
+
+Notes:
+[1] Standard Errors are heteroscedasticity robust (HC2)
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="imperfect-multicollinearity">
+<h3>Imperfect Multicollinearity<a class="headerlink" href="#imperfect-multicollinearity" title="Link to this heading">#</a></h3>
+<p>if <span class="math notranslate nohighlight">\( X_1, X_2 \)</span> are correlated, it  would be difficult to use these data to estimate the coefficient on <span class="math notranslate nohighlight">\( X_1 \)</span>, holding constant <span class="math notranslate nohighlight">\(X_2\)</span>.</p>
+</section>
+</section>
+<section id="control-variables-and-conditional-mean-independence">
+<h2>Control Variables and Conditional Mean Independence<a class="headerlink" href="#control-variables-and-conditional-mean-independence" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="s1">&#39;el_pct&#39;</span><span class="p">,</span> <span class="s1">&#39;meal_pct&#39;</span><span class="p">,</span> <span class="n">kind</span> <span class="o">=</span> <span class="s1">&#39;scatter&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Axes: xlabel=&#39;el_pct&#39;, ylabel=&#39;meal_pct&#39;&gt;
+</pre></div>
+</div>
+<img alt="_images/f86383c0ce2820ed1519362c82041cdaadfb6c547441d34eb9ea45de255756f9.png" src="_images/f86383c0ce2820ed1519362c82041cdaadfb6c547441d34eb9ea45de255756f9.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;el_pct&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">corr</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;meal_pct&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>np.float64(0.6530607156221082)
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">model7</span> <span class="o">=</span> <span class="n">smf</span><span class="o">.</span><span class="n">ols</span><span class="p">(</span><span class="s2">&quot;testscr ~  str + el_pct + meal_pct &quot;</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">df</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">cov_type</span><span class="o">=</span><span class="s1">&#39;HC2&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">model7</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>                            OLS Regression Results                            
+==============================================================================
+Dep. Variable:                testscr   R-squared:                       0.775
+Model:                            OLS   Adj. R-squared:                  0.773
+Method:                 Least Squares   F-statistic:                     451.5
+Date:                Wed, 10 Jul 2024   Prob (F-statistic):          2.13e-130
+Time:                        14:28:24   Log-Likelihood:                -1520.5
+No. Observations:                 420   AIC:                             3049.
+Df Residuals:                     416   BIC:                             3065.
+Df Model:                           3                                         
+Covariance Type:                  HC2                                         
+==============================================================================
+                 coef    std err          z      P&gt;|z|      [0.025      0.975]
+------------------------------------------------------------------------------
+Intercept    700.1500      5.591    125.225      0.000     689.192     711.108
+str           -0.9983      0.271     -3.680      0.000      -1.530      -0.467
+el_pct        -0.1216      0.033     -3.689      0.000      -0.186      -0.057
+meal_pct      -0.5473      0.024    -22.659      0.000      -0.595      -0.500
+==============================================================================
+Omnibus:                        6.998   Durbin-Watson:                   1.438
+Prob(Omnibus):                  0.030   Jarque-Bera (JB):               10.626
+Skew:                          -0.024   Prob(JB):                      0.00493
+Kurtosis:                       3.778   Cond. No.                         621.
+==============================================================================
+
+Notes:
+[1] Standard Errors are heteroscedasticity robust (HC2)
+</pre></div>
+</div>
+</div>
+</div>
+<p>Coefficient of meal_pct is very large but does not have causal interpretation</p>
+<p>Eliminating the reduced-price lunch program to reduce meal_pct to 0% is unlikely to boost test scores; it may even lower them by leaving students hungry.
+It is a control variable not a regressor</p>
+<p>We Include <strong>control variables</strong> to make regressors uncorrelated with error term</p>
+</section>
+<section id="exercises">
+<h2>Exercises<a class="headerlink" href="#exercises" title="Link to this heading">#</a></h2>
 <p>🚧 Under Construction</p>
 </section>
 </section>
@@ -1589,7 +2237,19 @@ scores between schools with a high vs. a low student–teacher ratio is less tha
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#multiple-regression">Multiple Regression</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#multicollinearity">Multicollinearity</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#multicollinearity">Multicollinearity</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#perfect-multicollinearity">Perfect Multicollinearity</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#fraction-and-percentage">fraction and percentage</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#wrong-threshold-for-dummy-variable">wrong threshold for dummy variable</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#complementary-percentage">Complementary percentage</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#dummy-variable-trap">Dummy variable trap</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#imperfect-multicollinearity">Imperfect Multicollinearity</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#control-variables-and-conditional-mean-independence">Control Variables and Conditional Mean Independence</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exercises">Exercises</a></li>
 </ul>
   </nav></div>
 
