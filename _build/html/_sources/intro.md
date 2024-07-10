@@ -1,7 +1,6 @@
 # Welcome
 
-Welcome to the interactive Python solutions book for "Introduction to Econometrics" by James H. Stock and Mark W. Watson. This JupyterBook provides detailed solutions to the examples and exercises found in Stock and Watson's influential text, designed to help readers understand and apply econometric methods using Python.
-
+to the interactive Python solutions book for "Introduction to Econometrics" by James H. Stock and Mark W. Watson. This JupyterBook provides detailed solutions to the examples and exercises found in Stock and Watson's influential text, designed to help readers understand and apply econometric methods using Python.
 
 ## Objectives
 
