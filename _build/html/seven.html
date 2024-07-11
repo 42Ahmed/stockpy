@@ -57,6 +57,8 @@
     <script async="async" src="_static/sphinx-thebe.js?v=c100c467"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'seven';</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -365,7 +367,9 @@ document.write(`
   </button>
 `);
 </script>
-
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
 </div></div>
       
     </div>
@@ -381,6 +385,29 @@ document.write(`
     <div id="print-main-content">
         <div id="jb-print-toc">
             
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#hypothesis-tests-for-a-single-coefficient">Hypothesis Tests for a single Coefficient</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#adding-expenditures-per-pupil">Adding expenditures per pupil</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#joint-hypotheses">Joint Hypotheses</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-homoskedasticity-only-f-statistic">The Homoskedasticity-Only F-Statistic</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#testing-single-restrictions-involving-multiple-coefficients">Testing Single Restrictions Involving Multiple Coefficients</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#confidence-sets-for-multiple-coefficients">Confidence Sets for Multiple Coefficients</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#model-specification-for-multiple-regression">Model Specification for Multiple Regression</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#analysis-of-the-test-score-data-set">Analysis of the Test Score Data Set</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#interpretation">Interpretation</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exercises">Exercises</a></li>
+</ul>
+            </nav>
         </div>
     </div>
 </div>
@@ -392,7 +419,1195 @@ document.write(`
                   
   <section class="tex2jax_ignore mathjax_ignore" id="hypothesis-tests-and-confidence-intervals-in-multiple-regression">
 <h1>7. Hypothesis Tests and Confidence Intervals in Multiple Regression<a class="headerlink" href="#hypothesis-tests-and-confidence-intervals-in-multiple-regression" title="Link to this heading">#</a></h1>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">statsmodels.api</span> <span class="k">as</span> <span class="nn">sm</span>
+<span class="kn">import</span> <span class="nn">statsmodels.formula.api</span> <span class="k">as</span> <span class="nn">smf</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
+<span class="kn">import</span> <span class="nn">math</span>
+</pre></div>
+</div>
+</div>
+</div>
+<section id="hypothesis-tests-for-a-single-coefficient">
+<h2>Hypothesis Tests for a single Coefficient<a class="headerlink" href="#hypothesis-tests-for-a-single-coefficient" title="Link to this heading">#</a></h2>
+<p>Test the hypothesis that a change in the student–teacher
+ratio has no effect on test scores, holding constant the percentage of English learners
+in the district</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="s2">&quot;data/replication/Replication Data/caschool.xlsx&quot;</span><span class="p">)</span>
+<span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>F:\miniconda3\envs\py\Lib\site-packages\openpyxl\worksheet\_reader.py:329: UserWarning: Unknown extension is not supported and will be removed
+  warn(msg)
+</pre></div>
+</div>
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Observation Number</th>
+      <th>dist_cod</th>
+      <th>county</th>
+      <th>district</th>
+      <th>gr_span</th>
+      <th>enrl_tot</th>
+      <th>teachers</th>
+      <th>calw_pct</th>
+      <th>meal_pct</th>
+      <th>computer</th>
+      <th>testscr</th>
+      <th>comp_stu</th>
+      <th>expn_stu</th>
+      <th>str</th>
+      <th>avginc</th>
+      <th>el_pct</th>
+      <th>read_scr</th>
+      <th>math_scr</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1</td>
+      <td>75119</td>
+      <td>Alameda</td>
+      <td>Sunol Glen Unified</td>
+      <td>KK-08</td>
+      <td>195</td>
+      <td>10.900000</td>
+      <td>0.510200</td>
+      <td>2.040800</td>
+      <td>67</td>
+      <td>690.799988</td>
+      <td>0.343590</td>
+      <td>6384.911133</td>
+      <td>17.889910</td>
+      <td>22.690001</td>
+      <td>0.000000</td>
+      <td>691.599976</td>
+      <td>690.000000</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>2</td>
+      <td>61499</td>
+      <td>Butte</td>
+      <td>Manzanita Elementary</td>
+      <td>KK-08</td>
+      <td>240</td>
+      <td>11.150000</td>
+      <td>15.416700</td>
+      <td>47.916698</td>
+      <td>101</td>
+      <td>661.200012</td>
+      <td>0.420833</td>
+      <td>5099.380859</td>
+      <td>21.524664</td>
+      <td>9.824000</td>
+      <td>4.583333</td>
+      <td>660.500000</td>
+      <td>661.900024</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>3</td>
+      <td>61549</td>
+      <td>Butte</td>
+      <td>Thermalito Union Elementary</td>
+      <td>KK-08</td>
+      <td>1550</td>
+      <td>82.900002</td>
+      <td>55.032299</td>
+      <td>76.322601</td>
+      <td>169</td>
+      <td>643.599976</td>
+      <td>0.109032</td>
+      <td>5501.954590</td>
+      <td>18.697226</td>
+      <td>8.978000</td>
+      <td>30.000002</td>
+      <td>636.299988</td>
+      <td>650.900024</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>4</td>
+      <td>61457</td>
+      <td>Butte</td>
+      <td>Golden Feather Union Elementary</td>
+      <td>KK-08</td>
+      <td>243</td>
+      <td>14.000000</td>
+      <td>36.475399</td>
+      <td>77.049202</td>
+      <td>85</td>
+      <td>647.700012</td>
+      <td>0.349794</td>
+      <td>7101.831055</td>
+      <td>17.357143</td>
+      <td>8.978000</td>
+      <td>0.000000</td>
+      <td>651.900024</td>
+      <td>643.500000</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>5</td>
+      <td>61523</td>
+      <td>Butte</td>
+      <td>Palermo Union Elementary</td>
+      <td>KK-08</td>
+      <td>1335</td>
+      <td>71.500000</td>
+      <td>33.108601</td>
+      <td>78.427002</td>
+      <td>171</td>
+      <td>640.849976</td>
+      <td>0.128090</td>
+      <td>5235.987793</td>
+      <td>18.671329</td>
+      <td>9.080333</td>
+      <td>13.857677</td>
+      <td>641.799988</td>
+      <td>639.900024</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">smf</span><span class="o">.</span><span class="n">ols</span><span class="p">(</span><span class="s1">&#39;testscr ~ str + el_pct&#39;</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span><span class="n">df</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">cov_type</span><span class="o">=</span><span class="s1">&#39;HC2&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>                            OLS Regression Results                            
+==============================================================================
+Dep. Variable:                testscr   R-squared:                       0.426
+Model:                            OLS   Adj. R-squared:                  0.424
+Method:                 Least Squares   F-statistic:                     222.8
+Date:                Thu, 11 Jul 2024   Prob (F-statistic):           1.56e-66
+Time:                        14:57:50   Log-Likelihood:                -1716.6
+No. Observations:                 420   AIC:                             3439.
+Df Residuals:                     417   BIC:                             3451.
+Df Model:                           2                                         
+Covariance Type:                  HC2                                         
+==============================================================================
+                 coef    std err          z      P&gt;|z|      [0.025      0.975]
+------------------------------------------------------------------------------
+Intercept    686.0322      8.754     78.365      0.000     668.874     703.190
+str           -1.1013      0.434     -2.537      0.011      -1.952      -0.250
+el_pct        -0.6498      0.031    -20.888      0.000      -0.711      -0.589
+==============================================================================
+Omnibus:                        0.631   Durbin-Watson:                   0.686
+Prob(Omnibus):                  0.729   Jarque-Bera (JB):                0.550
+Skew:                           0.088   Prob(JB):                        0.760
+Kurtosis:                       3.024   Cond. No.                         301.
+==============================================================================
+
+Notes:
+[1] Standard Errors are heteroscedasticity robust (HC2)
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">model</span><span class="o">.</span><span class="n">tvalues</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Intercept    78.364956
+str          -2.536570
+el_pct      -20.888079
+dtype: float64
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">model</span><span class="o">.</span><span class="n">pvalues</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Intercept    0.000000e+00
+str          1.119444e-02
+el_pct       6.872883e-97
+dtype: float64
+</pre></div>
+</div>
+</div>
+</div>
+<p>the null hypothesis can be rejected at the 5% significance level (but not quite at the 1%
+significance level).</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">model</span><span class="o">.</span><span class="n">conf_int</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>0</th>
+      <th>1</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>Intercept</th>
+      <td>668.874088</td>
+      <td>703.190409</td>
+    </tr>
+    <tr>
+      <th>str</th>
+      <td>-1.952248</td>
+      <td>-0.250343</td>
+    </tr>
+    <tr>
+      <th>el_pct</th>
+      <td>-0.710746</td>
+      <td>-0.588807</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<p>we can be 95% confident that the
+true value of the coefficient is between -1.95 and -0.26.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">model</span><span class="o">.</span><span class="n">conf_int</span><span class="p">()</span> <span class="o">*-</span><span class="mi">2</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>0</th>
+      <th>1</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>Intercept</th>
+      <td>-1337.748176</td>
+      <td>-1406.380819</td>
+    </tr>
+    <tr>
+      <th>str</th>
+      <td>3.904497</td>
+      <td>0.500687</td>
+    </tr>
+    <tr>
+      <th>el_pct</th>
+      <td>1.421493</td>
+      <td>1.177614</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<p>Interval if str decreases by two is (10.52, 3.902)</p>
+<section id="adding-expenditures-per-pupil">
+<h3>Adding expenditures per pupil<a class="headerlink" href="#adding-expenditures-per-pupil" title="Link to this heading">#</a></h3>
+<p>If manager is to hire more teachers, she can pay for those teachers either by making cuts elsewhere in the budget (no new computers, reduced maintenance, and so on) or by asking for an increase in her budget, which taxpayers do not
+favor. What, she asks, is the effect on test scores of reducing the student–teacher ratio,
+holding expenditures per pupil (and the percentage of English learners) constant?</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">model2</span> <span class="o">=</span> <span class="n">smf</span><span class="o">.</span><span class="n">ols</span><span class="p">(</span><span class="s1">&#39;testscr ~ str + I(expn_stu / 1000) + el_pct&#39;</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span><span class="n">df</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">cov_type</span><span class="o">=</span><span class="s1">&#39;HC2&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">model2</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>                            OLS Regression Results                            
+==============================================================================
+Dep. Variable:                testscr   R-squared:                       0.437
+Model:                            OLS   Adj. R-squared:                  0.433
+Method:                 Least Squares   F-statistic:                     146.4
+Date:                Thu, 11 Jul 2024   Prob (F-statistic):           9.03e-65
+Time:                        14:57:50   Log-Likelihood:                -1712.8
+No. Observations:                 420   AIC:                             3434.
+Df Residuals:                     416   BIC:                             3450.
+Df Model:                           3                                         
+Covariance Type:                  HC2                                         
+======================================================================================
+                         coef    std err          z      P&gt;|z|      [0.025      0.975]
+--------------------------------------------------------------------------------------
+Intercept            649.5779     15.525     41.840      0.000     619.149     680.007
+str                   -0.2864      0.484     -0.592      0.554      -1.234       0.661
+I(expn_stu / 1000)     3.8679      1.590      2.432      0.015       0.751       6.984
+el_pct                -0.6560      0.032    -20.583      0.000      -0.718      -0.594
+==============================================================================
+Omnibus:                        0.046   Durbin-Watson:                   0.742
+Prob(Omnibus):                  0.977   Jarque-Bera (JB):                0.070
+Skew:                          -0.025   Prob(JB):                        0.966
+Kurtosis:                       2.962   Cond. No.                         631.
+==============================================================================
+
+Notes:
+[1] Standard Errors are heteroscedasticity robust (HC2)
+</pre></div>
+</div>
+</div>
+</div>
+<p>Expn (in book) is total annual expenditures per pupil in the district in thousands of
+dollars unlike the dataset</p>
+<p>Holding expenditures per pupil and the percentage of
+English learners constant, changing the student–teacher ratio is estimated to have a
+very small effect on test scores</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">model2</span><span class="o">.</span><span class="n">tvalues</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Intercept             41.839919
+str                   -0.592206
+I(expn_stu / 1000)     2.432447
+el_pct               -20.583253
+dtype: float64
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">model2</span><span class="o">.</span><span class="n">pvalues</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Intercept             0.000000e+00
+str                   5.537124e-01
+I(expn_stu / 1000)    1.499718e-02
+el_pct                3.877673e-94
+dtype: float64
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">model2</span><span class="o">.</span><span class="n">conf_int</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>0</th>
+      <th>1</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>Intercept</th>
+      <td>619.148888</td>
+      <td>680.007007</td>
+    </tr>
+    <tr>
+      <th>str</th>
+      <td>-1.234265</td>
+      <td>0.661467</td>
+    </tr>
+    <tr>
+      <th>I(expn_stu / 1000)</th>
+      <td>0.751309</td>
+      <td>6.984495</td>
+    </tr>
+    <tr>
+      <th>el_pct</th>
+      <td>-0.718490</td>
+      <td>-0.593555</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<p>the hypothesis that the population value of
+this coefficient is indeed 0 cannot be rejected even at the 10% significance level.</p>
+<p>The model provides no evidence that hiring more teachers improves test scores if overall expenditures per pupil are held constant</p>
+<p>If  the
+coefficient on STR in the model were negative and large. If so, school districts could
+raise their test scores simply by decreasing funding for other purposes (textbooks, technology, sports, and so on) and using those funds to hire more teachers</p>
+<p>Standard error increases in model2 compared to model due to multicollinearity</p>
+</section>
+</section>
+<section id="joint-hypotheses">
+<h2>Joint Hypotheses<a class="headerlink" href="#joint-hypotheses" title="Link to this heading">#</a></h2>
+<p>Tax payer asserts that the population values of both
+the coefficient on the student–teacher ratio (<span class="math notranslate nohighlight">\(\beta_1\)</span>) and the coefficient on spending per
+pupil (<span class="math notranslate nohighlight">\(\beta_2\)</span>) are 0;</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">constraints</span> <span class="o">=</span> <span class="s1">&#39;str = 0, I(expn_stu / 1000) = 0&#39;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">model2</span><span class="o">.</span><span class="n">f_test</span><span class="p">(</span><span class="n">constraints</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;class &#39;statsmodels.stats.contrast.ContrastResults&#39;&gt;
+&lt;F test: F=5.372980036466773, p=0.004967910226898628, df_denom=416, df_num=2&gt;
+</pre></div>
+</div>
+</div>
+</div>
+<p>We can reject the taxpayer’s hypothesis that neither the student–teacher ratio nor expenditures per pupil have an effect
+on test scores (holding constant the percentage of English learners)</p>
+<section id="the-homoskedasticity-only-f-statistic">
+<h3>The Homoskedasticity-Only F-Statistic<a class="headerlink" href="#the-homoskedasticity-only-f-statistic" title="Link to this heading">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">model3</span> <span class="o">=</span> <span class="n">smf</span><span class="o">.</span><span class="n">ols</span><span class="p">(</span><span class="s1">&#39;testscr ~ str + I(expn_stu / 1000) + el_pct&#39;</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span><span class="n">df</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">model3</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>                            OLS Regression Results                            
+==============================================================================
+Dep. Variable:                testscr   R-squared:                       0.437
+Model:                            OLS   Adj. R-squared:                  0.433
+Method:                 Least Squares   F-statistic:                     107.5
+Date:                Thu, 11 Jul 2024   Prob (F-statistic):           1.60e-51
+Time:                        14:57:50   Log-Likelihood:                -1712.8
+No. Observations:                 420   AIC:                             3434.
+Df Residuals:                     416   BIC:                             3450.
+Df Model:                           3                                         
+Covariance Type:            nonrobust                                         
+======================================================================================
+                         coef    std err          t      P&gt;|t|      [0.025      0.975]
+--------------------------------------------------------------------------------------
+Intercept            649.5779     15.206     42.719      0.000     619.688     679.468
+str                   -0.2864      0.481     -0.596      0.551      -1.231       0.658
+I(expn_stu / 1000)     3.8679      1.412      2.739      0.006       1.092       6.644
+el_pct                -0.6560      0.039    -16.776      0.000      -0.733      -0.579
+==============================================================================
+Omnibus:                        0.046   Durbin-Watson:                   0.742
+Prob(Omnibus):                  0.977   Jarque-Bera (JB):                0.070
+Skew:                          -0.025   Prob(JB):                        0.966
+Kurtosis:                       2.962   Cond. No.                         631.
+==============================================================================
+
+Notes:
+[1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">constraints</span> <span class="o">=</span> <span class="s1">&#39;str = 0, I(expn_stu / 1000) = 0&#39;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">model3</span><span class="o">.</span><span class="n">f_test</span><span class="p">(</span><span class="n">constraints</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;class &#39;statsmodels.stats.contrast.ContrastResults&#39;&gt;
+&lt;F test: F=8.010126233882449, p=0.0003859745281015147, df_denom=416, df_num=2&gt;
+</pre></div>
+</div>
+</div>
+</div>
+<p>The hypothesis is rejected at the
+1% level using the homoskedasticity-only test.</p>
+<p>The other method (however tedious) is to do both restricted regression and unrestricted regression and calculate f manuallly</p>
+</section>
+</section>
+<section id="testing-single-restrictions-involving-multiple-coefficients">
+<h2>Testing Single Restrictions Involving Multiple Coefficients<a class="headerlink" href="#testing-single-restrictions-involving-multiple-coefficients" title="Link to this heading">#</a></h2>
+<p>Null Hypothesis
+<span class="math notranslate nohighlight">\( H_0: \beta_1 = \beta_2 \)</span></p>
+<p>Alternative Hypothesis
+<span class="math notranslate nohighlight">\( H_A: \beta_1 \neq \beta_2 \)</span></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">constraints</span> <span class="o">=</span> <span class="s1">&#39;str - I(expn_stu / 1000) = 0&#39;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">model2</span><span class="o">.</span><span class="n">f_test</span><span class="p">(</span><span class="n">constraints</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;class &#39;statsmodels.stats.contrast.ContrastResults&#39;&gt;
+&lt;F test: F=8.830038052533293, p=0.0031350569277935167, df_denom=416, df_num=1&gt;
+</pre></div>
+</div>
+</div>
+</div>
+<p>reject the null hypothesis</p>
+</section>
+<section id="confidence-sets-for-multiple-coefficients">
+<h2>Confidence Sets for Multiple Coefficients<a class="headerlink" href="#confidence-sets-for-multiple-coefficients" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">matplotlib.patches</span> <span class="kn">import</span> <span class="n">Ellipse</span>
+
+<span class="k">def</span> <span class="nf">plot_coefficient_confidence_ellipse</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">regressor1</span><span class="p">,</span> <span class="n">regressor2</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">intercept</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">confidence_level</span><span class="o">=</span><span class="mf">0.95</span><span class="p">,</span> <span class="n">xlim</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ylim</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">xticks</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">yticks</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="c1"># Extract coefficients and covariance matrix</span>
+    <span class="n">params</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">params</span>
+    <span class="n">cov_params</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">cov_params</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">regressor2</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># Single regressor case</span>
+        <span class="n">regressors</span> <span class="o">=</span> <span class="p">[</span><span class="n">regressor1</span><span class="p">]</span>
+        <span class="n">se_regressors</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">cov_params</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">regressor1</span><span class="p">,</span> <span class="n">regressor1</span><span class="p">])]</span>
+        <span class="n">center</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="n">regressor1</span><span class="p">]</span>
+        <span class="n">width</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">se_regressors</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># Two regressors case</span>
+        <span class="n">regressors</span> <span class="o">=</span> <span class="p">[</span><span class="n">regressor1</span><span class="p">,</span> <span class="n">regressor2</span><span class="p">]</span>
+        <span class="n">se_regressors</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">cov_params</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">regressor1</span><span class="p">,</span> <span class="n">regressor1</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">cov_params</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">regressor2</span><span class="p">,</span> <span class="n">regressor2</span><span class="p">])]</span>
+        <span class="n">center</span> <span class="o">=</span> <span class="n">params</span><span class="p">[[</span><span class="n">regressor1</span><span class="p">,</span> <span class="n">regressor2</span><span class="p">]]</span><span class="o">.</span><span class="n">values</span>
+        <span class="n">width</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">se_regressors</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">height</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">se_regressors</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="c1"># Calculate the covariance between regressor1 and regressor2</span>
+        <span class="n">cov_regressor1_regressor2</span> <span class="o">=</span> <span class="n">cov_params</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">regressor1</span><span class="p">,</span> <span class="n">regressor2</span><span class="p">]</span>
+
+    <span class="c1"># Plotting</span>
+    <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_aspect</span><span class="p">(</span><span class="s1">&#39;equal&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Confidence level</span>
+    <span class="n">n_std</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">confidence_level</span><span class="p">))</span>  <span class="c1"># Number of standard deviations</span>
+
+    <span class="k">if</span> <span class="n">regressor2</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># Single regressor case</span>
+        <span class="n">ellipse</span> <span class="o">=</span> <span class="n">Ellipse</span><span class="p">(</span><span class="n">xy</span><span class="o">=</span><span class="p">(</span><span class="n">center</span><span class="p">,</span> <span class="n">intercept</span><span class="p">),</span> <span class="n">width</span><span class="o">=</span><span class="n">n_std</span> <span class="o">*</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="n">n_std</span> <span class="o">*</span> <span class="n">width</span><span class="p">,</span>
+                          <span class="n">angle</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="n">fc</span><span class="o">=</span><span class="s1">&#39;None&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+        <span class="n">ax</span><span class="o">.</span><span class="n">add_patch</span><span class="p">(</span><span class="n">ellipse</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="n">regressor1</span><span class="p">],</span> <span class="n">intercept</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">)</span>  <span class="c1"># Center point</span>
+
+        <span class="c1"># Labels and title</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$\beta$ (</span><span class="si">{}</span><span class="s1">)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">regressor1</span><span class="p">))</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;Intercept ($\beta_0$)&#39;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Confidence Ellipse of Coefficient&#39;</span><span class="p">)</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># Two regressors case</span>
+        <span class="n">ellipse</span> <span class="o">=</span> <span class="n">Ellipse</span><span class="p">(</span><span class="n">xy</span><span class="o">=</span><span class="n">center</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="n">n_std</span> <span class="o">*</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="n">n_std</span> <span class="o">*</span> <span class="n">height</span><span class="p">,</span>
+                          <span class="n">angle</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arctan</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">cov_regressor1_regressor2</span> <span class="o">/</span> <span class="p">(</span><span class="n">se_regressors</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="n">se_regressors</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span> <span class="o">/</span> <span class="mi">2</span><span class="p">),</span>
+                          <span class="n">edgecolor</span><span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="n">fc</span><span class="o">=</span><span class="s1">&#39;None&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+        <span class="n">ax</span><span class="o">.</span><span class="n">add_patch</span><span class="p">(</span><span class="n">ellipse</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="n">regressor1</span><span class="p">],</span> <span class="n">params</span><span class="p">[</span><span class="n">regressor2</span><span class="p">],</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">)</span>  <span class="c1"># Center point</span>
+
+        <span class="c1"># Labels and title</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$\beta_1$ (</span><span class="si">{}</span><span class="s1">)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">regressor1</span><span class="p">))</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$\beta_2$ (</span><span class="si">{}</span><span class="s1">)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">regressor2</span><span class="p">))</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Confidence Ellipse of Coefficients&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Set x-axis and y-axis limits if provided</span>
+    <span class="k">if</span> <span class="n">xlim</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="n">xlim</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">ylim</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="n">ylim</span><span class="p">)</span>
+
+     <span class="c1"># Set x-axis and y-axis limits if provided</span>
+    <span class="k">if</span> <span class="n">xlim</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="n">xlim</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">ylim</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="n">ylim</span><span class="p">)</span>
+
+    <span class="c1"># Set xticks and yticks if provided</span>
+    <span class="k">if</span> <span class="n">xticks</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">(</span><span class="n">xticks</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">(</span><span class="n">rotation</span><span class="o">=</span><span class="mi">90</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">yticks</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">(</span><span class="n">yticks</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span> <span class="n">plot_coefficient_confidence_ellipse</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="s1">&#39;str&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/ba3ab8e3f63bdc45965ef2f3905cc46b7b0540eee4fb19143898e87734f202ae.png" src="_images/ba3ab8e3f63bdc45965ef2f3905cc46b7b0540eee4fb19143898e87734f202ae.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span> <span class="n">plot_coefficient_confidence_ellipse</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="s1">&#39;str&#39;</span><span class="p">,</span><span class="s1">&#39;el_pct&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/c7c27e375670a8b7f86cdb80c838e606f755fb993c23e752a5c06038fc405d04.png" src="_images/c7c27e375670a8b7f86cdb80c838e606f755fb993c23e752a5c06038fc405d04.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span> <span class="n">plot_coefficient_confidence_ellipse</span><span class="p">(</span><span class="n">model2</span><span class="p">,</span> <span class="s1">&#39;str&#39;</span><span class="p">,</span><span class="s1">&#39;I(expn_stu / 1000)&#39;</span><span class="p">,</span>
+                                     <span class="n">xlim</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span><span class="mf">1.5</span><span class="p">),</span> <span class="n">ylim</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">9</span><span class="p">),</span>
+                                    <span class="n">xticks</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mf">0.5</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/96d52a149fc3fa67052ba88c78869a4deea197b73e18f511f6db3a64092de658.png" src="_images/96d52a149fc3fa67052ba88c78869a4deea197b73e18f511f6db3a64092de658.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span> <span class="n">plot_coefficient_confidence_ellipse</span><span class="p">(</span><span class="n">model3</span><span class="p">,</span> <span class="s1">&#39;str&#39;</span><span class="p">,</span><span class="s1">&#39;I(expn_stu / 1000)&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/5d53fbfcdc2c43255f3f511ed0b4ca37fe2cf0fac45f5355f1ee8334be67d979.png" src="_images/5d53fbfcdc2c43255f3f511ed0b4ca37fe2cf0fac45f5355f1ee8334be67d979.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span> <span class="n">plot_coefficient_confidence_ellipse</span><span class="p">(</span><span class="n">model2</span><span class="p">,</span> <span class="s1">&#39;str&#39;</span><span class="p">,</span><span class="s1">&#39;I(expn_stu / 1000)&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/e84e8d0cf05649a97e1ca357c9b5fbd525344c6f718d0cf56d2a3037513a1b59.png" src="_images/e84e8d0cf05649a97e1ca357c9b5fbd525344c6f718d0cf56d2a3037513a1b59.png" />
+</div>
+</div>
+</section>
+<section id="model-specification-for-multiple-regression">
+<h2>Model Specification for Multiple Regression<a class="headerlink" href="#model-specification-for-multiple-regression" title="Link to this heading">#</a></h2>
+<p>Refer to theory and experts to decide on base specification then compare it with alternative specifications</p>
+</section>
+<section id="analysis-of-the-test-score-data-set">
+<h2>Analysis of the Test Score Data Set<a class="headerlink" href="#analysis-of-the-test-score-data-set" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span><span class="o">.</span><span class="n">columns</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Index([&#39;Observation Number&#39;, &#39;dist_cod&#39;, &#39;county&#39;, &#39;district&#39;, &#39;gr_span&#39;,
+       &#39;enrl_tot&#39;, &#39;teachers&#39;, &#39;calw_pct&#39;, &#39;meal_pct&#39;, &#39;computer&#39;, &#39;testscr&#39;,
+       &#39;comp_stu&#39;, &#39;expn_stu&#39;, &#39;str&#39;, &#39;avginc&#39;, &#39;el_pct&#39;, &#39;read_scr&#39;,
+       &#39;math_scr&#39;],
+      dtype=&#39;object&#39;)
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sns</span><span class="o">.</span><span class="n">scatterplot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s1">&#39;el_pct&#39;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s1">&#39;testscr&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">df</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/f873e828ddfc158cf2c352a0cc1a3687bbd8c4f076c295cd028dd72a11c68cbc.png" src="_images/f873e828ddfc158cf2c352a0cc1a3687bbd8c4f076c295cd028dd72a11c68cbc.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sns</span><span class="o">.</span><span class="n">scatterplot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s1">&#39;meal_pct&#39;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s1">&#39;testscr&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">df</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/aee9a7611ac10602f772cffcd7906b5afa21af8103d570e517665ee9a869bc31.png" src="_images/aee9a7611ac10602f772cffcd7906b5afa21af8103d570e517665ee9a869bc31.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sns</span><span class="o">.</span><span class="n">scatterplot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s1">&#39;calw_pct&#39;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s1">&#39;testscr&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">df</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/350edea3ea0abe1d8557a3665ec616aff933d429c1f4829a01034d91af5c6c60.png" src="_images/350edea3ea0abe1d8557a3665ec616aff933d429c1f4829a01034d91af5c6c60.png" />
+</div>
+</div>
+<p>For base model, we use str, el_pct, meal_pct</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">model4</span> <span class="o">=</span> <span class="n">smf</span><span class="o">.</span><span class="n">ols</span><span class="p">(</span><span class="s1">&#39;testscr ~ str&#39;</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span><span class="n">df</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">cov_type</span> <span class="o">=</span> <span class="s1">&#39;HC2&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">model4</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;*&quot;</span><span class="o">*</span><span class="mi">90</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Number of Observations (nobs):&quot;</span><span class="p">,</span> <span class="n">model4</span><span class="o">.</span><span class="n">nobs</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Adjusted R-squared:&quot;</span><span class="p">,</span> <span class="n">model4</span><span class="o">.</span><span class="n">rsquared_adj</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Standard Error of Regression (SER):&quot;</span><span class="p">,</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">model4</span><span class="o">.</span><span class="n">ssr</span> <span class="o">/</span> <span class="n">model4</span><span class="o">.</span><span class="n">df_resid</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;*&quot;</span><span class="o">*</span><span class="mi">90</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Coefficient of &#39;str&#39;:&quot;</span><span class="p">,</span> <span class="n">model4</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;str&#39;</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Standard Error of &#39;str&#39; coefficient:&quot;</span><span class="p">,</span> <span class="n">model4</span><span class="o">.</span><span class="n">bse</span><span class="p">[</span><span class="s1">&#39;str&#39;</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Confidence Interval of &#39;str&#39; coefficient:&quot;</span><span class="p">,</span> <span class="n">model4</span><span class="o">.</span><span class="n">conf_int</span><span class="p">()</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s1">&#39;str&#39;</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;*&quot;</span><span class="o">*</span><span class="mi">90</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Coefficient of intercept:&quot;</span><span class="p">,</span> <span class="n">model4</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;Intercept&#39;</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Standard Error of &#39;intercept&#39; coefficient:&quot;</span><span class="p">,</span> <span class="n">model4</span><span class="o">.</span><span class="n">bse</span><span class="p">[</span><span class="s1">&#39;Intercept&#39;</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Control Variables:&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>                            OLS Regression Results                            
+==============================================================================
+Dep. Variable:                testscr   R-squared:                       0.051
+Model:                            OLS   Adj. R-squared:                  0.049
+Method:                 Least Squares   F-statistic:                     19.13
+Date:                Thu, 11 Jul 2024   Prob (F-statistic):           1.55e-05
+Time:                        14:57:52   Log-Likelihood:                -1822.2
+No. Observations:                 420   AIC:                             3648.
+Df Residuals:                     418   BIC:                             3657.
+Df Model:                           1                                         
+Covariance Type:                  HC2                                         
+==============================================================================
+                 coef    std err          z      P&gt;|z|      [0.025      0.975]
+------------------------------------------------------------------------------
+Intercept    698.9330     10.400     67.206      0.000     678.550     719.316
+str           -2.2798      0.521     -4.373      0.000      -3.302      -1.258
+==============================================================================
+Omnibus:                        5.390   Durbin-Watson:                   0.129
+Prob(Omnibus):                  0.068   Jarque-Bera (JB):                3.589
+Skew:                          -0.012   Prob(JB):                        0.166
+Kurtosis:                       2.548   Cond. No.                         207.
+==============================================================================
+
+Notes:
+[1] Standard Errors are heteroscedasticity robust (HC2)
+******************************************************************************************
+Number of Observations (nobs): 420.0
+Adjusted R-squared: 0.048970334541527216
+Standard Error of Regression (SER): 18.58096749678702
+******************************************************************************************
+Coefficient of &#39;str&#39;: -2.2798082870234486
+Standard Error of &#39;str&#39; coefficient: 0.5212891489361441
+Confidence Interval of &#39;str&#39; coefficient: 0   -3.301516
+1   -1.258100
+Name: str, dtype: float64
+******************************************************************************************
+Coefficient of intercept: 698.9329523279791
+Standard Error of &#39;intercept&#39; coefficient: 10.399789809001236
+Control Variables:
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">model5</span> <span class="o">=</span> <span class="n">smf</span><span class="o">.</span><span class="n">ols</span><span class="p">(</span><span class="s1">&#39;testscr ~ str + el_pct&#39;</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span><span class="n">df</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">cov_type</span> <span class="o">=</span> <span class="s1">&#39;HC2&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">model5</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;*&quot;</span><span class="o">*</span><span class="mi">90</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Number of Observations (nobs):&quot;</span><span class="p">,</span> <span class="n">model5</span><span class="o">.</span><span class="n">nobs</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Adjusted R-squared:&quot;</span><span class="p">,</span> <span class="n">model5</span><span class="o">.</span><span class="n">rsquared_adj</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Standard Error of Regression (SER):&quot;</span><span class="p">,</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">model5</span><span class="o">.</span><span class="n">ssr</span> <span class="o">/</span> <span class="n">model5</span><span class="o">.</span><span class="n">df_resid</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;*&quot;</span><span class="o">*</span><span class="mi">90</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Coefficient of &#39;str&#39;:&quot;</span><span class="p">,</span> <span class="n">model5</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;str&#39;</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Standard Error of &#39;str&#39; coefficient:&quot;</span><span class="p">,</span> <span class="n">model5</span><span class="o">.</span><span class="n">bse</span><span class="p">[</span><span class="s1">&#39;str&#39;</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Confidence Interval of &#39;str&#39; coefficient:&quot;</span><span class="p">,</span> <span class="n">model5</span><span class="o">.</span><span class="n">conf_int</span><span class="p">()</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s1">&#39;str&#39;</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;*&quot;</span><span class="o">*</span><span class="mi">90</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Coefficient of intercept:&quot;</span><span class="p">,</span> <span class="n">model5</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;Intercept&#39;</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Standard Error of &#39;intercept&#39; coefficient:&quot;</span><span class="p">,</span> <span class="n">model5</span><span class="o">.</span><span class="n">bse</span><span class="p">[</span><span class="s1">&#39;Intercept&#39;</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;*&quot;</span><span class="o">*</span><span class="mi">90</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Control Variables:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Coefficient of &#39;el_pct&#39;:&quot;</span><span class="p">,</span> <span class="n">model5</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;el_pct&#39;</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Standard Error of &#39;el_pct&#39; coefficient:&quot;</span><span class="p">,</span> <span class="n">model5</span><span class="o">.</span><span class="n">bse</span><span class="p">[</span><span class="s1">&#39;el_pct&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>                            OLS Regression Results                            
+==============================================================================
+Dep. Variable:                testscr   R-squared:                       0.426
+Model:                            OLS   Adj. R-squared:                  0.424
+Method:                 Least Squares   F-statistic:                     222.8
+Date:                Thu, 11 Jul 2024   Prob (F-statistic):           1.56e-66
+Time:                        14:57:52   Log-Likelihood:                -1716.6
+No. Observations:                 420   AIC:                             3439.
+Df Residuals:                     417   BIC:                             3451.
+Df Model:                           2                                         
+Covariance Type:                  HC2                                         
+==============================================================================
+                 coef    std err          z      P&gt;|z|      [0.025      0.975]
+------------------------------------------------------------------------------
+Intercept    686.0322      8.754     78.365      0.000     668.874     703.190
+str           -1.1013      0.434     -2.537      0.011      -1.952      -0.250
+el_pct        -0.6498      0.031    -20.888      0.000      -0.711      -0.589
+==============================================================================
+Omnibus:                        0.631   Durbin-Watson:                   0.686
+Prob(Omnibus):                  0.729   Jarque-Bera (JB):                0.550
+Skew:                           0.088   Prob(JB):                        0.760
+Kurtosis:                       3.024   Cond. No.                         301.
+==============================================================================
+
+Notes:
+[1] Standard Errors are heteroscedasticity robust (HC2)
+******************************************************************************************
+Number of Observations (nobs): 420.0
+Adjusted R-squared: 0.4236804327106266
+Standard Error of Regression (SER): 14.4644849557101
+******************************************************************************************
+Coefficient of &#39;str&#39;: -1.101295888867436
+Standard Error of &#39;str&#39; coefficient: 0.4341673903333591
+Confidence Interval of &#39;str&#39; coefficient: 0   -1.952248
+1   -0.250343
+Name: str, dtype: float64
+******************************************************************************************
+Coefficient of intercept: 686.0322486844
+Standard Error of &#39;intercept&#39; coefficient: 8.754324456959138
+******************************************************************************************
+Control Variables:
+Coefficient of &#39;el_pct&#39;: -0.6497767766531359
+Standard Error of &#39;el_pct&#39; coefficient: 0.031107541185006728
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">model6</span> <span class="o">=</span> <span class="n">smf</span><span class="o">.</span><span class="n">ols</span><span class="p">(</span><span class="s1">&#39;testscr ~ str + el_pct + meal_pct&#39;</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span><span class="n">df</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">cov_type</span> <span class="o">=</span> <span class="s1">&#39;HC2&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">model6</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;*&quot;</span><span class="o">*</span><span class="mi">90</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Number of Observations (nobs):&quot;</span><span class="p">,</span> <span class="n">model6</span><span class="o">.</span><span class="n">nobs</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Adjusted R-squared:&quot;</span><span class="p">,</span> <span class="n">model6</span><span class="o">.</span><span class="n">rsquared_adj</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Standard Error of Regression (SER):&quot;</span><span class="p">,</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">model6</span><span class="o">.</span><span class="n">ssr</span> <span class="o">/</span> <span class="n">model6</span><span class="o">.</span><span class="n">df_resid</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;*&quot;</span><span class="o">*</span><span class="mi">90</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Coefficient of &#39;str&#39;:&quot;</span><span class="p">,</span> <span class="n">model6</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;str&#39;</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Standard Error of &#39;str&#39; coefficient:&quot;</span><span class="p">,</span> <span class="n">model6</span><span class="o">.</span><span class="n">bse</span><span class="p">[</span><span class="s1">&#39;str&#39;</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Confidence Interval of &#39;str&#39; coefficient:&quot;</span><span class="p">,</span> <span class="n">model6</span><span class="o">.</span><span class="n">conf_int</span><span class="p">()</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s1">&#39;str&#39;</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;*&quot;</span><span class="o">*</span><span class="mi">90</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Coefficient of intercept:&quot;</span><span class="p">,</span> <span class="n">model6</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;Intercept&#39;</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Standard Error of &#39;intercept&#39; coefficient:&quot;</span><span class="p">,</span> <span class="n">model6</span><span class="o">.</span><span class="n">bse</span><span class="p">[</span><span class="s1">&#39;Intercept&#39;</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;*&quot;</span><span class="o">*</span><span class="mi">90</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Control Variables:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Coefficient of &#39;el_pct&#39;:&quot;</span><span class="p">,</span> <span class="n">model6</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;el_pct&#39;</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Standard Error of &#39;el_pct&#39; coefficient:&quot;</span><span class="p">,</span> <span class="n">model6</span><span class="o">.</span><span class="n">bse</span><span class="p">[</span><span class="s1">&#39;el_pct&#39;</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Coefficient of &#39;meal_pct&#39;:&quot;</span><span class="p">,</span> <span class="n">model6</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;meal_pct&#39;</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Standard Error of &#39;meal_pct&#39; coefficient:&quot;</span><span class="p">,</span> <span class="n">model6</span><span class="o">.</span><span class="n">bse</span><span class="p">[</span><span class="s1">&#39;meal_pct&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>                            OLS Regression Results                            
+==============================================================================
+Dep. Variable:                testscr   R-squared:                       0.775
+Model:                            OLS   Adj. R-squared:                  0.773
+Method:                 Least Squares   F-statistic:                     451.5
+Date:                Thu, 11 Jul 2024   Prob (F-statistic):          2.13e-130
+Time:                        14:57:52   Log-Likelihood:                -1520.5
+No. Observations:                 420   AIC:                             3049.
+Df Residuals:                     416   BIC:                             3065.
+Df Model:                           3                                         
+Covariance Type:                  HC2                                         
+==============================================================================
+                 coef    std err          z      P&gt;|z|      [0.025      0.975]
+------------------------------------------------------------------------------
+Intercept    700.1500      5.591    125.225      0.000     689.192     711.108
+str           -0.9983      0.271     -3.680      0.000      -1.530      -0.467
+el_pct        -0.1216      0.033     -3.689      0.000      -0.186      -0.057
+meal_pct      -0.5473      0.024    -22.659      0.000      -0.595      -0.500
+==============================================================================
+Omnibus:                        6.998   Durbin-Watson:                   1.438
+Prob(Omnibus):                  0.030   Jarque-Bera (JB):               10.626
+Skew:                          -0.024   Prob(JB):                      0.00493
+Kurtosis:                       3.778   Cond. No.                         621.
+==============================================================================
+
+Notes:
+[1] Standard Errors are heteroscedasticity robust (HC2)
+******************************************************************************************
+Number of Observations (nobs): 420.0
+Adjusted R-squared: 0.7728897777772022
+Standard Error of Regression (SER): 9.08007911799521
+******************************************************************************************
+Coefficient of &#39;str&#39;: -0.9983092184361917
+Standard Error of &#39;str&#39; coefficient: 0.2712582912841282
+Confidence Interval of &#39;str&#39; coefficient: 0   -1.529966
+1   -0.466653
+Name: str, dtype: float64
+******************************************************************************************
+Coefficient of intercept: 700.1499646912087
+Standard Error of &#39;intercept&#39; coefficient: 5.591126981728231
+******************************************************************************************
+Control Variables:
+Coefficient of &#39;el_pct&#39;: -0.12157329139694084
+Standard Error of &#39;el_pct&#39; coefficient: 0.03295681505850961
+Coefficient of &#39;meal_pct&#39;: -0.5473455513714036
+Standard Error of &#39;meal_pct&#39; coefficient: 0.024155738874582403
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">model7</span> <span class="o">=</span> <span class="n">smf</span><span class="o">.</span><span class="n">ols</span><span class="p">(</span><span class="s1">&#39;testscr ~ str + el_pct + meal_pct + calw_pct&#39;</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span><span class="n">df</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">cov_type</span> <span class="o">=</span> <span class="s1">&#39;HC2&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">model7</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;*&quot;</span><span class="o">*</span><span class="mi">90</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Number of Observations (nobs): </span><span class="si">{</span><span class="n">model7</span><span class="o">.</span><span class="n">nobs</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Adjusted R-squared: </span><span class="si">{</span><span class="n">model7</span><span class="o">.</span><span class="n">rsquared_adj</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Standard Error of Regression (SER): </span><span class="si">{</span><span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">model7</span><span class="o">.</span><span class="n">ssr</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">model7</span><span class="o">.</span><span class="n">df_resid</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;*&quot;</span><span class="o">*</span><span class="mi">90</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Coefficient of &#39;str&#39;: </span><span class="si">{</span><span class="n">model7</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;str&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Standard Error of &#39;str&#39; coefficient: </span><span class="si">{</span><span class="n">model7</span><span class="o">.</span><span class="n">bse</span><span class="p">[</span><span class="s1">&#39;str&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Confidence Interval of &#39;str&#39; coefficient: </span><span class="si">{</span><span class="n">model7</span><span class="o">.</span><span class="n">conf_int</span><span class="p">()</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s1">&#39;str&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;*&quot;</span><span class="o">*</span><span class="mi">90</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Coefficient of intercept: </span><span class="si">{</span><span class="n">model7</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;Intercept&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Standard Error of &#39;intercept&#39; coefficient: </span><span class="si">{</span><span class="n">model7</span><span class="o">.</span><span class="n">bse</span><span class="p">[</span><span class="s1">&#39;Intercept&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;*&quot;</span><span class="o">*</span><span class="mi">90</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Control Variables:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Coefficient of &#39;el_pct&#39;: </span><span class="si">{</span><span class="n">model7</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;el_pct&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Standard Error of &#39;el_pct&#39; coefficient: </span><span class="si">{</span><span class="n">model7</span><span class="o">.</span><span class="n">bse</span><span class="p">[</span><span class="s1">&#39;el_pct&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Coefficient of &#39;meal_pct&#39;: </span><span class="si">{</span><span class="n">model7</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;meal_pct&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Standard Error of &#39;meal_pct&#39; coefficient: </span><span class="si">{</span><span class="n">model7</span><span class="o">.</span><span class="n">bse</span><span class="p">[</span><span class="s1">&#39;meal_pct&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Coefficient of &#39;calw_pct&#39;: </span><span class="si">{</span><span class="n">model7</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;calw_pct&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Standard Error of &#39;calw_pct&#39; coefficient: </span><span class="si">{</span><span class="n">model7</span><span class="o">.</span><span class="n">bse</span><span class="p">[</span><span class="s1">&#39;calw_pct&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>                            OLS Regression Results                            
+==============================================================================
+Dep. Variable:                testscr   R-squared:                       0.775
+Model:                            OLS   Adj. R-squared:                  0.773
+Method:                 Least Squares   F-statistic:                     357.7
+Date:                Thu, 11 Jul 2024   Prob (F-statistic):          5.15e-133
+Time:                        14:57:52   Log-Likelihood:                -1520.2
+No. Observations:                 420   AIC:                             3050.
+Df Residuals:                     415   BIC:                             3071.
+Df Model:                           4                                         
+Covariance Type:                  HC2                                         
+==============================================================================
+                 coef    std err          z      P&gt;|z|      [0.025      0.975]
+------------------------------------------------------------------------------
+Intercept    700.3918      5.559    125.982      0.000     689.496     711.288
+str           -1.0144      0.270     -3.757      0.000      -1.544      -0.485
+el_pct        -0.1298      0.036     -3.561      0.000      -0.201      -0.058
+meal_pct      -0.5286      0.038    -13.759      0.000      -0.604      -0.453
+calw_pct      -0.0479      0.060     -0.800      0.424      -0.165       0.069
+==============================================================================
+Omnibus:                        6.583   Durbin-Watson:                   1.430
+Prob(Omnibus):                  0.037   Jarque-Bera (JB):                9.701
+Skew:                          -0.032   Prob(JB):                      0.00782
+Kurtosis:                       3.742   Cond. No.                         644.
+==============================================================================
+
+Notes:
+[1] Standard Errors are heteroscedasticity robust (HC2)
+******************************************************************************************
+Number of Observations (nobs): 420.0
+Adjusted R-squared: 0.7726799599940171
+Standard Error of Regression (SER): 9.084272505309498
+******************************************************************************************
+Coefficient of &#39;str&#39;: -1.014353283686381
+Standard Error of &#39;str&#39; coefficient: 0.2699983170627972
+Confidence Interval of &#39;str&#39; coefficient: 0   -1.543540
+1   -0.485166
+Name: str, dtype: float64
+******************************************************************************************
+Coefficient of intercept: 700.3918429187605
+Standard Error of &#39;intercept&#39; coefficient: 5.559437672353088
+******************************************************************************************
+Control Variables:
+Coefficient of &#39;el_pct&#39;: -0.12982189169754665
+Standard Error of &#39;el_pct&#39; coefficient: 0.036457668649763415
+Coefficient of &#39;meal_pct&#39;: -0.5286190781836066
+Standard Error of &#39;meal_pct&#39; coefficient: 0.03841911349299429
+Coefficient of &#39;calw_pct&#39;: -0.04785370535070532
+Standard Error of &#39;calw_pct&#39; coefficient: 0.05984133513574561
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">model8</span> <span class="o">=</span> <span class="n">smf</span><span class="o">.</span><span class="n">ols</span><span class="p">(</span><span class="s1">&#39;testscr ~ str + el_pct  + calw_pct&#39;</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span><span class="n">df</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">cov_type</span> <span class="o">=</span> <span class="s1">&#39;HC2&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">model8</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;*&quot;</span><span class="o">*</span><span class="mi">90</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Number of Observations (nobs): </span><span class="si">{</span><span class="n">model8</span><span class="o">.</span><span class="n">nobs</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Adjusted R-squared: </span><span class="si">{</span><span class="n">model8</span><span class="o">.</span><span class="n">rsquared_adj</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Standard Error of Regression (SER): </span><span class="si">{</span><span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">model8</span><span class="o">.</span><span class="n">ssr</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">model8</span><span class="o">.</span><span class="n">df_resid</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;*&quot;</span><span class="o">*</span><span class="mi">90</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Coefficient of &#39;str&#39;: </span><span class="si">{</span><span class="n">model8</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;str&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Standard Error of &#39;str&#39; coefficient: </span><span class="si">{</span><span class="n">model8</span><span class="o">.</span><span class="n">bse</span><span class="p">[</span><span class="s1">&#39;str&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Confidence Interval of &#39;str&#39; coefficient: </span><span class="si">{</span><span class="n">model8</span><span class="o">.</span><span class="n">conf_int</span><span class="p">()</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s1">&#39;str&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;*&quot;</span><span class="o">*</span><span class="mi">90</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Coefficient of intercept: </span><span class="si">{</span><span class="n">model8</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;Intercept&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Standard Error of &#39;intercept&#39; coefficient: </span><span class="si">{</span><span class="n">model8</span><span class="o">.</span><span class="n">bse</span><span class="p">[</span><span class="s1">&#39;Intercept&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;*&quot;</span><span class="o">*</span><span class="mi">90</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Control Variables:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Coefficient of &#39;el_pct&#39;: </span><span class="si">{</span><span class="n">model8</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;el_pct&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Standard Error of &#39;el_pct&#39; coefficient: </span><span class="si">{</span><span class="n">model8</span><span class="o">.</span><span class="n">bse</span><span class="p">[</span><span class="s1">&#39;el_pct&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Coefficient of &#39;calw_pct&#39;: </span><span class="si">{</span><span class="n">model8</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;calw_pct&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Standard Error of &#39;calw_pct&#39; coefficient: </span><span class="si">{</span><span class="n">model8</span><span class="o">.</span><span class="n">bse</span><span class="p">[</span><span class="s1">&#39;calw_pct&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>                            OLS Regression Results                            
+==============================================================================
+Dep. Variable:                testscr   R-squared:                       0.629
+Model:                            OLS   Adj. R-squared:                  0.626
+Method:                 Least Squares   F-statistic:                     167.2
+Date:                Thu, 11 Jul 2024   Prob (F-statistic):           4.09e-71
+Time:                        14:57:52   Log-Likelihood:                -1625.3
+No. Observations:                 420   AIC:                             3259.
+Df Residuals:                     416   BIC:                             3275.
+Df Model:                           3                                         
+Covariance Type:                  HC2                                         
+==============================================================================
+                 coef    std err          z      P&gt;|z|      [0.025      0.975]
+------------------------------------------------------------------------------
+Intercept    697.9987      6.946    100.491      0.000     684.385     711.612
+str           -1.3080      0.340     -3.845      0.000      -1.975      -0.641
+el_pct        -0.4876      0.030    -16.399      0.000      -0.546      -0.429
+calw_pct      -0.7900      0.069    -11.477      0.000      -0.925      -0.655
+==============================================================================
+Omnibus:                        4.267   Durbin-Watson:                   1.094
+Prob(Omnibus):                  0.118   Jarque-Bera (JB):                5.337
+Skew:                          -0.027   Prob(JB):                       0.0694
+Kurtosis:                       3.550   Cond. No.                         338.
+==============================================================================
+
+Notes:
+[1] Standard Errors are heteroscedasticity robust (HC2)
+******************************************************************************************
+Number of Observations (nobs): 420.0
+Adjusted R-squared: 0.6258642151608783
+Standard Error of Regression (SER): 11.654292560344556
+******************************************************************************************
+Coefficient of &#39;str&#39;: -1.3079841315208052
+Standard Error of &#39;str&#39; coefficient: 0.3402221471993885
+Confidence Interval of &#39;str&#39; coefficient: 0   -1.974807
+1   -0.641161
+Name: str, dtype: float64
+******************************************************************************************
+Coefficient of intercept: 697.99869004892
+Standard Error of &#39;intercept&#39; coefficient: 6.945907382951443
+******************************************************************************************
+Control Variables:
+Coefficient of &#39;el_pct&#39;: -0.48762020439032006
+Standard Error of &#39;el_pct&#39; coefficient: 0.02973489830434721
+Coefficient of &#39;calw_pct&#39;: -0.7899647808493098
+Standard Error of &#39;calw_pct&#39; coefficient: 0.06883049219973834
+</pre></div>
+</div>
+</div>
+</div>
+<section id="interpretation">
+<h3>Interpretation<a class="headerlink" href="#interpretation" title="Link to this heading">#</a></h3>
+<p>In contrast to the other two control variables, the percentage qualifying for
+income assistance appears to be redundant.</p>
+<p>R squared ajusted increases when adding student characteristics</p>
+<p>Controlling for these student characteristics cuts the estimated effect of the
+student–teacher ratio on test scores approximately in half. This estimated
+effect is not very sensitive to which specific control variables are included in
+the regression. In all cases, the hypothesis that the coefficient on the student–
+teacher ratio is 0 can be rejected at the 5% level</p>
+</section>
+</section>
+<section id="exercises">
+<h2>Exercises<a class="headerlink" href="#exercises" title="Link to this heading">#</a></h2>
 <p>🚧 Under Construction</p>
+</section>
 </section>
 
     <script type="text/x-thebe-config">
@@ -449,6 +1664,36 @@ document.write(`
             </div>
             
             
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#hypothesis-tests-for-a-single-coefficient">Hypothesis Tests for a single Coefficient</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#adding-expenditures-per-pupil">Adding expenditures per pupil</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#joint-hypotheses">Joint Hypotheses</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-homoskedasticity-only-f-statistic">The Homoskedasticity-Only F-Statistic</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#testing-single-restrictions-involving-multiple-coefficients">Testing Single Restrictions Involving Multiple Coefficients</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#confidence-sets-for-multiple-coefficients">Confidence Sets for Multiple Coefficients</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#model-specification-for-multiple-regression">Model Specification for Multiple Regression</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#analysis-of-the-test-score-data-set">Analysis of the Test Score Data Set</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#interpretation">Interpretation</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exercises">Exercises</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
               
             
           </div>
